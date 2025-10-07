@@ -11,9 +11,14 @@
     "dev:webpack": "webpack-dev-server --hot --config ./webpack.config.renderer.js",
     "dev:electron": "wait-on http://localhost:8080 && electron ./dist/electron.js"
   },
-  "author": "",
+  "author": {
+    "name": "grommunio GmbH",
+    "email": "dev@grommunio.com",
+    "url": "https://grommunio.com"
+  },
   "license": "MIT",
-  "description": "",
+  "description": "Desktop App for grommunio",
+  "homepage": "https://grommunio.com",
   "devDependencies": {
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
