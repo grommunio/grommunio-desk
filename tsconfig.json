@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "es2020",
+    "moduleResolution": "node",
     "strict": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
