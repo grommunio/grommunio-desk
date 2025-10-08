@@ -1,3 +1,5 @@
+const ESLintPlugin = require("eslint-webpack-plugin");
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
@@ -21,4 +23,8 @@ module.exports = {
       extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss'],
       modules: ['node_modules'],
     },
+    plugins: [new ESLintPlugin({
+      extensions: ['.ts', '.tsx'],
+      files: ['src/']
+    })],
 };
