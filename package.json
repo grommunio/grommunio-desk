@@ -9,7 +9,8 @@
     "start": "cross-env NODE_ENV=production npm run build:main && electron ./dist/electron.js",
     "dev": "cross-env NODE_ENV=develop npm run build:main && run-p dev:*",
     "dev:webpack": "webpack-dev-server --hot --config ./webpack.config.renderer.js",
-    "dev:electron": "wait-on http://localhost:8080 && electron ./dist/electron.js"
+    "dev:electron": "wait-on http://localhost:8080 && electron ./dist/electron.js",
+    "eslint": "eslint src/"
   },
   "author": {
     "name": "grommunio GmbH",
@@ -20,17 +21,21 @@
   "description": "Desktop App for grommunio",
   "homepage": "https://grommunio.com",
   "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@stylistic/eslint-plugin": "^5.4.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "cross-env": "^10.1.0",
     "electron": "^38.2.0",
     "electron-reloader": "^1.2.3",
+    "eslint": "^9.37.0",
     "html-webpack-plugin": "^5.6.4",
     "npm-run-all": "^4.1.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.0",
     "wait-on": "^9.0.1",
     "webpack": "^5.102.0",
     "webpack-cli": "^6.0.1",
