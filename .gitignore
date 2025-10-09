@@ -1,5 +1,6 @@
 # build
 dist/
+.tsconfig-temp.json
 
 # dependencies
 node_modules/

@@ -4,9 +4,28 @@ set -e
 
 echo "=== Running pre-commit check ==="
 
-diffFiles=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.jsx?$|\.tsx?$' | tr '\n' ' ')
+tempConfig=.tsconfig-temp.json
+
+diffFiles=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.jsx?$|\.tsx?$') || true
 if [ ! -z "$diffFiles" ]; then
   npx eslint $diffFiles
+
+  cat >$tempConfig <<EOF
+{
+  "extends": "./tsconfig.json",
+  "noEmmit": true,
+  "include": [
+EOF
+  for file in $diffFiles; do
+    echo "    \"$file\"," >> $tempConfig
+  done
+  cat >>$tempConfig <<EOF
+    "unused"
+  ]
+}
+EOF
+  npx tsc --project $tempConfig
 fi
+rm -f $tempConfig
 
 echo "=== Pre-commit check completed successfully ==="
