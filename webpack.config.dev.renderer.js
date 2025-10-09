@@ -22,5 +22,23 @@ module.exports = merge(base,
       }),
     ],
     //node: { global: true }, // Fix: "Uncaught ReferenceError: global is not defined", and "Can't resolve 'fs'".
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: 'style-loader',
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+              },
+            }
+          ],
+        },
+      ],
+    },
   }
 )

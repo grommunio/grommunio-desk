@@ -1,5 +1,7 @@
 const {merge} = require('webpack-merge')
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
 const base = require('./webpack.config.prod.base')
 
@@ -10,17 +12,39 @@ module.exports = merge(base,
     output: {
       path: __dirname + '/dist',
       filename: 'app.js',
-      //publicPath: './',
-      //libraryTarget: 'umd' // Fix: "Uncaught ReferenceError: exports is not defined".
     },
     devServer: {
       historyApiFallback: true
     },
     plugins: [
       new HtmlWebpackPlugin({
+        inject: true,
         template: './src/index.html',
       }),
+      new MiniCssExtractPlugin(),
     ],
-    //node: { global: true }, // Fix: "Uncaught ReferenceError: global is not defined", and "Can't resolve 'fs'".
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+              },
+            }
+          ],
+        },
+      ],
+    },
+    optimization: {
+      minimizer: [
+        new CssMinimizerPlugin(),
+      ],
+    },
   }
 )

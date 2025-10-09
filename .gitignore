@@ -4,3 +4,6 @@ dist/
 
 # dependencies
 node_modules/
+
+# editors
+.vscode/
