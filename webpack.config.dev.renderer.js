@@ -1,7 +1,7 @@
-const {merge} = require('webpack-merge');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const {merge} = require('webpack-merge')
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 
-const base = require('./webpack.config.base');
+const base = require('./webpack.config.dev.base')
 
 module.exports = merge(base,
   {
@@ -23,4 +23,4 @@ module.exports = merge(base,
     ],
     //node: { global: true }, // Fix: "Uncaught ReferenceError: global is not defined", and "Can't resolve 'fs'".
   }
-);
+)

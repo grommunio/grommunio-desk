@@ -1,6 +1,6 @@
-const {merge} = require('webpack-merge');
+const {merge} = require('webpack-merge')
 
-const base = require('./webpack.config.base');
+const base = require('./webpack.config.dev.base')
 
 module.exports = merge(base,
   {
@@ -11,4 +11,4 @@ module.exports = merge(base,
       filename: 'electron.js',
     },
   }
-);
+)
