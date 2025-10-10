@@ -5,11 +5,11 @@ const base = require('./webpack.config.dev.base')
 
 module.exports = merge(base,
   {
-    entry: './src/app.tsx',
+    entry: './src/renderer/mainWindow/index.tsx',
     target: 'electron-renderer',
     output: {
       path: __dirname + '/dist',
-      filename: 'app.js',
+      filename: 'index.js',
       //publicPath: './',
       //libraryTarget: 'umd' // Fix: "Uncaught ReferenceError: exports is not defined".
     },

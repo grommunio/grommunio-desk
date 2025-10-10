@@ -7,11 +7,11 @@ const base = require('./webpack.config.prod.base')
 
 module.exports = merge(base,
   {
-    entry: './src/app.tsx',
+    entry: './src/renderer/mainWindow/index.tsx',
     target: 'electron-renderer',
     output: {
       path: __dirname + '/dist',
-      filename: 'app.js',
+      filename: 'index.js',
     },
     devServer: {
       historyApiFallback: true
