@@ -12,15 +12,17 @@ if [ ! -z "$diffFiles" ]; then
 
   cat >$tempConfig <<EOF
 {
+  "compilerOptions": {
+    "noEmit": true
+  },
   "extends": "./tsconfig.json",
-  "noEmmit": true,
   "include": [
 EOF
   for file in $diffFiles; do
     echo "    \"$file\"," >> $tempConfig
   done
   cat >>$tempConfig <<EOF
-    "unused"
+    "**/*.d.ts"
   ]
 }
 EOF
