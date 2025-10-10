@@ -1,15 +1,19 @@
 const {merge} = require('webpack-merge')
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
-const base = require('./webpack.config.dev.base')
+const {baseConfig, isProduction} = require('./webpack.config.base')
 
-module.exports = merge(base,
+module.exports = merge(baseConfig,
   {
-    entry: './src/renderer/mainWindow/index.tsx',
+    entry: {
+      main: './src/renderer/mainWindow/index.tsx',
+    },
     target: 'electron-renderer',
     output: {
       path: __dirname + '/dist',
-      filename: 'index.js',
+      filename: '[name].bundle.js',
       //publicPath: './',
       //libraryTarget: 'umd' // Fix: "Uncaught ReferenceError: exports is not defined".
     },
@@ -18,8 +22,10 @@ module.exports = merge(base,
     },
     plugins: [
       new HtmlWebpackPlugin({
+        inject: true,
         template: './src/index.html',
       }),
+      isProduction && new MiniCssExtractPlugin(),
     ],
     //node: { global: true }, // Fix: "Uncaught ReferenceError: global is not defined", and "Can't resolve 'fs'".
     module: {
@@ -27,9 +33,7 @@ module.exports = merge(base,
         {
           test: /\.css$/,
           use: [
-            {
-              loader: 'style-loader',
-            },
+            isProduction ? {loader: MiniCssExtractPlugin.loader} : {loader: 'style-loader'},
             {
               loader: 'css-loader',
               options: {
@@ -38,6 +42,11 @@ module.exports = merge(base,
             }
           ],
         },
+      ],
+    },
+    optimization: {
+      minimizer: [
+          isProduction && new CssMinimizerPlugin(),
       ],
     },
   }
