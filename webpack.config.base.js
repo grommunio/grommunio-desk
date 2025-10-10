@@ -1,3 +1,5 @@
+// Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
+
 const ESLintPlugin = require("eslint-webpack-plugin")
 
 const isProduction = process.env.NODE_ENV === 'production';

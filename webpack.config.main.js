@@ -1,3 +1,5 @@
+// Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
+
 const {merge} = require('webpack-merge')
 
 const {baseConfig} = require('./webpack.config.base')

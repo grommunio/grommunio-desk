@@ -1,3 +1,5 @@
+// Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
+
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import * as styles from './index.module.css'
