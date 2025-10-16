@@ -1,7 +1,7 @@
 {
   "name": "grommunio-desk",
   "version": "1.0.0",
-  "main": "dist/electron.js",
+  "main": "dist/main.js",
   "scripts": {
     "build": "cross-env NODE_ENV=develop run-p build:*",
     "build:main": "webpack --config ./webpack.config.main.js",
@@ -9,10 +9,10 @@
     "prod": "cross-env NODE_ENV=production run-p prod:*",
     "prod:main": "webpack --config ./webpack.config.main.js",
     "prod:renderer": "webpack --config ./webpack.config.renderer.js",
-    "start": "electron ./dist/electron.js",
+    "start": "electron ./dist/main.js",
     "dev": "run-p dev:*",
     "dev:webpack": "webpack-dev-server --hot --config ./webpack.config.renderer.js",
-    "dev:electron": "npm run build:main && wait-on http://localhost:8080 && electron ./dist/electron.js",
+    "dev:electron": "npm run build:main && wait-on http://localhost:8080 && electron ./dist/main.js",
     "eslint": "eslint",
     "tsc": "tsc --noEmit",
     "test": "run-p eslint tsc",

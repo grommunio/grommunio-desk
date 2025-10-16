@@ -15,12 +15,12 @@ module.exports = merge(baseConfig,
     target: 'electron-renderer',
     output: {
       path: __dirname + '/dist',
-      filename: '[name].bundle.js',
+      filename: 'renderer_[name].bundle.js',
       //publicPath: './',
       //libraryTarget: 'umd' // Fix: "Uncaught ReferenceError: exports is not defined".
     },
     devServer: {
-      historyApiFallback: true
+      historyApiFallback: true,
     },
     plugins: [
       new HtmlWebpackPlugin({

@@ -1,29 +1,13 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
 import { app, BrowserWindow } from 'electron'
+import { createMainWindow } from './windows/mainWindow'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-function createWindow() {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true, // TODO: research about security
-      contextIsolation: false,
-    },
-  })
+console.log('Production:', isProduction)
 
-  if (isProduction)
-    win.loadFile('index.html')
-  else {
-    win.loadURL('http://localhost:8080/')
-    win.webContents.openDevTools()
-  }
-
-  console.log('Production:', isProduction)
-}
-app.on('ready', createWindow)
+app.on('ready', () => createMainWindow(isProduction))
 
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their
@@ -39,6 +23,6 @@ app.on('activate', () => {
   // app when the dock icon is clicked and there are no
   // other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
+    createMainWindow(isProduction)
   }
 })
