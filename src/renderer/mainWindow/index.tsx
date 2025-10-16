@@ -4,7 +4,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import * as styles from './index.module.css'
 
-const Root = () => {
+const Root = (): React.ReactElement => {
   return (
     <div className={styles.text}>
       Hello world!
