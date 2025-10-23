@@ -2,13 +2,12 @@
 
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import * as styles from './index.module.css'
+import './index.css'
+import MainPage from './components/MainPage'
 
 const Root = (): React.ReactElement => {
   return (
-    <div className={styles.text}>
-      Hello world!
-    </div>
+    <MainPage />
   )
 }
 
