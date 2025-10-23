@@ -1,7 +1,7 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
 import { app, BrowserWindow } from 'electron'
-import { createMainWindow } from './windows/mainWindow'
+import { createMainWindow } from './windows/main'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
