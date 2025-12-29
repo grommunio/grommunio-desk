@@ -2,14 +2,14 @@
 
 const {merge} = require('webpack-merge')
 
-const {baseConfig} = require('./webpack.config.base')
+const {baseConfig, outputPath} = require('./webpack.config.base')
 
 module.exports = merge(baseConfig,
   {
     entry: './src/main/index.ts',
     target: 'electron-main',
     output: {
-      path: __dirname + '/dist',
+      path: outputPath,
       filename: 'main.js',
     },
   }

@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
-const {baseConfig, isProduction} = require('./webpack.config.base')
+const {baseConfig, isProduction, outputPath} = require('./webpack.config.base')
 
 module.exports = merge(baseConfig,
   {
@@ -14,7 +14,7 @@ module.exports = merge(baseConfig,
     },
     target: 'electron-renderer',
     output: {
-      path: __dirname + '/dist',
+      path: outputPath,
       filename: 'renderer_[name].bundle.js',
       //publicPath: './',
       //libraryTarget: 'umd' // Fix: "Uncaught ReferenceError: exports is not defined".

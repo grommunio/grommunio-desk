@@ -6,18 +6,16 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   isProduction,
+  outputPath: __dirname + '/build',
   baseConfig: {
-    mode: isProduction? 'production' : 'development',
+    mode: isProduction ? 'production' : 'development',
     module: {
       rules: [{
-        test: /\.ts(x?)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         include: /src/,
         use: [
           {
-            loader: 'ts-loader',
-            options: {
-              projectReferences: true
-            }
+            loader: 'babel-loader', // babel-loader uses polyfills (which ts-loader doesn't)
           }
         ],
       }],
