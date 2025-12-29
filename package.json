@@ -1,7 +1,7 @@
 {
   "name": "grommunio-desk",
   "version": "1.0.0",
-  "main": "dist/main.js",
+  "main": "./main.js",
   "scripts": {
     "build": "cross-env NODE_ENV=develop run-p build:*",
     "build:main": "webpack --config ./webpack.config.main.js",
@@ -26,6 +26,9 @@
   "license": "MIT",
   "description": "Desktop App for grommunio",
   "homepage": "https://grommunio.com",
+  "repository": {
+    "url": "https://github.com/grommunio"
+  },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
     "@stylistic/eslint-plugin": "^5.4.0",
