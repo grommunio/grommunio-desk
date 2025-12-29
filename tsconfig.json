@@ -6,6 +6,8 @@
     "strict": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "esModuleInterop": true,
     "jsx": "react",
     "plugins": [{"name": "typescript-plugin-css-modules"}]
