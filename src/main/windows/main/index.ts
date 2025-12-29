@@ -1,9 +1,9 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
-import { BrowserWindow, shell, HandlerDetails, WindowOpenHandlerResponse, Menu, app } from 'electron'
-import path from 'path'
+import { BrowserWindow, shell, HandlerDetails, WindowOpenHandlerResponse, Menu } from 'electron'
 
 import store from '../../utils/store'
+import { getAppPath } from '../../utils/utils'
 
 export default class MainWindow {
   win?: BrowserWindow
@@ -28,7 +28,7 @@ export default class MainWindow {
       height: windowSize[1],
       title: 'grommunio Desk',
       webPreferences: {
-        preload: path.join(app.getAppPath(), 'preload.js'),
+        preload: getAppPath('preload.js'),
       },
       show: false,
     })

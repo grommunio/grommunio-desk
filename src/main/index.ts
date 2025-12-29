@@ -5,6 +5,7 @@ import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
 import MainWindow from './windows/main'
 import store from './utils/store'
 import { CONFIG_SAVE_SERVER } from './constants/communication'
+import { getExtraResourcesPath } from './utils/utils'
 
 const isProduction = process.env.NODE_ENV === 'production'
 console.log('Production:', isProduction)
@@ -15,6 +16,16 @@ app.on('ready', () => {
   ipcMain.on(CONFIG_SAVE_SERVER, (_event: IpcMainEvent, server: string) => {
     store.set('server', server)
     mainWindow?.reloadView(server)
+  })
+
+  app.setAboutPanelOptions({
+    applicationName: app.getName(),
+    applicationVersion: app.getVersion(),
+    copyright: `Copyright (c) 2020-${new Date().getFullYear()} grommunio GmbH. All Rights Reserved.`,
+    version: app.getVersion(),
+    credits: 'grommunio GmbH',
+    website: 'https://grommunio.com',
+    iconPath: getExtraResourcesPath('app_icon.png'),
   })
 
   const server = store.get('server')

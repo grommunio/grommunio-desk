@@ -38,6 +38,7 @@
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "babel-loader": "^10.0.0",
+    "copy-webpack-plugin": "^13.0.1",
     "cross-env": "^10.1.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
