@@ -10,7 +10,7 @@ const {baseConfig, isProduction, outputPath} = require('./webpack.config.base')
 module.exports = merge(baseConfig,
   {
     entry: {
-      main: './src/renderer/mainWindow/index.tsx',
+      main: './src/renderer/main/index.tsx',
     },
     target: 'electron-renderer',
     output: {
