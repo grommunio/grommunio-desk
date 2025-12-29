@@ -3,11 +3,11 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import MainPage from './components/MainPage'
+import StartPage from './components/StartPage'
 
 const Root = (): React.ReactElement => {
   return (
-    <MainPage />
+    <StartPage />
   )
 }
 

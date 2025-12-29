@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 
-const MainPage = (): React.ReactElement => {
+const StartPage = (): React.ReactElement => {
   const [input, setInput] = useState('')
 
   const onSend = (): void => {
@@ -21,4 +21,4 @@ const MainPage = (): React.ReactElement => {
   )
 }
 
-export default MainPage
+export default StartPage
