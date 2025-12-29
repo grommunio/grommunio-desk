@@ -10,6 +10,9 @@ export default defineConfig(
   eslint.configs.recommended,
   globalIgnores([
     'webpack.config.*',
+    'eslint.config.mjs',
+    'resources/',
+    'build/',
     'dist/',
   ]),
   {
@@ -27,6 +30,19 @@ export default defineConfig(
     rules: {
       'license-header/header': ['error', './resources/license-header.js'],
       '@typescript-eslint/explicit-function-return-type': 'error',
+    },
+  },
+  {
+    files: ['**/*.js', '**/*.cjs', '**/*.mjs', '**/*.jsx'],
+    plugins: {
+      'stylistic': stylistic,
+      'license-header': licenseHeader,
+    },
+    extends: [
+      'stylistic/recommended',
+    ],
+    rules: {
+      'license-header/header': ['error', './resources/license-header.js'],
     },
   },
 )
