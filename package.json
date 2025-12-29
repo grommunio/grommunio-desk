@@ -16,7 +16,8 @@
     "eslint": "eslint",
     "tsc": "tsc --noEmit",
     "test": "run-p eslint tsc",
-    "prepare": "husky"
+    "prepare": "husky",
+    "package": "electron-builder --config electron-builder.json"
   },
   "author": {
     "name": "grommunio GmbH",
@@ -43,6 +44,7 @@
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
     "electron": "^38.2.0",
+    "electron-builder": "^26.0.12",
     "eslint": "^9.37.0",
     "eslint-plugin-license-header": "^0.8.0",
     "eslint-webpack-plugin": "^5.0.2",

@@ -1,0 +1,39 @@
+{
+  "appId": "com.grommunio.desk",
+  "productName": "grommunio-Desk",
+  "artifactName": "${version}/${name}-${buildVersion}-${os}-${arch}.${ext}",
+  "buildNumber": "1",
+  "directories": {
+    "output": "dist"
+  },
+  "files": [
+    {
+      "from": "build/",
+      "filter": ["**/*.@(js|css|html)"]
+    },
+    "package.json"
+  ],
+  "extraFiles": [
+
+  ],
+  "extraResources": [
+    {
+      "from": "build/",
+      "filter": ["**/*.@(png)"]
+    }
+  ],
+  "beforePack": "scripts/beforepack.cjs",
+  "linux": {
+    "category": "Office;Email;InstantMessaging",
+    "target": ["deb"]
+  },
+  "mac": {
+    "icon": "assets/mac/icon.icns"
+  },
+  "win": {
+    "icon": "assets/windows/icon.ico",
+    "target": [
+      "nsis"
+    ]
+  }
+}
