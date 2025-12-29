@@ -11,7 +11,7 @@
     "dev": "run-p dev:webpack dev:electron",
     "dev:webpack": "webpack-dev-server --hot --config ./webpack.config.renderer.js",
     "dev:build": "cross-env NODE_ENV=develop run-p build:main",
-    "dev:electron": "npm run dev:build && wait-on http://localhost:8080 && npm run start",
+    "dev:electron": "npm run dev:build && wait-on http://localhost:8080/main.html && npm run start",
     "eslint": "eslint",
     "tsc": "tsc --noEmit",
     "test": "run-p eslint tsc",

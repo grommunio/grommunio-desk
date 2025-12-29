@@ -16,20 +16,26 @@ module.exports = merge(baseConfig,
     output: {
       path: outputPath,
       filename: 'renderer_[name].bundle.js',
-      //publicPath: './',
-      //libraryTarget: 'umd' // Fix: "Uncaught ReferenceError: exports is not defined".
     },
     devServer: {
       historyApiFallback: true,
     },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+    },
     plugins: [
       new HtmlWebpackPlugin({
-        inject: true,
+        title: 'grommunio Desk',
+        filename: 'main.html',
         template: './src/index.html',
+        chunks: ['main'],
+        inject: true,
       }),
       isProduction && new MiniCssExtractPlugin(),
     ],
-    //node: { global: true }, // Fix: "Uncaught ReferenceError: global is not defined", and "Can't resolve 'fs'".
+    target: 'web',
     module: {
       rules: [
         {

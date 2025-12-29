@@ -16,7 +16,7 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader', // babel-loader uses polyfills (which ts-loader doesn't)
-          }
+          },
         ],
       }],
     },

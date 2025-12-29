@@ -13,9 +13,9 @@ export function createMainWindow(isProduction: boolean): void {
   })
 
   if (isProduction)
-    win.loadFile('index.html')
+    win.loadFile('main.html')
   else {
-    win.loadURL('http://localhost:8080/')
+    win.loadURL('http://localhost:8080/main.html')
     win.webContents.openDevTools()
   }
 }
