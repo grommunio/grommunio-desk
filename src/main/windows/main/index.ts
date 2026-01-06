@@ -16,7 +16,7 @@ export default class MainWindow {
     this.createWindow()
   }
 
-  createWindow(): void {
+  createWindow = (): void => {
     if (this.win != null)
       return
 
@@ -73,7 +73,7 @@ export default class MainWindow {
     this.loadView()
   }
 
-  private loadView(): void {
+  private loadView = (): void => {
     if (this.win == null)
       return
 
@@ -95,12 +95,12 @@ export default class MainWindow {
       this.win.webContents.openDevTools()
   }
 
-  reloadView(server: string | undefined): void {
+  reloadView = (server: string | undefined): void => {
     this.server = server
     this.loadView()
   }
 
-  show(): void {
+  show = (): void => {
     if (this.win == null) {
       console.error('Variable \'win\' is null / undefined')
       return
@@ -108,7 +108,7 @@ export default class MainWindow {
     this.win.show()
   }
 
-  private registerWinListeners(): void {
+  private registerWinListeners = (): void => {
     if (this.win == null) {
       console.error('Variable \'win\' is unexpectedly null / undefined')
       return
@@ -121,7 +121,7 @@ export default class MainWindow {
     })
   }
 
-  private registerViewListeners(): void {
+  private registerViewListeners = (): void => {
     if (this.win == null) {
       console.error('Variable \'win\' is unexpectedly null / undefined')
       return

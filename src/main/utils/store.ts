@@ -24,16 +24,16 @@ class Store<T extends ConfigData = ConfigData> {
     this.data = this.readConfigFile(opts.defaults as T)
   }
 
-  get<K extends keyof T>(key: K): T[K] {
+  get = <K extends keyof T>(key: K): T[K] => {
     return this.data[key] as T[K]
   }
 
-  set<K extends keyof T>(key: K, val: T[K]): void {
+  set = <K extends keyof T>(key: K, val: T[K]): void => {
     this.data[key] = val
     this.writeConfigFile()
   }
 
-  private readConfigFile(defaults: T): T {
+  private readConfigFile = (defaults: T): T => {
     try {
       return { ...defaults, ...JSON.parse(fs.readFileSync(this.path).toString()) as T }
     }
@@ -42,7 +42,7 @@ class Store<T extends ConfigData = ConfigData> {
     }
   }
 
-  private writeConfigFile(): void {
+  private writeConfigFile = (): void => {
     fs.writeFileSync(this.path, JSON.stringify(this.data)) // TODO: try-catch that
   }
 }
