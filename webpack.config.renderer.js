@@ -10,7 +10,7 @@ const {baseConfig, isProduction, outputPath} = require('./webpack.config.base')
 module.exports = merge(baseConfig,
   {
     entry: {
-      main: './src/renderer/main/index.tsx',
+      'main-main': './src/renderer/mainWindow/mainView/index.tsx',
     },
     target: 'electron-renderer',
     output: {
@@ -28,9 +28,9 @@ module.exports = merge(baseConfig,
     plugins: [
       new HtmlWebpackPlugin({
         title: 'grommunio Desk',
-        filename: 'main.html',
+        filename: 'main-main.html',
         template: './src/index.html',
-        chunks: ['main'],
+        chunks: ['main-main'],
         inject: true,
       }),
       isProduction && new MiniCssExtractPlugin(),

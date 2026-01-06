@@ -55,9 +55,9 @@ export default class MainWindow {
     }
     else {
       if (this.isProduction)
-        this.win.webContents.loadFile('main.html')
+        this.win.webContents.loadFile('main-main.html')
       else
-        this.win.webContents.loadURL('http://localhost:8080/main.html')
+        this.win.webContents.loadURL('http://localhost:8080/main-main.html')
     }
 
     if (!this.isProduction)
