@@ -4,6 +4,7 @@ import { BrowserWindow, shell, HandlerDetails, WindowOpenHandlerResponse, Menu }
 
 import store from '../../utils/store'
 import { getAppPath } from '../../utils/utils'
+import { buildAppMenuTemplate } from '../../utils/appMenu'
 
 export default class MainWindow {
   win?: BrowserWindow
@@ -34,39 +35,7 @@ export default class MainWindow {
     })
 
     const isMac = process.platform === 'darwin'
-    const menu = Menu.buildFromTemplate([
-      {
-        label: 'File',
-        submenu: [
-          // { type: 'separator' },
-          isMac ? { role: 'close' } : { role: 'quit' },
-        ],
-      },
-      {
-        label: 'Server',
-        submenu: [
-          {
-            click: (): void => {
-              store.set('server', undefined)
-              this.reloadView(undefined)
-            },
-            label: 'Switch server',
-          },
-        ],
-      },
-      {
-        label: 'View',
-        submenu: [
-          { role: 'toggleDevTools' },
-        ],
-      },
-      {
-        label: 'Help',
-        submenu: [
-          { role: 'about' },
-        ],
-      },
-    ])
+    const menu = Menu.buildFromTemplate(buildAppMenuTemplate(isMac, this.switchServer))
     this.win.setMenu(menu)
 
     this.registerWinListeners()
@@ -141,5 +110,10 @@ export default class MainWindow {
     })
 
     // TODO: prevent redirects to external pages
+  }
+
+  private switchServer = (): void => {
+    store.set('server', undefined)
+    this.reloadView(undefined)
   }
 }
