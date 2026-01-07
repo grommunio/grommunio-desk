@@ -1,0 +1,13 @@
+{
+  "version": 1.1,
+  "properties": [{
+    "name": "app-region",
+    "description": "Property provided by OS Chrome",
+    "references": [
+      {
+        "name": "Electron documentation",
+        "url": "https://www.electronjs.org/docs/latest/tutorial/custom-window-interactions#custom-draggable-regions"
+      }
+    ]
+  }]
+}
