@@ -30,6 +30,12 @@ export default defineConfig(
     rules: {
       'license-header/header': ['error', './resources/license-header.js'],
       '@typescript-eslint/explicit-function-return-type': 'error',
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+        }
+      ]
     },
   },
   {
