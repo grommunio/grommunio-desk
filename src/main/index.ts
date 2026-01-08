@@ -15,7 +15,7 @@ let mainWindow: MainWindow | undefined
 app.on('ready', () => {
   ipcMain.on(CONFIG_SAVE_SERVER, (_event: IpcMainEvent, server: string) => {
     store.set('server', server)
-    mainWindow?.reloadView(server)
+    mainWindow?.reloadMainView(server)
   })
 
   app.setAboutPanelOptions({

@@ -1,6 +1,6 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
-export const buildAppMenuTemplate = (isMac: boolean, onSwitchServer: () => void): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
+export const buildAppMenuTemplate = (isMac: boolean, onSwitchServer: () => void, onToggleMainViewDevTools: () => void): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
   {
     label: 'File',
     submenu: [
@@ -20,7 +20,10 @@ export const buildAppMenuTemplate = (isMac: boolean, onSwitchServer: () => void)
   {
     label: 'View',
     submenu: [
-      { role: 'toggleDevTools' },
+      {
+        click: onToggleMainViewDevTools,
+        label: 'Toggle mainView developer tools',
+      },
     ],
   },
   {
