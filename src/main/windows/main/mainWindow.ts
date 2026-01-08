@@ -38,7 +38,7 @@ export default class MainWindow {
 
     this.registerWinListeners()
     this.mainView = new MainView(this.isProduction)
-    this.win.contentView.addChildView(this.mainView.create(this.server, this.win.getContentSize()))
+    this.win.contentView.addChildView(this.mainView.create(this.win.getContentSize(), { server: this.server }))
   }
 
   show = (): void => {
@@ -72,11 +72,13 @@ export default class MainWindow {
 
   private switchServer = (): void => {
     store.set('server', undefined)
-    this.mainView?.reload(undefined)
+    this.server = undefined
+    this.mainView?.reload({ server: undefined })
   }
 
   reloadMainView = (server: string | undefined): void => {
-    this.mainView?.reload(server)
+    this.server = server
+    this.mainView?.reload({ server: server })
   }
 
   private toggleMainViewDevTools = (): void => {
