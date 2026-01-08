@@ -4,7 +4,7 @@ import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } fro
 
 import { getAppPath } from '../../utils/utils'
 import { TITLE_BAR_HEIGHT } from '../../../constants/window'
-import { DEV_TOOLS_OPTIONS } from '../../constants/view'
+import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 
 export default class MainView {
   private static readonly DEFAULT_HTML_FILE = 'main-main.html'
@@ -28,7 +28,7 @@ export default class MainView {
       if (this.isProduction)
         this.view.webContents.loadFile(getAppPath(MainView.DEFAULT_HTML_FILE))
       else
-        this.view.webContents.loadURL(`http://localhost:8080/${MainView.DEFAULT_HTML_FILE}`)
+        this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${MainView.DEFAULT_HTML_FILE}`)
     }
   }
 
