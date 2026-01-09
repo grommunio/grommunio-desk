@@ -3,14 +3,14 @@
 import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } from 'electron'
 
 import { getAppPath } from '../../utils/utils'
-import { TITLE_BAR_HEIGHT } from '../../../constants/window'
+import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
 
-interface CreateInterface {
+interface MainViewOptions {
   server: string | undefined
 }
-export default class MainView implements View<CreateInterface> {
+export default class MainView implements View<MainViewOptions> {
   private static readonly DEFAULT_HTML_FILE = 'main-main.html'
   private view?: WebContentsView
   private isProduction: boolean
@@ -61,10 +61,10 @@ export default class MainView implements View<CreateInterface> {
     if (this.view == null)
       return
 
-    this.view.setBounds({ x: 0, y: TITLE_BAR_HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR_HEIGHT })
+    this.view.setBounds({ x: 0, y: TITLE_BAR.HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR.HEIGHT })
   }
 
-  create = (contentSize: number[], options: CreateInterface): WebContentsView => {
+  create = (contentSize: number[], options: MainViewOptions): WebContentsView => {
     if (this.view != null)
       return this.view
 
@@ -84,7 +84,7 @@ export default class MainView implements View<CreateInterface> {
     return this.view
   }
 
-  reload = (options: CreateInterface): void => {
+  reload = (options: MainViewOptions): void => {
     this.load(options.server)
   }
 

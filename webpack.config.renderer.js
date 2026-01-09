@@ -11,6 +11,7 @@ module.exports = merge(baseConfig,
   {
     entry: {
       'main-main': './src/renderer/mainWindow/mainView/index.tsx',
+      'main-titleBar': './src/renderer/mainWindow/titleBar/index.tsx',
     },
     target: 'electron-renderer',
     output: {
@@ -31,6 +32,13 @@ module.exports = merge(baseConfig,
         filename: 'main-main.html',
         template: './src/index.html',
         chunks: ['main-main'],
+        inject: true,
+      }),
+      new HtmlWebpackPlugin({
+        title: 'grommunio Desk',
+        filename: 'main-titleBar.html',
+        template: './src/index.html',
+        chunks: ['main-titleBar'],
         inject: true,
       }),
       isProduction && new MiniCssExtractPlugin(),

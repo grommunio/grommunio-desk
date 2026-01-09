@@ -1,0 +1,7 @@
+body {
+  margin: 0px;
+  height: 100vh;
+  width: 100vw;
+  app-region: drag;
+  user-select: none;
+}

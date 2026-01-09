@@ -1,18 +1,25 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
-export const buildAppMenuTemplate = (isMac: boolean, onSwitchServer: () => void, onToggleMainViewDevTools: () => void): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
+interface AppMenuTemplateOptions {
+  isMac: boolean
+  onSwitchServer: () => void
+  onToggleMainViewDevTools: () => void
+  onToggleTitleBarDevTools: () => void
+}
+
+export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
   {
     label: 'File',
     submenu: [
       // { type: 'separator' },
-      isMac ? { role: 'close' } : { role: 'quit' },
+      options.isMac ? { role: 'close' } : { role: 'quit' },
     ],
   },
   {
     label: 'Server',
     submenu: [
       {
-        click: onSwitchServer,
+        click: options.onSwitchServer,
         label: 'Switch server',
       },
     ],
@@ -21,8 +28,12 @@ export const buildAppMenuTemplate = (isMac: boolean, onSwitchServer: () => void,
     label: 'View',
     submenu: [
       {
-        click: onToggleMainViewDevTools,
+        click: options.onToggleMainViewDevTools,
         label: 'Toggle mainView developer tools',
+      },
+      {
+        click: options.onToggleTitleBarDevTools,
+        label: 'Toggle titleBarView developer tools',
       },
     ],
   },

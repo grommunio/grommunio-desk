@@ -5,16 +5,20 @@ import { BaseWindow, Menu } from 'electron'
 import store from '../../utils/store'
 import { buildAppMenuTemplate } from '../../utils/appMenu'
 import MainView from './mainView'
+import TitleBarView from './titleBar'
+import { TITLE_BAR } from '../../../constants/window'
 
+type Server = string | undefined
 export default class MainWindow {
   private win?: BaseWindow
   private mainView?: MainView
-  private server: string | undefined
+  private titleBarView?: TitleBarView
+  private server: Server
   private isProduction: boolean
 
-  constructor(isProduction: boolean, server: string | undefined) {
-    this.server = server
+  constructor(isProduction: boolean, server: Server) {
     this.isProduction = isProduction
+    this.server = server
     this.createWindow()
   }
 
@@ -29,16 +33,36 @@ export default class MainWindow {
       width: windowSize[0],
       height: windowSize[1],
       title: 'grommunio Desk',
+      titleBarStyle: 'hidden',
+      ...(process.platform !== 'darwin'
+        ? { titleBarOverlay:
+            {
+              color: TITLE_BAR.BACKGROUND_COLOR,
+              symbolColor: TITLE_BAR.COLOR,
+              height: TITLE_BAR.HEIGHT,
+            },
+          }
+        : {}
+      ),
       show: false,
     })
 
     const isMac = process.platform === 'darwin'
-    const menu = Menu.buildFromTemplate(buildAppMenuTemplate(isMac, this.switchServer, this.toggleMainViewDevTools))
+    const menu = Menu.buildFromTemplate(buildAppMenuTemplate({
+      isMac,
+      onSwitchServer: this.switchServer,
+      onToggleMainViewDevTools: this.toggleMainViewDevTools,
+      onToggleTitleBarDevTools: this.toggleTitleBarViewDevTools,
+    }))
     this.win.setMenu(menu)
 
     this.registerWinListeners()
+
     this.mainView = new MainView(this.isProduction)
     this.win.contentView.addChildView(this.mainView.create(this.win.getContentSize(), { server: this.server }))
+
+    this.titleBarView = new TitleBarView(this.isProduction)
+    this.win.contentView.addChildView(this.titleBarView.create(this.win.getContentSize()))
   }
 
   show = (): void => {
@@ -62,11 +86,14 @@ export default class MainWindow {
     })
     this.win.on('closed', () => {
       this.mainView?.close()
+      this.titleBarView?.close()
     })
     this.win.on('resize', () => {
       if (this.win == null)
         return
-      this.mainView?.adjustBounds(this.win.getContentSize())
+      const winSize = this.win.getSize()
+      this.mainView?.adjustBounds(winSize)
+      this.titleBarView?.adjustBounds(winSize)
     })
   }
 
@@ -76,12 +103,16 @@ export default class MainWindow {
     this.mainView?.reload({ server: undefined })
   }
 
-  reloadMainView = (server: string | undefined): void => {
+  reloadMainView = (server: Server): void => {
     this.server = server
-    this.mainView?.reload({ server: server })
+    this.mainView?.reload({ server: this.server })
   }
 
   private toggleMainViewDevTools = (): void => {
     this.mainView?.toggleDevTools()
+  }
+
+  private toggleTitleBarViewDevTools = (): void => {
+    this.titleBarView?.toggleDevTools()
   }
 }
