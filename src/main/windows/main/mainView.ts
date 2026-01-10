@@ -6,9 +6,10 @@ import { getAppPath } from '../../utils/utils'
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
+import { ServerURL } from '../../../types/misc'
 
 interface MainViewOptions {
-  server: string | undefined
+  server: ServerURL
 }
 export default class MainView implements View<MainViewOptions> {
   private static readonly DEFAULT_HTML_FILE = 'main-main.html'
@@ -19,7 +20,7 @@ export default class MainView implements View<MainViewOptions> {
     this.isProduction = isProduction
   }
 
-  private load = (server: string | undefined): void => {
+  private load = (server: ServerURL): void => {
     if (this.view == null)
       return
 

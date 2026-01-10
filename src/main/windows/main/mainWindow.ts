@@ -1,24 +1,28 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
-import { BaseWindow, Menu } from 'electron'
+import { BaseWindow, Menu, ipcMain, IpcMainEvent } from 'electron'
 
 import store from '../../utils/store'
 import { buildAppMenuTemplate } from '../../utils/appMenu'
 import MainView from './mainView'
 import TitleBarView from './titleBar'
 import { TITLE_BAR } from '../../../constants/window'
+import { CONFIG_SAVE_SERVER } from '../../constants/communication'
+import { ServerURL } from '../../../types/misc'
 
-type Server = string | undefined
 export default class MainWindow {
   private win?: BaseWindow
   private mainView?: MainView
   private titleBarView?: TitleBarView
-  private server: Server
+  private server: ServerURL
   private isProduction: boolean
 
-  constructor(isProduction: boolean, server: Server) {
+  constructor(isProduction: boolean, server: ServerURL) {
     this.isProduction = isProduction
     this.server = server
+
+    ipcMain.on(CONFIG_SAVE_SERVER, this.onConfigSaveServer)
+
     this.createWindow()
   }
 
@@ -50,7 +54,7 @@ export default class MainWindow {
     const isMac = process.platform === 'darwin'
     const menu = Menu.buildFromTemplate(buildAppMenuTemplate({
       isMac,
-      onSwitchServer: this.switchServer,
+      resetServer: () => this.reloadMainView(undefined),
       onToggleMainViewDevTools: this.toggleMainViewDevTools,
       onToggleTitleBarDevTools: this.toggleTitleBarViewDevTools,
     }))
@@ -97,15 +101,14 @@ export default class MainWindow {
     })
   }
 
-  private switchServer = (): void => {
-    store.set('server', undefined)
-    this.server = undefined
-    this.mainView?.reload({ server: undefined })
+  private reloadMainView = (server: ServerURL): void => {
+    store.set('server', server)
+    this.server = server
+    this.mainView?.reload({ server })
   }
 
-  reloadMainView = (server: Server): void => {
-    this.server = server
-    this.mainView?.reload({ server: this.server })
+  private onConfigSaveServer = (_event: IpcMainEvent, server: ServerURL): void => {
+    this.reloadMainView(server)
   }
 
   private toggleMainViewDevTools = (): void => {

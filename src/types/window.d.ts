@@ -1,11 +1,11 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
-export {}
+import { ServerURL } from './misc'
 
 declare global {
   interface Window {
     electronAPI: {
-      saveServer: (server: string) => void
+      saveServer: (server: ServerURL) => void
     }
   }
 }

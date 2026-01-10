@@ -2,7 +2,7 @@
 
 interface AppMenuTemplateOptions {
   isMac: boolean
-  onSwitchServer: () => void
+  resetServer: () => void
   onToggleMainViewDevTools: () => void
   onToggleTitleBarDevTools: () => void
 }
@@ -19,7 +19,7 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
     label: 'Server',
     submenu: [
       {
-        click: options.onSwitchServer,
+        click: options.resetServer,
         label: 'Switch server',
       },
     ],

@@ -1,10 +1,9 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
-import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
+import { app, BrowserWindow } from 'electron'
 
 import MainWindow from './windows/main'
 import store from './utils/store'
-import { CONFIG_SAVE_SERVER } from './constants/communication'
 import { getExtraResourcesPath } from './utils/utils'
 
 const isProduction = process.env.NODE_ENV === 'production'
@@ -13,11 +12,6 @@ console.log('Production:', isProduction)
 let mainWindow: MainWindow | undefined
 
 app.on('ready', () => {
-  ipcMain.on(CONFIG_SAVE_SERVER, (_event: IpcMainEvent, server: string) => {
-    store.set('server', server)
-    mainWindow?.reloadMainView(server)
-  })
-
   app.setAboutPanelOptions({
     applicationName: app.getName(),
     applicationVersion: app.getVersion(),

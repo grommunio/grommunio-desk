@@ -4,8 +4,10 @@ import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
 
+import { ServerURL } from '../../types/misc'
+
 interface ConfigData {
-  server?: string
+  server?: ServerURL
   windowSize: number[]
 }
 
