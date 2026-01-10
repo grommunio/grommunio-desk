@@ -1,0 +1,31 @@
+.titleBarDiv {
+  display: flex;
+  align-items: center;
+}
+
+.menuButton {
+  app-region: no-drag;
+  background: unset;
+  border: unset;
+  border-radius: 20px;
+  margin-left: 10px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menuButton:focus-visible {
+  outline: 0;
+}
+.menuButton:after {
+  transform: translate(2px, 2px);
+  content: '\2807';
+  color: white;
+  font-size: 15px;
+
+}
+.menuButton:hover,
+.menuButton:focus {
+  background-color: #ffffff3b;
+}

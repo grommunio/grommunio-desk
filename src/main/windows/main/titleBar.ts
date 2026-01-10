@@ -6,6 +6,7 @@ import { getAppPath } from '../../utils/utils'
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
+import { ON_APP_MENU_CLOSE } from '../../constants/communication'
 
 export default class TitleBarView implements View<null> {
   private static readonly DEFAULT_HTML_FILE = 'main-titleBar.html'
@@ -54,7 +55,11 @@ export default class TitleBarView implements View<null> {
     if (this.view != null)
       return this.view
 
-    this.view = new WebContentsView()
+    this.view = new WebContentsView({
+      webPreferences: {
+        preload: getAppPath('preload.js'),
+      },
+    })
 
     this.registerListeners()
     this.adjustBounds(contentSize)
@@ -77,5 +82,10 @@ export default class TitleBarView implements View<null> {
       this.view.webContents.openDevTools(DEV_TOOLS_OPTIONS)
     else
       this.view.webContents.closeDevTools()
+  }
+
+  // IPC functions
+  sendAppMenuClose = (): void => {
+    this.view?.webContents.send(ON_APP_MENU_CLOSE)
   }
 }
