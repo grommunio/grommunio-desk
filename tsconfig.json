@@ -10,7 +10,11 @@
     "noUnusedParameters": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "plugins": [{"name": "typescript-plugin-css-modules"}]
+    "plugins": [{"name": "typescript-plugin-css-modules"}],
+    "baseUrl": ".",
+    "paths": {
+      "@utils/*": ["src/main/utils/*", "src/renderer/utils/*"],
+    }
   },
   "include": [
     "src"

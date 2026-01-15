@@ -44,6 +44,11 @@ module.exports = merge(baseConfig,
       isProduction && new MiniCssExtractPlugin(),
     ],
     target: 'web',
+    resolve: {
+      alias: {
+        '@utils': '/src/renderer/utils/',
+      },
+    },
     module: {
       rules: [
         {
