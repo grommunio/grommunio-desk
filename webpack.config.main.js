@@ -9,6 +9,11 @@ module.exports = merge(baseConfig,
   {
     entry: './src/main/index.ts',
     target: 'electron-main',
+    resolve: {
+      alias: {
+        '@utils': '/src/main/utils/',
+      },
+    },
     output: {
       path: outputPath,
       filename: 'main.js',

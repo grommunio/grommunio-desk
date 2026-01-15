@@ -2,11 +2,15 @@
 
 import React, { useState } from 'react'
 
+import Logger from '@utils/logger'
+
+const logger = new Logger('renderer/mainWindow/mainView/StartPage')
+
 const StartPage = (): React.ReactElement => {
   const [input, setInput] = useState('')
 
   const onSend = (): void => {
-    console.log('New server', input)
+    logger.debug('onSend', `New server: ${input}`)
     window.electronAPI.saveServer(input)
   }
 

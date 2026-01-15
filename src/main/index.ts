@@ -5,9 +5,12 @@ import { app, BrowserWindow } from 'electron'
 import MainWindow from './windows/main'
 import store from './utils/store'
 import { getExtraResourcesPath } from './utils/utils'
+import Logger from '@utils/logger'
+
+const logger = new Logger('main/index')
 
 const isProduction = process.env.NODE_ENV === 'production'
-console.log('Production:', isProduction)
+logger.verbose('isProduction', `Production: ${isProduction}`)
 
 let mainWindow: MainWindow | undefined
 

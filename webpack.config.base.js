@@ -22,6 +22,7 @@ module.exports = {
     },
     devtool: isProduction ? undefined : 'inline-source-map',
     resolve: {
+      roots: [__dirname],
       extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss'],
       modules: ['node_modules'],
     },

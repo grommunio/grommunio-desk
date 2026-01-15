@@ -7,6 +7,9 @@ import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
 import { ServerURL } from '../../../types/misc'
+import Logger from '@utils/logger'
+
+const logger = new Logger('main/windows/main/mainView')
 
 interface MainViewOptions {
   server: ServerURL
@@ -24,7 +27,7 @@ export default class MainView implements View<MainViewOptions> {
     if (this.view == null)
       return
 
-    console.log('Server', server)
+    logger.verbose('load', 'Server:', server)
 
     if (server != undefined) {
       this.view.webContents.loadURL(server)
