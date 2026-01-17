@@ -6,6 +6,7 @@ import MainWindow from './windows/main'
 import store from './utils/store'
 import { getExtraResourcesPath } from './utils/utils'
 import Logger from '@utils/logger'
+import registerIpcFunctions from './intercom'
 
 const logger = new Logger('main/index')
 
@@ -15,6 +16,8 @@ logger.verbose('isProduction', `Production: ${isProduction}`)
 let mainWindow: MainWindow | undefined
 
 app.on('ready', () => {
+  registerIpcFunctions()
+
   app.setAboutPanelOptions({
     applicationName: app.getName(),
     applicationVersion: app.getVersion(),

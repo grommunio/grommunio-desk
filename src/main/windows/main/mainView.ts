@@ -75,6 +75,7 @@ export default class MainView implements View<MainViewOptions> {
     this.view = new WebContentsView({
       webPreferences: {
         preload: getAppPath('preload.js'),
+        // TODO: set (cookies) session partition
       },
     })
 
