@@ -4,7 +4,7 @@ import { app, BrowserWindow } from 'electron'
 
 import MainWindow from './windows/main'
 import store from './utils/store'
-import { getExtraResourcesPath } from './utils/utils'
+import { getExtraResourcesPath } from './utils/paths'
 import Logger from '@utils/logger'
 import registerIpcFunctions from './intercom'
 

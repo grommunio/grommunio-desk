@@ -2,7 +2,7 @@
 
 import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } from 'electron'
 
-import { getAppPath } from '../../utils/utils'
+import { getAppPath } from '../../utils/paths'
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
