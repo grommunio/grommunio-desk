@@ -1,5 +1,6 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
+const path = require('path')
 const {merge} = require('webpack-merge')
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
@@ -13,7 +14,6 @@ module.exports = merge(baseConfig,
       'main-main': './src/renderer/mainWindow/mainView/index.tsx',
       'main-titleBar': './src/renderer/mainWindow/titleBar/index.tsx',
     },
-    target: 'electron-renderer',
     output: {
       path: outputPath,
       filename: 'renderer_[name].bundle.js',
@@ -48,11 +48,15 @@ module.exports = merge(baseConfig,
       alias: {
         '@utils': '/src/renderer/utils/',
       },
+      fallback: { // TODO: necessary?
+        events: require.resolve('events/'),
+      },
     },
     module: {
       rules: [
         {
           test: /\.css$/,
+          include: path.resolve(__dirname, "src"),
           use: [
             isProduction ? {loader: MiniCssExtractPlugin.loader} : {loader: 'style-loader'},
             {
@@ -64,6 +68,11 @@ module.exports = merge(baseConfig,
               },
             }
           ],
+        },
+        {
+          test: /\.(svg|png|jpg|gif)$/,
+          include: path.resolve(__dirname, "assets"),
+          type: "asset/inline",
         },
       ],
     },

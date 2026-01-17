@@ -8,6 +8,8 @@ declare global {
       saveServer: (server: ServerURL) => void
       toggleAppMenu: () => void
 
+      validateServer: (server: string) => Promise<boolean>
+
       onAppMenuClose: (listener: () => void) => void
     }
   }
