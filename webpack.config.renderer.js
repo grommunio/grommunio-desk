@@ -48,9 +48,6 @@ module.exports = merge(baseConfig,
       alias: {
         '@utils': '/src/renderer/utils/',
       },
-      fallback: { // TODO: necessary?
-        events: require.resolve('events/'),
-      },
     },
     module: {
       rules: [
