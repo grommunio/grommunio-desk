@@ -1,9 +1,11 @@
 {
-  "startPage": {
-    "description": "Enter your grommunio server URL to continue.",
-    "error": "Please enter a valid https:// URL.",
-    "invalidServer": "Invalid server URL.",
-    "validServer": "Server verified.",
-    "submit": "Submit"
+  "mainWindow": {
+    "mainView": {
+      "description": "Enter your grommunio server URL to continue.",
+      "error": "Please enter a valid https:// URL.",
+      "invalidServer": "Invalid server URL.",
+      "validServer": "Server verified.",
+      "submit": "Submit"
+    }
   }
 }

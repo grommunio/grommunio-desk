@@ -1,9 +1,11 @@
 {
-  "startPage": {
-    "description": "Bitte geben Sie die URL Ihres grommunio Servers ein, um fortzufahren.",
-    "error": "Bitte geben Sie eine gültige https:// URL ein.",
-    "invalidServer": "Ungültige Server URL.",
-    "validServer": "Server erfolgreich geprüft.",
-    "submit": "Senden"
+  "mainWindow": {
+    "mainView": {
+      "description": "Bitte geben Sie die URL Ihres grommunio Servers ein, um fortzufahren.",
+      "error": "Bitte geben Sie eine gültige https:// URL ein.",
+      "invalidServer": "Ungültige Server URL.",
+      "validServer": "Server erfolgreich geprüft.",
+      "submit": "Senden"
+    }
   }
 }

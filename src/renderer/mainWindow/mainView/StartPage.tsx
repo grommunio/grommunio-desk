@@ -21,11 +21,11 @@ const StartPage = (): React.ReactElement => {
   const showSuccess = useMemo(() => isValidFormat && serverValidationStatus === 'valid', [isValidFormat, serverValidationStatus])
   const messageText = useMemo(() =>
     showSuccess
-      ? t('startPage.validServer')
+      ? t('mainWindow.mainView.validServer')
       : (!isValidFormat || serverValidationStatus === 'invalid')
           ? serverValidationStatus === 'invalid'
-            ? t('startPage.invalidServer')
-            : t('startPage.error')
+            ? t('mainWindow.mainView.invalidServer')
+            : t('mainWindow.mainView.error')
           : '',
   [showSuccess, isValidFormat, serverValidationStatus])
 
@@ -86,7 +86,7 @@ const StartPage = (): React.ReactElement => {
       <div className={styles.content}>
         <img className={styles.logo} src={logoImg} alt="grommunio" />
         <p className={`${styles.description} ${input ? styles.descriptionHidden : ''}`}>
-          {t('startPage.description')}
+          {t('mainWindow.mainView.description')}
         </p>
         <input
           className={styles.input}
@@ -114,7 +114,7 @@ const StartPage = (): React.ReactElement => {
           }
         </div>
         <button className={styles.button} onClick={onSend} disabled={!isValidFormat || ['notChecked', 'checking'].includes(serverValidationStatus)}>
-          {t('startPage.submit')}
+          {t('mainWindow.mainView.submit')}
         </button>
       </div>
     </div>

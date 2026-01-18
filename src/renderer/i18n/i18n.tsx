@@ -26,6 +26,7 @@ i18next.use(initReactI18next).init({
   resources,
   lng: getSystemLanguage(),
   fallbackLng: FALLBACK_LNG,
+  debug: process.env.NODE_ENV !== 'production', // TODO: improve: add function to warn when translation to key is missing
 })
 
 export default i18next
