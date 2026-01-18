@@ -8,6 +8,7 @@ import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
 import { ServerURL } from '../../../types/misc'
 import Logger from '@utils/logger'
+import { throwIfPropertyUndefined } from '../../utils/misc'
 
 const logger = new Logger('main/windows/main/mainView')
 
@@ -24,8 +25,7 @@ export default class MainView implements View<MainViewOptions> {
   }
 
   private load = (server: ServerURL): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
 
     logger.verbose('load', 'Server:', server)
 
@@ -41,8 +41,7 @@ export default class MainView implements View<MainViewOptions> {
   }
 
   private registerListeners = (): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
 
     this.view.webContents.on('page-title-updated', (e) => {
       e.preventDefault()
@@ -62,8 +61,7 @@ export default class MainView implements View<MainViewOptions> {
   }
 
   adjustBounds = (contentSize: number[]): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
 
     this.view.setBounds({ x: 0, y: TITLE_BAR.HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR.HEIGHT })
   }
@@ -94,15 +92,15 @@ export default class MainView implements View<MainViewOptions> {
   }
 
   close = (): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
+
     this.view.webContents.close()
     this.view = undefined
   }
 
   toggleDevTools = (): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
+
     if (!this.view.webContents.isDevToolsOpened())
       this.view.webContents.openDevTools(DEV_TOOLS_OPTIONS)
     else

@@ -9,6 +9,7 @@ import TitleBarView from './titleBar'
 import { TITLE_BAR } from '../../../constants/window'
 import { CONFIG_SAVE_SERVER, TOGGLE_APP_MENU } from '../../constants/communication'
 import { ServerURL } from '../../../types/misc'
+import { throwIfPropertyUndefined } from '../../utils/misc'
 
 export default class MainWindow {
   private win?: BaseWindow
@@ -73,21 +74,17 @@ export default class MainWindow {
   }
 
   show = (): void => {
-    if (this.win == null) {
-      console.error('Variable \'win\' is null / undefined')
-      return
-    }
+    throwIfPropertyUndefined('win', this.win) // TODO: catch exceptions in main process and write to log
+
     this.win.show()
   }
 
   private registerWinListeners = (): void => {
-    if (this.win == null) {
-      console.error('Variable \'win\' is unexpectedly null / undefined') // TODO: throw error instead of returning
-      return
-    }
+    throwIfPropertyUndefined('win', this.win)
+
     this.win.on('close', () => {
-      if (this.win == null)
-        return
+      throwIfPropertyUndefined('win', this.win)
+
       store.set('windowSize', this.win.getSize())
       this.win = undefined
     })
@@ -96,8 +93,8 @@ export default class MainWindow {
       this.titleBarView?.close()
     })
     this.win.on('resize', () => {
-      if (this.win == null)
-        return
+      throwIfPropertyUndefined('win', this.win)
+
       const winSize = this.win.getSize()
       this.mainView?.adjustBounds(winSize)
       this.titleBarView?.adjustBounds(winSize)
@@ -105,8 +102,7 @@ export default class MainWindow {
   }
 
   private registerMenuListeners = (): void => {
-    if (this.appMenu == null)
-      return
+    throwIfPropertyUndefined('appMenu', this.appMenu)
 
     this.appMenu.on('menu-will-close', () => {
       this.titleBarView?.sendAppMenuClose()

@@ -7,6 +7,7 @@ import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
 import { ON_APP_MENU_CLOSE } from '../../constants/communication'
+import { throwIfPropertyUndefined } from '../../utils/misc'
 
 export default class TitleBarView implements View<null> {
   private static readonly DEFAULT_HTML_FILE = 'main-titleBar.html'
@@ -18,8 +19,7 @@ export default class TitleBarView implements View<null> {
   }
 
   private load = (): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
 
     if (this.isProduction)
       this.view.webContents.loadFile(getAppPath(TitleBarView.DEFAULT_HTML_FILE))
@@ -28,8 +28,7 @@ export default class TitleBarView implements View<null> {
   }
 
   private registerListeners = (): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
 
     this.view.webContents.on('page-title-updated', (e) => {
       e.preventDefault()
@@ -45,8 +44,7 @@ export default class TitleBarView implements View<null> {
   }
 
   adjustBounds = (contentSize: number[]): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
 
     this.view.setBounds({ x: 0, y: 0, width: contentSize[0], height: TITLE_BAR.HEIGHT })
   }
@@ -69,15 +67,15 @@ export default class TitleBarView implements View<null> {
   }
 
   close = (): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
+
     this.view.webContents.close()
     this.view = undefined
   }
 
   toggleDevTools = (): void => {
-    if (this.view == null)
-      return
+    throwIfPropertyUndefined('view', this.view)
+
     if (!this.view.webContents.isDevToolsOpened())
       this.view.webContents.openDevTools(DEV_TOOLS_OPTIONS)
     else
