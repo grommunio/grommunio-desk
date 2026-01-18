@@ -12,7 +12,7 @@ module.exports = merge(baseConfig,
   {
     entry: {
       'main-main': './src/renderer/mainWindow/mainView/index.tsx',
-      'main-titleBar': './src/renderer/mainWindow/titleBar/index.tsx',
+      'main-titleBar': './src/renderer/mainWindow/titleBarView/index.tsx',
     },
     output: {
       path: outputPath,
