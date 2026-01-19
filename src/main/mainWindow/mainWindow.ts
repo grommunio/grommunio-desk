@@ -2,14 +2,14 @@
 
 import { BaseWindow, Menu, ipcMain, IpcMainEvent } from 'electron'
 
-import store from '../../utils/store'
-import { buildAppMenuTemplate } from '../../utils/appMenu'
+import store from '../utils/store'
+import { buildAppMenuTemplate } from '../utils/appMenu'
 import MainView from './mainView'
-import TitleBarView from './titleBar'
-import { TITLE_BAR } from '../../../constants/window'
-import { CONFIG_SAVE_SERVER, TOGGLE_APP_MENU } from '../../constants/communication'
-import { ServerURL } from '../../../types/misc'
-import { throwIfPropertyUndefined } from '../../utils/misc'
+import TitleBarView from './titleBarView'
+import { TITLE_BAR } from '../../constants/window'
+import { CONFIG_SAVE_SERVER, TOGGLE_APP_MENU } from '../constants/communication'
+import { ServerURL } from '../../types/misc'
+import { throwIfPropertyUndefined } from '../utils/misc'
 
 export default class MainWindow {
   private win?: BaseWindow

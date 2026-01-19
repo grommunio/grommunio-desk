@@ -2,13 +2,13 @@
 
 import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } from 'electron'
 
-import { getAppPath } from '../../utils/paths'
-import { TITLE_BAR } from '../../../constants/window'
-import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
-import View from '../../interfaces/view'
-import { ServerURL } from '../../../types/misc'
+import { getAppPath } from '../utils/paths'
+import { TITLE_BAR } from '../../constants/window'
+import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../constants/view'
+import View from '../interfaces/view'
+import { ServerURL } from '../../types/misc'
 import Logger from '@utils/logger'
-import { throwIfPropertyUndefined } from '../../utils/misc'
+import { throwIfPropertyUndefined } from '../utils/misc'
 
 const logger = new Logger('main/windows/main/mainView')
 
