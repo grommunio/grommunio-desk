@@ -11,6 +11,7 @@ declare global {
       validateServer: (server: string) => Promise<boolean>
 
       onAppMenuClose: (listener: () => void) => void
+      onServerSwitch: (listener: (server: ServerURL) => void) => void
     }
   }
 }

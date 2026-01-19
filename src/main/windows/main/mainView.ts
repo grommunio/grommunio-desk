@@ -19,15 +19,18 @@ export default class MainView implements View<MainViewOptions> {
   private static readonly DEFAULT_HTML_FILE = 'main-main.html'
   private view?: WebContentsView
   private isProduction: boolean
+  private serverSwitchListener?: (server: ServerURL) => void
 
-  constructor(isProduction: boolean) {
+  constructor(isProduction: boolean, serverSwitchListener?: (server: ServerURL) => void) {
     this.isProduction = isProduction
+    this.serverSwitchListener = serverSwitchListener
   }
 
   private load = (server: ServerURL): void => {
     throwIfPropertyUndefined('view', this.view)
 
     logger.verbose('load', 'Server:', server)
+    this.serverSwitchListener?.(server)
 
     if (server != undefined) {
       this.view.webContents.loadURL(server)

@@ -57,7 +57,7 @@ export default class MainWindow {
     const isMac = process.platform === 'darwin'
     this.appMenu = Menu.buildFromTemplate(buildAppMenuTemplate({
       isMac,
-      resetServer: () => this.reloadMainView(undefined),
+      resetServer: () => this.switchServer(undefined),
       onToggleMainViewDevTools: this.toggleMainViewDevTools,
       onToggleTitleBarDevTools: this.toggleTitleBarViewDevTools,
     }))
@@ -66,10 +66,10 @@ export default class MainWindow {
     this.registerWinListeners()
     this.registerMenuListeners()
 
-    this.mainView = new MainView(this.isProduction)
+    this.mainView = new MainView(this.isProduction, this.onServerSwitch)
     this.win.contentView.addChildView(this.mainView.create(this.win.getContentSize(), { server: this.server }))
 
-    this.titleBarView = new TitleBarView(this.isProduction)
+    this.titleBarView = new TitleBarView(this.isProduction, this.onTitleBarDidFinishLoad)
     this.win.contentView.addChildView(this.titleBarView.create(this.win.getContentSize()))
   }
 
@@ -109,7 +109,9 @@ export default class MainWindow {
     })
   }
 
-  private reloadMainView = (server: ServerURL): void => {
+  private switchServer = (server: ServerURL): void => {
+    if (server === this.server)
+      return
     store.set('server', server)
     this.server = server
     this.mainView?.reload({ server })
@@ -123,9 +125,17 @@ export default class MainWindow {
     this.titleBarView?.toggleDevTools()
   }
 
+  private onServerSwitch = (server: ServerURL): void => {
+    this.titleBarView?.sendServerSwitch(server)
+  }
+
+  private onTitleBarDidFinishLoad = (): void => {
+    this.titleBarView?.sendServerSwitch(this.server)
+  }
+
   // IPC functions
   private onConfigSaveServer = (_event: IpcMainEvent, server: ServerURL): void => {
-    this.reloadMainView(server)
+    this.switchServer(server)
   }
 
   private onToggleAppMenu = (_event: IpcMainEvent): void => {

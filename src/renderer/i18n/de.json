@@ -6,6 +6,9 @@
       "invalidServer": "Ungültige Server URL.",
       "validServer": "Server erfolgreich geprüft.",
       "submit": "Senden"
+    },
+    "titleBarView": {
+      "switchServer": "Server ändern"
     }
   }
 }

@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 
 import './index.css'
 import TitleBar from './titleBar'
+import '../../i18n/i18n'
 
 const Root = (): React.ReactElement => {
   return (

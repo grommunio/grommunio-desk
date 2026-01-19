@@ -6,16 +6,19 @@ import { getAppPath } from '../../utils/paths'
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import View from '../../interfaces/view'
-import { ON_APP_MENU_CLOSE } from '../../constants/communication'
+import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH } from '../../constants/communication'
 import { throwIfPropertyUndefined } from '../../utils/misc'
+import { ServerURL } from '../../../types/misc'
 
 export default class TitleBarView implements View<null> {
   private static readonly DEFAULT_HTML_FILE = 'main-titleBar.html'
   private view?: WebContentsView
   private isProduction: boolean
+  private onDidFinishLoad?: () => void
 
-  constructor(isProduction: boolean) {
+  constructor(isProduction: boolean, onDidFinishLoad?: () => void) {
     this.isProduction = isProduction
+    this.onDidFinishLoad = onDidFinishLoad
   }
 
   private load = (): void => {
@@ -40,6 +43,10 @@ export default class TitleBarView implements View<null> {
 
     this.view.webContents.setWindowOpenHandler((): WindowOpenHandlerResponse => {
       return { action: 'deny' }
+    })
+
+    this.view.webContents.on('did-finish-load', () => {
+      this.onDidFinishLoad?.()
     })
   }
 
@@ -85,5 +92,9 @@ export default class TitleBarView implements View<null> {
   // IPC functions
   sendAppMenuClose = (): void => {
     this.view?.webContents.send(ON_APP_MENU_CLOSE)
+  }
+
+  sendServerSwitch = (server: ServerURL): void => {
+    this.view?.webContents.send(ON_SERVER_SWITCH, server) // TODO: add undefined check (possibly throw an error)
   }
 }

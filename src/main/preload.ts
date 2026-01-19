@@ -9,6 +9,7 @@ import {
   TOGGLE_APP_MENU,
   VALIDATE_SERVER,
   ON_APP_MENU_CLOSE,
+  ON_SERVER_SWITCH,
 } from './constants/communication'
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -18,4 +19,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   validateServer: (server: string) => ipcRenderer.invoke(VALIDATE_SERVER, server),
 
   onAppMenuClose: (listener: () => void) => ipcRenderer.on(ON_APP_MENU_CLOSE, (_event: IpcRendererEvent) => listener()),
+  onServerSwitch: (listener: (server: ServerURL) => void) => ipcRenderer.on(ON_SERVER_SWITCH, (_event: IpcRendererEvent, server: ServerURL) => listener(server)),
 })

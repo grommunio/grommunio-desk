@@ -4,4 +4,5 @@ body {
   width: 100vw;
   app-region: drag;
   user-select: none;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
