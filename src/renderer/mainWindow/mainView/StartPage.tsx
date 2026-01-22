@@ -33,7 +33,7 @@ const StartPage = (): React.ReactElement => {
     if (!isValidFormat || ['notChecked', 'checking'].includes(serverValidationStatus))
       return
 
-    logger.debug('onSend', 'New server', input)
+    logger.debug('onSend', 'New server:', input)
     window.electronAPI.saveServer(input)
   }
 

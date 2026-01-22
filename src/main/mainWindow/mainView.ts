@@ -9,6 +9,7 @@ import View from '../interfaces/view'
 import { ServerURL } from '../../types/misc'
 import Logger from '@utils/logger'
 import { throwIfPropertyUndefined } from '../utils/misc'
+import { IS_PRODUCTION } from '../../constants/misc'
 
 const logger = new Logger('main/windows/main/mainView')
 
@@ -18,11 +19,9 @@ interface MainViewOptions {
 export default class MainView implements View<MainViewOptions> {
   private static readonly DEFAULT_HTML_FILE = 'main-main.html'
   private view?: WebContentsView
-  private isProduction: boolean
   private serverSwitchListener?: (server: ServerURL) => void
 
-  constructor(isProduction: boolean, serverSwitchListener?: (server: ServerURL) => void) {
-    this.isProduction = isProduction
+  constructor(serverSwitchListener?: (server: ServerURL) => void) {
     this.serverSwitchListener = serverSwitchListener
   }
 
@@ -36,7 +35,7 @@ export default class MainView implements View<MainViewOptions> {
       this.view.webContents.loadURL(server)
     }
     else {
-      if (this.isProduction)
+      if (IS_PRODUCTION)
         this.view.webContents.loadFile(getAppPath(MainView.DEFAULT_HTML_FILE))
       else
         this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${MainView.DEFAULT_HTML_FILE}`)
@@ -84,7 +83,7 @@ export default class MainView implements View<MainViewOptions> {
     this.adjustBounds(contentSize)
     this.load(options.server)
 
-    if (!this.isProduction)
+    if (!IS_PRODUCTION)
       this.toggleDevTools()
 
     return this.view

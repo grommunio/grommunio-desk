@@ -9,22 +9,21 @@ import View from '../interfaces/view'
 import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH } from '../constants/communication'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import { ServerURL } from '../../types/misc'
+import { IS_PRODUCTION } from '../../constants/misc'
 
 export default class TitleBarView implements View<null> {
   private static readonly DEFAULT_HTML_FILE = 'main-titleBar.html'
   private view?: WebContentsView
-  private isProduction: boolean
   private onDidFinishLoad?: () => void
 
-  constructor(isProduction: boolean, onDidFinishLoad?: () => void) {
-    this.isProduction = isProduction
+  constructor(onDidFinishLoad?: () => void) {
     this.onDidFinishLoad = onDidFinishLoad
   }
 
   private load = (): void => {
     throwIfPropertyUndefined('view', this.view)
 
-    if (this.isProduction)
+    if (IS_PRODUCTION)
       this.view.webContents.loadFile(getAppPath(TitleBarView.DEFAULT_HTML_FILE))
     else
       this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${TitleBarView.DEFAULT_HTML_FILE}`)

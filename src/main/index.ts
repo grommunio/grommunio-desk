@@ -7,11 +7,11 @@ import store from './utils/store'
 import { getExtraResourcesPath } from './utils/paths'
 import Logger from '@utils/logger'
 import registerIpcFunctions from './intercom'
+import { IS_PRODUCTION } from '../constants/misc'
 
 const logger = new Logger('main/index')
 
-const isProduction = process.env.NODE_ENV === 'production'
-logger.verbose('isProduction', `Production: ${isProduction}`)
+logger.verbose('isProduction', `Production: ${IS_PRODUCTION}`)
 
 let mainWindow: MainWindow | undefined
 
@@ -29,7 +29,7 @@ app.on('ready', () => {
   })
 
   const server = store.get('server')
-  mainWindow = new MainWindow(isProduction, server)
+  mainWindow = new MainWindow(server)
   mainWindow.show()
 })
 

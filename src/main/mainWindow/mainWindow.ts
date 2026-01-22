@@ -17,10 +17,8 @@ export default class MainWindow {
   private mainView?: MainView
   private titleBarView?: TitleBarView
   private server: ServerURL
-  private isProduction: boolean
 
-  constructor(isProduction: boolean, server: ServerURL) {
-    this.isProduction = isProduction
+  constructor(server: ServerURL) {
     this.server = server
 
     ipcMain.on(CONFIG_SAVE_SERVER, this.onConfigSaveServer)
@@ -66,10 +64,10 @@ export default class MainWindow {
     this.registerWinListeners()
     this.registerMenuListeners()
 
-    this.mainView = new MainView(this.isProduction, this.onServerSwitch)
+    this.mainView = new MainView(this.onServerSwitch)
     this.win.contentView.addChildView(this.mainView.create(this.win.getContentSize(), { server: this.server }))
 
-    this.titleBarView = new TitleBarView(this.isProduction, this.onTitleBarDidFinishLoad)
+    this.titleBarView = new TitleBarView(this.onTitleBarDidFinishLoad)
     this.win.contentView.addChildView(this.titleBarView.create(this.win.getContentSize()))
   }
 

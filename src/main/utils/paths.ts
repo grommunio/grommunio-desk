@@ -2,15 +2,14 @@
 
 import { app } from 'electron'
 import path from 'path'
-
-const isProduction = process.env.NODE_ENV === 'production'
+import { IS_PRODUCTION } from '../../constants/misc'
 
 export function getResourcesPath(...paths: string[]): string {
   return path.join(app.getAppPath(), ...paths)
 }
 
 export function getExtraResourcesPath(...paths: string[]): string {
-  return isProduction ? path.join(app.getAppPath(), '../', ...paths) : path.join(app.getAppPath(), ...paths)
+  return IS_PRODUCTION ? path.join(app.getAppPath(), '../', ...paths) : path.join(app.getAppPath(), ...paths)
 }
 
 export function getAppPath(...paths: string[]): string {

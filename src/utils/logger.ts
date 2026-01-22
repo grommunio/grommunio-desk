@@ -14,37 +14,39 @@ abstract class Logger {
     return `[${prefix}${functionName}] [${logLevel}] > ${message}`
   }
 
-  public abstract silly(functionName: string, message: string, ...args: unknown[]): void
-  public abstract debug(functionName: string, message: string, ...args: unknown[]): void
-  public abstract verbose(functionName: string, message: string, ...args: unknown[]): void
-  public abstract info(functionName: string, message: string, ...args: unknown[]): void
-  public abstract warn(functionName: string, message: string, ...args: unknown[]): void
-  public abstract error(functionName: string, message: string, ...args: unknown[]): void
+  // TODO: add 'public' visibility explicitly?
+  abstract silly(functionName: string, message: string, ...args: unknown[]): void
+  abstract debug(functionName: string, message: string, ...args: unknown[]): void
+  abstract verbose(functionName: string, message: string, ...args: unknown[]): void
+  abstract info(functionName: string, message: string, ...args: unknown[]): void
+  abstract warn(functionName: string, message: string, ...args: unknown[]): void
+  abstract error(functionName: string, message: string, ...args: unknown[]): void
 }
 
 export function createLogClass(log: ElectronLogger): new (fileName?: string) => Logger {
   return class ProcessLogger extends Logger {
-    public silly = (functionName: string, message: string, ...args: unknown[]): void => {
+    // TODO: improve logging functions: add functionality for formatted message string (%s for strings, ...)
+    silly = (functionName: string, message: string, ...args: unknown[]): void => {
       log.silly(this.formatMessage(functionName, message, 'silly'), ...args)
     }
 
-    public debug = (functionName: string, message: string, ...args: unknown[]): void => {
+    debug = (functionName: string, message: string, ...args: unknown[]): void => {
       log.debug(this.formatMessage(functionName, message, 'debug'), ...args)
     }
 
-    public verbose = (functionName: string, message: string, ...args: unknown[]): void => {
+    verbose = (functionName: string, message: string, ...args: unknown[]): void => {
       log.verbose(this.formatMessage(functionName, message, 'verbose'), ...args)
     }
 
-    public info = (functionName: string, message: string, ...args: unknown[]): void => {
+    info = (functionName: string, message: string, ...args: unknown[]): void => {
       log.info(this.formatMessage(functionName, message, 'info'), ...args)
     }
 
-    public warn = (functionName: string, message: string, ...args: unknown[]): void => {
+    warn = (functionName: string, message: string, ...args: unknown[]): void => {
       log.warn(this.formatMessage(functionName, message, 'warn'), ...args)
     }
 
-    public error = (functionName: string, message: string, ...args: unknown[]): void => {
+    error = (functionName: string, message: string, ...args: unknown[]): void => {
       log.error(this.formatMessage(functionName, message, 'error'), ...args)
     }
   }
