@@ -64,7 +64,7 @@ export default class MainWindow {
     this.registerWinListeners()
     this.registerMenuListeners()
 
-    this.mainView = new MainView(this.onServerSwitch)
+    this.mainView = new MainView()
     this.win.contentView.addChildView(this.mainView.create(this.win.getContentSize(), { server: this.server }))
 
     this.titleBarView = new TitleBarView(this.onTitleBarDidFinishLoad)
@@ -113,6 +113,7 @@ export default class MainWindow {
     store.set('server', server)
     this.server = server
     this.mainView?.reload({ server })
+    this.titleBarView?.sendServerSwitch(server)
   }
 
   private toggleMainViewDevTools = (): void => {
@@ -121,10 +122,6 @@ export default class MainWindow {
 
   private toggleTitleBarViewDevTools = (): void => {
     this.titleBarView?.toggleDevTools()
-  }
-
-  private onServerSwitch = (server: ServerURL): void => {
-    this.titleBarView?.sendServerSwitch(server)
   }
 
   private onTitleBarDidFinishLoad = (): void => {

@@ -19,17 +19,11 @@ interface MainViewOptions {
 export default class MainView implements View<MainViewOptions> {
   private static readonly DEFAULT_HTML_FILE = 'main-main.html'
   private view?: WebContentsView
-  private serverSwitchListener?: (server: ServerURL) => void
-
-  constructor(serverSwitchListener?: (server: ServerURL) => void) {
-    this.serverSwitchListener = serverSwitchListener
-  }
 
   private load = (server: ServerURL): void => {
     throwIfPropertyUndefined('view', this.view)
 
     logger.verbose('load', 'Server:', server)
-    this.serverSwitchListener?.(server)
 
     if (server != undefined) {
       this.view.webContents.loadURL(server)
