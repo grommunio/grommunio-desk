@@ -1,8 +1,8 @@
 {
   "appId": "com.grommunio.desk",
-  "productName": "grommunio-Desk",
+  "productName": "grommunio Desk",
   "artifactName": "${version}/${name}-${buildVersion}-${os}-${arch}.${ext}",
-  "buildNumber": "1",
+  "buildNumber": "2",
   "directories": {
     "output": "dist"
   },

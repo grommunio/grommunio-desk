@@ -19,7 +19,7 @@ app.on('ready', () => {
   registerIpcFunctions()
 
   app.setAboutPanelOptions({
-    applicationName: app.getName(),
+    applicationName: 'grommunio Desk',
     applicationVersion: app.getVersion(),
     copyright: `Copyright (c) 2020-${new Date().getFullYear()} grommunio GmbH. All Rights Reserved.`,
     version: app.getVersion(),
