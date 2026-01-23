@@ -3,7 +3,6 @@
 import { app, BrowserWindow } from 'electron'
 
 import MainWindow from './mainWindow'
-import store from './utils/store'
 import { getExtraResourcesPath } from './utils/paths'
 import Logger from '@utils/logger'
 import registerIpcFunctions from './intercom'
@@ -28,8 +27,7 @@ app.on('ready', () => {
     iconPath: getExtraResourcesPath('app_icon.png'),
   })
 
-  const server = store.get('server')
-  mainWindow = new MainWindow(server)
+  mainWindow = new MainWindow()
   mainWindow.show()
 })
 

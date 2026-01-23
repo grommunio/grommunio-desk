@@ -4,24 +4,22 @@ import { BaseWindow, Menu, ipcMain, IpcMainEvent } from 'electron'
 
 import store from '../utils/store'
 import { buildAppMenuTemplate } from '../utils/appMenu'
-import MainView from './mainView'
 import TitleBarView from './titleBarView'
 import { TITLE_BAR } from '../../constants/window'
-import { CONFIG_SAVE_SERVER, TOGGLE_APP_MENU } from '../constants/communication'
+import { TOGGLE_APP_MENU } from '../constants/communication'
 import { ServerURL } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
+import ViewManager from './viewManager'
 
 export default class MainWindow {
   private win?: BaseWindow
   private appMenu?: Menu
-  private mainView?: MainView
+  private viewManager: ViewManager
   private titleBarView?: TitleBarView
-  private server: ServerURL
 
-  constructor(server: ServerURL) {
-    this.server = server
+  constructor() {
+    this.viewManager = new ViewManager(this.onServerSwitch)
 
-    ipcMain.on(CONFIG_SAVE_SERVER, this.onConfigSaveServer)
     ipcMain.on(TOGGLE_APP_MENU, this.onToggleAppMenu)
 
     this.createWindow()
@@ -55,8 +53,8 @@ export default class MainWindow {
     const isMac = process.platform === 'darwin'
     this.appMenu = Menu.buildFromTemplate(buildAppMenuTemplate({
       isMac,
-      resetServer: () => this.switchServer(undefined),
-      onToggleMainViewDevTools: this.toggleMainViewDevTools,
+      resetServer: () => this.viewManager.switchServer(undefined),
+      onToggleMainViewDevTools: this.viewManager.toggleViewDevTools,
       onToggleTitleBarDevTools: this.toggleTitleBarViewDevTools,
     }))
     this.win.setMenu(this.appMenu)
@@ -64,8 +62,7 @@ export default class MainWindow {
     this.registerWinListeners()
     this.registerMenuListeners()
 
-    this.mainView = new MainView()
-    this.win.contentView.addChildView(this.mainView.create(this.win.getContentSize(), { server: this.server }))
+    this.win.contentView.addChildView(this.viewManager.createView(this.win.getContentSize()))
 
     this.titleBarView = new TitleBarView(this.onTitleBarDidFinishLoad)
     this.win.contentView.addChildView(this.titleBarView.create(this.win.getContentSize()))
@@ -87,14 +84,14 @@ export default class MainWindow {
       this.win = undefined
     })
     this.win.on('closed', () => {
-      this.mainView?.close()
+      this.viewManager.closeAllViews()
       this.titleBarView?.close()
     })
     this.win.on('resize', () => {
       throwIfPropertyUndefined('win', this.win)
 
       const winSize = this.win.getSize()
-      this.mainView?.adjustBounds(winSize)
+      this.viewManager.adjustViewBounds(winSize)
       this.titleBarView?.adjustBounds(winSize)
     })
   }
@@ -107,32 +104,19 @@ export default class MainWindow {
     })
   }
 
-  private switchServer = (server: ServerURL): void => {
-    if (server === this.server)
-      return
-    store.set('server', server)
-    this.server = server
-    this.mainView?.reload({ server })
-    this.titleBarView?.sendServerSwitch(server)
-  }
-
-  private toggleMainViewDevTools = (): void => {
-    this.mainView?.toggleDevTools()
-  }
-
   private toggleTitleBarViewDevTools = (): void => {
     this.titleBarView?.toggleDevTools()
   }
 
   private onTitleBarDidFinishLoad = (): void => {
-    this.titleBarView?.sendServerSwitch(this.server)
+    this.titleBarView?.sendServerSwitch(this.viewManager.getCurrServer())
+  }
+
+  private onServerSwitch = (server: ServerURL): void => {
+    this.titleBarView?.sendServerSwitch(server)
   }
 
   // IPC functions
-  private onConfigSaveServer = (_event: IpcMainEvent, server: ServerURL): void => {
-    this.switchServer(server)
-  }
-
   private onToggleAppMenu = (_event: IpcMainEvent): void => {
     this.appMenu?.popup({
       window: this.win,
