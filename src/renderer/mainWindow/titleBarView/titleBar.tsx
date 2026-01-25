@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import React, { useRef, RefObject, useEffect } from 'react'
+import React, { useRef, RefObject, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styles from './titleBar.module.css'
@@ -9,8 +9,8 @@ import { ServerURL } from '../../../types/misc'
 
 const TitleBar = (): React.ReactElement => {
   const { t } = useTranslation()
+  const [isSwitchServerButtonDisabled, setSwitchServerButtonDisabled] = useState(true)
   const menuButtonRef = useRef(null) as unknown as RefObject<HTMLDivElement>
-  const switchServerButtonRef = useRef(null) as unknown as RefObject<HTMLButtonElement>
 
   useEffect(() => {
     window.electronAPI.onAppMenuClose(onAppMenuClose)
@@ -27,10 +27,7 @@ const TitleBar = (): React.ReactElement => {
   }
   // onSwitchServerClick is not the only method to switch servers (e.g. via app menu), so it's necessary to listen on server switching
   const onServerSwitch = (server: ServerURL): void => {
-    if (server == null)
-      switchServerButtonRef.current.disabled = true
-    else
-      switchServerButtonRef.current.disabled = false
+    setSwitchServerButtonDisabled(server == null)
   }
 
   return (
@@ -49,7 +46,7 @@ const TitleBar = (): React.ReactElement => {
       />
       <button
         className={styles.switchServerButton}
-        ref={switchServerButtonRef}
+        disabled={isSwitchServerButtonDisabled}
         onClick={onSwitchServerClick}
       >
         {t('mainWindow.titleBarView.switchServer')}
