@@ -11,13 +11,15 @@ import { throwIfPropertyUndefined } from '../utils/misc'
 import { ServerURL } from '../../types/misc'
 import { IS_PRODUCTION } from '../../constants/misc'
 
-export default class TitleBarView implements View<null> {
+export default class TitleBarView implements View {
   private static readonly DEFAULT_HTML_FILE = 'main-titleBar.html'
   private view?: WebContentsView
   private onDidFinishLoad?: () => void
 
-  constructor(onDidFinishLoad?: () => void) {
+  constructor(contentSize: number[], onDidFinishLoad?: () => void) {
     this.onDidFinishLoad = onDidFinishLoad
+
+    this.create(contentSize)
   }
 
   private load = (): void => {
@@ -55,21 +57,17 @@ export default class TitleBarView implements View<null> {
     this.view.setBounds({ x: 0, y: 0, width: contentSize[0], height: TITLE_BAR.HEIGHT })
   }
 
-  create = (contentSize: number[]): WebContentsView => {
-    if (this.view != null)
-      return this.view
-
+  private create = (contentSize: number[]): void => {
     this.view = new WebContentsView({
       webPreferences: {
         preload: getAppPath('preload.js'),
       },
     })
+    this.view.setBackgroundColor(TITLE_BAR.BACKGROUND_COLOR)
 
     this.registerListeners()
     this.adjustBounds(contentSize)
     this.load()
-
-    return this.view
   }
 
   close = (): void => {
@@ -86,6 +84,11 @@ export default class TitleBarView implements View<null> {
       this.view.webContents.openDevTools(DEV_TOOLS_OPTIONS)
     else
       this.view.webContents.closeDevTools()
+  }
+
+  getWebView(): WebContentsView {
+    throwIfPropertyUndefined('view', this.view)
+    return this.view
   }
 
   // IPC functions

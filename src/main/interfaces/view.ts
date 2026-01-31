@@ -1,9 +1,9 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-export default interface View<ViewOptions> {
-  create(contentSize: number[], options: ViewOptions): void
+import { View as ElectronView } from 'electron'
+export default interface View {
   adjustBounds(contentSize: number[]): void
-  reload?(options: ViewOptions): void
   close(): void
   toggleDevTools(): void
+  getWebView(): ElectronView
 }

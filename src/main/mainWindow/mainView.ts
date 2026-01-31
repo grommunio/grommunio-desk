@@ -10,13 +10,16 @@ import { ServerURL } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import { IS_PRODUCTION } from '../../constants/misc'
 
-interface MainViewOptions {
-  server: ServerURL
-}
-
-export default class MainView implements View<MainViewOptions> {
+export default class MainView implements View {
   private static readonly DEFAULT_HTML_FILE = 'main-main.html'
   private view?: WebContentsView
+  private server: ServerURL
+
+  constructor(contentSize: number[], server: ServerURL) {
+    this.server = server
+
+    this.create(contentSize, server)
+  }
 
   private load = (server: ServerURL): void => {
     throwIfPropertyUndefined('view', this.view)
@@ -58,29 +61,18 @@ export default class MainView implements View<MainViewOptions> {
     this.view.setBounds({ x: 0, y: TITLE_BAR.HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR.HEIGHT })
   }
 
-  create = (contentSize: number[], options: MainViewOptions): WebContentsView => {
-    if (this.view != null)
-      return this.view
-
+  private create = (contentSize: number[], server: ServerURL): void => {
     this.view = new WebContentsView({
       webPreferences: {
         preload: getAppPath('preload.js'),
         // TODO: set (cookies) session partition
       },
     })
+    this.view.setBackgroundColor('#2a2b30')
 
     this.registerListeners()
     this.adjustBounds(contentSize)
-    this.load(options.server)
-
-    if (!IS_PRODUCTION)
-      this.toggleDevTools()
-
-    return this.view
-  }
-
-  reload = (options: MainViewOptions): void => {
-    this.load(options.server)
+    this.load(server)
   }
 
   close = (): void => {
@@ -97,5 +89,14 @@ export default class MainView implements View<MainViewOptions> {
       this.view.webContents.openDevTools(DEV_TOOLS_OPTIONS)
     else
       this.view.webContents.closeDevTools()
+  }
+
+  getServer(): ServerURL {
+    return this.server
+  }
+
+  getWebView(): WebContentsView {
+    throwIfPropertyUndefined('view', this.view)
+    return this.view
   }
 }

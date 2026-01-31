@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { BaseWindow, Menu, ipcMain, IpcMainEvent } from 'electron'
+import { BaseWindow, Menu, ipcMain, IpcMainEvent, View } from 'electron'
 
 import store from '../utils/store'
 import { buildAppMenuTemplate } from '../utils/appMenu'
@@ -18,7 +18,10 @@ export default class MainWindow {
   private titleBarView?: TitleBarView
 
   constructor() {
-    this.viewManager = new ViewManager(this.onServerSwitch)
+    this.viewManager = new ViewManager(
+      this.switchWindowView,
+      this.onServerSwitch,
+    )
 
     ipcMain.on(TOGGLE_APP_MENU, this.onToggleAppMenu)
 
@@ -62,10 +65,10 @@ export default class MainWindow {
     this.registerWinListeners()
     this.registerMenuListeners()
 
-    this.win.contentView.addChildView(this.viewManager.createView(this.win.getContentSize()))
+    this.viewManager.createViews(this.win.getSize()) // TODO: check if that's the correct size
 
-    this.titleBarView = new TitleBarView(this.onTitleBarDidFinishLoad)
-    this.win.contentView.addChildView(this.titleBarView.create(this.win.getContentSize()))
+    this.titleBarView = new TitleBarView(this.win.getSize(), this.onTitleBarDidFinishLoad)
+    this.win.contentView.addChildView(this.titleBarView.getWebView())
   }
 
   show = (): void => {
@@ -114,6 +117,13 @@ export default class MainWindow {
 
   private onServerSwitch = (server: ServerURL): void => {
     this.titleBarView?.sendServerSwitch(server)
+  }
+
+  private switchWindowView = (oldView: View | undefined, newView: View): void => {
+    throwIfPropertyUndefined('win', this.win)
+    this.win.contentView.addChildView(newView)
+    if (oldView != null)
+      this.win.contentView.removeChildView(oldView)
   }
 
   // IPC functions
