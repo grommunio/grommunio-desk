@@ -1,24 +1,26 @@
 // Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
 
-import { ipcMain, IpcMainEvent, View } from 'electron'
+import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import { ServerURL } from '../../types/misc'
 import store from '../utils/store'
-import MainView from './mainView'
+import ServerView from './mainViews/serverView'
+import StartView from './mainViews/startView'
 import { CONFIG_SAVE_SERVER } from '../constants/communication'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import Logger from '@utils/logger'
+import View from '../interfaces/view'
 
 const logger = new Logger('main/windows/main/mainView')
 
 export default class ViewManager {
-  private currView?: MainView
+  private currView?: View
   private windowContentSize?: number[]
-  private switchWindowView: (oldView: View | undefined, newView: View) => void
+  private switchWindowView: (oldView: ElectronView | undefined, newView: ElectronView) => void
   private serverSwitchListener?: (server: ServerURL) => void
 
   constructor(
-    switchWindowView: (oldView: View | undefined, newView: View) => void,
+    switchWindowView: (oldView: ElectronView | undefined, newView: ElectronView) => void,
     serverSwitchListener?: (server: ServerURL) => void,
   ) {
     this.switchWindowView = switchWindowView
@@ -32,7 +34,10 @@ export default class ViewManager {
     const oldWebView = this.currView?.getWebView()
     if (this.currView != null)
       this.currView.close()
-    this.currView = new MainView(this.windowContentSize, server)
+    if (server == null)
+      this.currView = new StartView(this.windowContentSize)
+    else
+      this.currView = new ServerView(this.windowContentSize, server)
     this.switchWindowView(oldWebView, this.currView.getWebView())
   }
 
@@ -52,7 +57,8 @@ export default class ViewManager {
 
   switchServer = (server: ServerURL): void => {
     logger.verbose('load', 'Server:', server)
-    if (server === this.currView?.getServer())
+    if ((this.currView instanceof StartView && (server == null))
+      || (this.currView instanceof ServerView && server === this.currView.getServer()))
       return
     store.set('server', server)
     this.switchCurrView(server)
@@ -70,7 +76,7 @@ export default class ViewManager {
   }
 
   getCurrServer = (): ServerURL => {
-    return this.currView?.getServer()
+    return this.currView instanceof ServerView ? this.currView.getServer() : undefined
   }
 
   // IPC functions

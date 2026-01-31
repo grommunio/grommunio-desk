@@ -38,10 +38,6 @@ export default class TitleBarView implements View {
       e.preventDefault()
     })
 
-    this.view.webContents.on('will-prevent-unload', (e) => {
-      e.preventDefault()
-    })
-
     this.view.webContents.setWindowOpenHandler((): WindowOpenHandlerResponse => {
       return { action: 'deny' }
     })

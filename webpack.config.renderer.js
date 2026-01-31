@@ -11,7 +11,7 @@ const {baseConfig, isProduction, outputPath} = require('./webpack.config.base')
 module.exports = merge(baseConfig,
   {
     entry: {
-      'main-main': './src/renderer/mainWindow/mainView/index.tsx',
+      'main-start': './src/renderer/mainWindow/startView/index.tsx',
       'main-titleBar': './src/renderer/mainWindow/titleBarView/index.tsx',
     },
     output: {
@@ -29,9 +29,9 @@ module.exports = merge(baseConfig,
     plugins: [
       new HtmlWebpackPlugin({
         title: 'grommunio Desk',
-        filename: 'main-main.html',
+        filename: 'main-start.html',
         template: './src/index.html',
-        chunks: ['main-main'],
+        chunks: ['main-start'],
         inject: true,
       }),
       new HtmlWebpackPlugin({

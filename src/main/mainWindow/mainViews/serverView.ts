@@ -2,37 +2,26 @@
 
 import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } from 'electron'
 
-import { getAppPath } from '../utils/paths'
-import { TITLE_BAR } from '../../constants/window'
-import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../constants/view'
-import View from '../interfaces/view'
-import { ServerURL } from '../../types/misc'
-import { throwIfPropertyUndefined } from '../utils/misc'
-import { IS_PRODUCTION } from '../../constants/misc'
+import { TITLE_BAR } from '../../../constants/window'
+import { DEV_TOOLS_OPTIONS } from '../../constants/view'
+import View from '../../interfaces/view'
+import { ServerURL } from '../../../types/misc'
+import { throwIfPropertyUndefined } from '../../utils/misc'
 
-export default class MainView implements View {
-  private static readonly DEFAULT_HTML_FILE = 'main-main.html'
+export default class ServerView implements View {
   private view?: WebContentsView
   private server: ServerURL
 
-  constructor(contentSize: number[], server: ServerURL) {
+  constructor(contentSize: number[], server: string) {
     this.server = server
 
     this.create(contentSize, server)
   }
 
-  private load = (server: ServerURL): void => {
+  private load = (server: string): void => {
     throwIfPropertyUndefined('view', this.view)
 
-    if (server != undefined) {
-      this.view.webContents.loadURL(server)
-    }
-    else {
-      if (IS_PRODUCTION)
-        this.view.webContents.loadFile(getAppPath(MainView.DEFAULT_HTML_FILE))
-      else
-        this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${MainView.DEFAULT_HTML_FILE}`)
-    }
+    this.view.webContents.loadURL(server)
   }
 
   private registerListeners = (): void => {
@@ -61,13 +50,9 @@ export default class MainView implements View {
     this.view.setBounds({ x: 0, y: TITLE_BAR.HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR.HEIGHT })
   }
 
-  private create = (contentSize: number[], server: ServerURL): void => {
-    this.view = new WebContentsView({
-      webPreferences: {
-        preload: getAppPath('preload.js'),
-        // TODO: set (cookies) session partition
-      },
-    })
+  private create = (contentSize: number[], server: string): void => {
+    // TODO: set (cookies) session partition
+    this.view = new WebContentsView()
     this.view.setBackgroundColor('#2a2b30')
 
     this.registerListeners()
