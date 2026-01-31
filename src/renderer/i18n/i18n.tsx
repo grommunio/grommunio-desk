@@ -1,4 +1,4 @@
-// Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
+// Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'

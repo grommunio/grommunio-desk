@@ -1,1 +1,1 @@
-// Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
+// Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.

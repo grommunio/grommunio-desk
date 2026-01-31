@@ -1,4 +1,4 @@
-// Copyright (c) 2020-present grommunio GmbH. All Rights Reserved.
+// Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 export const CONFIG_SAVE_SERVER = 'config_save_server'
 export const TOGGLE_APP_MENU = 'toggle_app_menu'
