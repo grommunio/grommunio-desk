@@ -1,10 +1,9 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { app } from 'electron'
-import path from 'path'
 import fs from 'fs'
 
 import { ServerURL } from '../../types/misc'
+import { getUserDataPath } from './paths'
 
 interface ConfigData {
   server?: ServerURL
@@ -21,8 +20,7 @@ class Store<T extends ConfigData = ConfigData> {
   readonly data: T
 
   constructor(opts: Opts<T>) {
-    const userDataPath = app.getPath('userData')
-    this.path = path.join(userDataPath, opts.configName + '.json')
+    this.path = getUserDataPath(opts.configName + '.json')
     this.data = this.readConfigFile(opts.defaults as T)
   }
 

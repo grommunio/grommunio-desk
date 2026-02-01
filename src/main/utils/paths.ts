@@ -15,3 +15,7 @@ export function getExtraResourcesPath(...paths: string[]): string {
 export function getAppPath(...paths: string[]): string {
   return getResourcesPath(...paths)
 }
+
+export function getUserDataPath(...paths: string[]): string {
+  return path.join(app.getPath('userData'), ...paths)
+}

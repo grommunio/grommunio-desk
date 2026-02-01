@@ -2,6 +2,11 @@
 
 import { Logger as ElectronLogger, LogLevel } from 'electron-log'
 
+export const LOGGER_PADDING = {
+  FUNCTION_NAME: 50,
+  LOG_LEVEL: 10,
+}
+
 abstract class Logger {
   private fileName: string
 
@@ -11,7 +16,7 @@ abstract class Logger {
 
   protected formatMessage = (functionName: string, message: string, logLevel: LogLevel): string => {
     const prefix = this.fileName ? `${this.fileName}.` : ''
-    return `[${prefix}${functionName}] [${logLevel}] > ${message}`
+    return `[${prefix}${functionName}]`.padStart(LOGGER_PADDING.FUNCTION_NAME) + ` [${logLevel}]`.padStart(LOGGER_PADDING.LOG_LEVEL) + ` > ${message}`
   }
 
   // TODO: add 'public' visibility explicitly?
