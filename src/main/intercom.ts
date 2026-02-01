@@ -4,10 +4,10 @@ import { ipcMain, IpcMainInvokeEvent } from 'electron'
 import https from 'https'
 
 import {
-  VALIDATE_SERVER,
+  VALIDATE_SERVER_URL,
 } from './constants/communication'
 
-function validateServer(server: string): Promise<boolean> {
+function validateServerUrl(server: string): Promise<boolean> {
   const url = server.replace(/\/$/, '') + '/web/version' // TODO: replace necessary?
 
   return new Promise((resolve) => {
@@ -30,7 +30,7 @@ function validateServer(server: string): Promise<boolean> {
 }
 
 export default function registerIpcFunctions(): void {
-  ipcMain.handle(VALIDATE_SERVER, async (_event: IpcMainInvokeEvent, server: string) => {
-    return validateServer(server)
+  ipcMain.handle(VALIDATE_SERVER_URL, async (_event: IpcMainInvokeEvent, server: string) => {
+    return validateServerUrl(server)
   })
 }

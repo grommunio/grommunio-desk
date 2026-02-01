@@ -1,17 +1,20 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { ServerURL } from './misc'
+import { Server, ServerOptions } from './misc'
 
 declare global {
   interface Window {
     electronAPI: {
-      saveServer: (server: ServerURL) => void
+      addServer: () => void
+      saveServerAndReload: (server: ServerOptions) => void
+      switchServer: (server: Server) => void
       toggleAppMenu: () => void
 
-      validateServer: (server: string) => Promise<boolean>
+      validateServerUrl: (server: string) => Promise<boolean>
 
       onAppMenuClose: (listener: () => void) => void
-      onServerSwitch: (listener: (server: ServerURL) => void) => void
+      onServerSwitch: (listener: (server: Server | undefined) => void) => void
+      onServerSave: (listener: (servers: Server[]) => void) => void
     }
   }
 }

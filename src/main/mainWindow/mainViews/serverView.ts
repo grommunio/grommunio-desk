@@ -5,23 +5,23 @@ import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } fro
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS } from '../../constants/view'
 import View from '../../interfaces/view'
-import { ServerURL } from '../../../types/misc'
+import { Server } from '../../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 
 export default class ServerView implements View {
   private view?: WebContentsView
-  private server: ServerURL
+  private server: Server
 
-  constructor(contentSize: number[], server: string) {
+  constructor(contentSize: number[], server: Server) {
     this.server = server
 
-    this.create(contentSize, server)
+    this.create(contentSize)
   }
 
-  private load = (server: string): void => {
+  private load = (): void => {
     throwIfPropertyUndefined('view', this.view)
 
-    this.view.webContents.loadURL(server)
+    this.view.webContents.loadURL(this.server.url)
   }
 
   private registerListeners = (): void => {
@@ -50,14 +50,14 @@ export default class ServerView implements View {
     this.view.setBounds({ x: 0, y: TITLE_BAR.HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR.HEIGHT })
   }
 
-  private create = (contentSize: number[], server: string): void => {
+  private create = (contentSize: number[]): void => {
     // TODO: set (cookies) session partition
     this.view = new WebContentsView()
     this.view.setBackgroundColor('#2a2b30')
 
     this.registerListeners()
     this.adjustBounds(contentSize)
-    this.load(server)
+    this.load()
   }
 
   close = (): void => {
@@ -76,7 +76,7 @@ export default class ServerView implements View {
       this.view.webContents.closeDevTools()
   }
 
-  getServer(): ServerURL {
+  getServer(): Server {
     return this.server
   }
 

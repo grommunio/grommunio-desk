@@ -2,11 +2,12 @@
 
 import fs from 'fs'
 
-import { ServerURL } from '../../types/misc'
+import { Server } from '../../types/misc'
 import { getUserDataPath } from './paths'
 
 interface ConfigData {
-  server?: ServerURL
+  lastUsedServer?: Server
+  servers: Server[]
   windowSize: number[]
 }
 
@@ -16,8 +17,8 @@ interface Opts<T extends ConfigData = ConfigData> {
 }
 
 class Store<T extends ConfigData = ConfigData> {
-  path: string
-  readonly data: T
+  private path: string
+  private readonly data: T
 
   constructor(opts: Opts<T>) {
     this.path = getUserDataPath(opts.configName + '.json')
@@ -51,5 +52,6 @@ export default new Store<ConfigData>({
   configName: 'config',
   defaults: {
     windowSize: [1000, 800],
+    servers: Array<Server>(),
   },
 })

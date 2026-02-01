@@ -6,9 +6,9 @@ import { getAppPath } from '../utils/paths'
 import { TITLE_BAR } from '../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../constants/view'
 import View from '../interfaces/view'
-import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH } from '../constants/communication'
+import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH, ON_SERVER_SAVE } from '../constants/communication'
 import { throwIfPropertyUndefined } from '../utils/misc'
-import { ServerURL } from '../../types/misc'
+import { Server } from '../../types/misc'
 import { IS_PRODUCTION } from '../../constants/misc'
 
 export default class TitleBarView implements View {
@@ -92,7 +92,11 @@ export default class TitleBarView implements View {
     this.view?.webContents.send(ON_APP_MENU_CLOSE)
   }
 
-  sendServerSwitch = (server: ServerURL): void => {
+  sendServerSwitch = (server: Server | undefined): void => {
     this.view?.webContents.send(ON_SERVER_SWITCH, server) // TODO: add undefined check (possibly throw an error)
+  }
+
+  sendServerSave = (servers: Server[]): void => {
+    this.view?.webContents.send(ON_SERVER_SAVE, servers)
   }
 }

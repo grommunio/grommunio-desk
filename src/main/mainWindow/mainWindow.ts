@@ -7,7 +7,7 @@ import { buildAppMenuTemplate } from '../utils/appMenu'
 import TitleBarView from './titleBarView'
 import { TITLE_BAR } from '../../constants/window'
 import { TOGGLE_APP_MENU } from '../constants/communication'
-import { ServerURL } from '../../types/misc'
+import { Server } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import ViewManager from './viewManager'
 
@@ -21,6 +21,7 @@ export default class MainWindow {
     this.viewManager = new ViewManager(
       this.switchWindowView,
       this.onServerSwitch,
+      this.onServerSave,
     )
 
     ipcMain.on(TOGGLE_APP_MENU, this.onToggleAppMenu)
@@ -115,8 +116,12 @@ export default class MainWindow {
     this.titleBarView?.sendServerSwitch(this.viewManager.getCurrServer())
   }
 
-  private onServerSwitch = (server: ServerURL): void => {
+  private onServerSwitch = (server: Server | undefined): void => {
     this.titleBarView?.sendServerSwitch(server)
+  }
+
+  private onServerSave = (servers: Server[]): void => {
+    this.titleBarView?.sendServerSave(servers)
   }
 
   private switchWindowView = (oldView: View | undefined, newView: View): void => {

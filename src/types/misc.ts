@@ -1,3 +1,8 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-export type ServerURL = string | undefined
+export interface ServerOptions {
+  url: string
+}
+export interface Server extends ServerOptions {
+  id: number
+}

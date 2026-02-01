@@ -3,7 +3,7 @@
 import { Logger as ElectronLogger, LogLevel } from 'electron-log'
 
 export const LOGGER_PADDING = {
-  FUNCTION_NAME: 50,
+  FUNCTION_NAME: 55,
   LOG_LEVEL: 10,
 }
 

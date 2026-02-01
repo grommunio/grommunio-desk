@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import styles from './StartPage.module.css'
 import Logger from '@utils/logger'
+import { ServerOptions } from '../../../types/misc'
 import logoImg from '../../../../assets/general/logo_with_text.png'
 import backgroundImg from '../../../../assets/general/dark_background.jpg'
 
@@ -33,8 +34,9 @@ const StartPage = (): React.ReactElement => {
     if (!isValidFormat || ['notChecked', 'checking'].includes(serverValidationStatus))
       return
 
-    logger.debug('onSend', 'New server:', input)
-    window.electronAPI.saveServer(input)
+    const server: ServerOptions = { url: input }
+    logger.debug('onSend', 'New server:', server)
+    window.electronAPI.saveServerAndReload(server)
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -62,7 +64,7 @@ const StartPage = (): React.ReactElement => {
 
     validationTimeoutRef.current = setTimeout(async () => {
       setServerValidationStatus('checking')
-      const serverValid = await window.electronAPI.validateServer(input)
+      const serverValid = await window.electronAPI.validateServerUrl(input)
       if (validationTimeoutRef.current != runId)
         return
       if (serverValid)

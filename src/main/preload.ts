@@ -2,22 +2,29 @@
 
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
-import { ServerURL } from '../types/misc'
+import { ServerOptions, Server } from '../types/misc'
 
 import {
-  CONFIG_SAVE_SERVER,
+  ADD_SERVER,
+  SAVE_SERVER_AND_RELOAD,
+  SWITCH_SERVER,
   TOGGLE_APP_MENU,
-  VALIDATE_SERVER,
+  VALIDATE_SERVER_URL,
   ON_APP_MENU_CLOSE,
   ON_SERVER_SWITCH,
+  ON_SERVER_SAVE,
 } from './constants/communication'
 
+// TODO: check if it is possible to make the ipc functions type proof -> type checking when calling e.g. ipcMain.on(...)
 contextBridge.exposeInMainWorld('electronAPI', {
-  saveServer: (server: ServerURL) => ipcRenderer.send(CONFIG_SAVE_SERVER, server),
+  addServer: () => ipcRenderer.send(ADD_SERVER),
+  saveServerAndReload: (server: ServerOptions) => ipcRenderer.send(SAVE_SERVER_AND_RELOAD, server),
+  switchServer: (server: Server) => ipcRenderer.send(SWITCH_SERVER, server),
   toggleAppMenu: () => ipcRenderer.send(TOGGLE_APP_MENU),
 
-  validateServer: (server: string) => ipcRenderer.invoke(VALIDATE_SERVER, server),
+  validateServerUrl: (server: string) => ipcRenderer.invoke(VALIDATE_SERVER_URL, server),
 
   onAppMenuClose: (listener: () => void) => ipcRenderer.on(ON_APP_MENU_CLOSE, (_event: IpcRendererEvent) => listener()),
-  onServerSwitch: (listener: (server: ServerURL) => void) => ipcRenderer.on(ON_SERVER_SWITCH, (_event: IpcRendererEvent, server: ServerURL) => listener(server)),
+  onServerSwitch: (listener: (server: Server | undefined) => void) => ipcRenderer.on(ON_SERVER_SWITCH, (_event: IpcRendererEvent, server: Server | undefined) => listener(server)),
+  onServerSave: (listener: (servers: Server[]) => void) => ipcRenderer.on(ON_SERVER_SAVE, (_event: IpcRendererEvent, servers: Server[]) => listener(servers)),
 })

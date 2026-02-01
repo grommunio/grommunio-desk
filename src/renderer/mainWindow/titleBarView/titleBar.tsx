@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import styles from './titleBar.module.css'
 import { TITLE_BAR } from '../../../constants/window'
-import { ServerURL } from '../../../types/misc'
+import { Server } from '../../../types/misc'
 
 const TitleBar = (): React.ReactElement => {
   const { t } = useTranslation()
@@ -18,7 +18,7 @@ const TitleBar = (): React.ReactElement => {
   }, [])
 
   const onSwitchServerClick = (): void => {
-    window.electronAPI.saveServer(undefined)
+    window.electronAPI.addServer()
   }
 
   // IPC functions
@@ -26,7 +26,7 @@ const TitleBar = (): React.ReactElement => {
     menuButtonRef.current.blur()
   }
   // onSwitchServerClick is not the only method to switch servers (e.g. via app menu), so it's necessary to listen on server switching
-  const onServerSwitch = (server: ServerURL): void => {
+  const onServerSwitch = (server: Server | undefined): void => {
     setSwitchServerButtonDisabled(server == null)
   }
 
