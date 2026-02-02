@@ -49,13 +49,13 @@ export default class ViewManager {
   }
 
   createViews = (windowContentSize: number[]): void => {
-    logger.verbose('createViews', 'Creating views')
+    logger.debug('createViews', 'Creating views')
     if (this.currView != null) // TODO: throw error (?)
       return
     this.windowContentSize = windowContentSize
     const server = store.get('lastUsedServer')
-    this.switchCurrView(server)
-    this.serverSwitchListener?.(server)
+    logger.verbose('createViews', 'Last used server:', server)
+    this.switchServer(server)
   }
 
   closeAllViews = (): void => {
@@ -65,7 +65,7 @@ export default class ViewManager {
   switchServer = (server: Server | undefined): void => {
     logger.verbose('switchServer', 'Server:', server)
     if ((this.currView instanceof StartView && (server == null))
-      || (this.currView instanceof ServerView && server === this.currView.getServer())) {
+      || (this.currView instanceof ServerView && server?.id === this.currView.getServer().id)) {
       logger.debug('switchServer', 'Canceling switchServer-operation, because server is already loaded')
       return
     }
@@ -90,6 +90,10 @@ export default class ViewManager {
 
   getCurrServer = (): Server | undefined => {
     return this.currView instanceof ServerView ? this.currView.getServer() : undefined
+  }
+
+  getServers = (): Server[] => {
+    return this.servers
   }
 
   // IPC functions
