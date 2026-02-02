@@ -8,7 +8,7 @@
       "submit": "Submit"
     },
     "titleBarView": {
-      "switchServer": "Switch server"
+      "addServer": "Add server"
     }
   }
 }

@@ -54,14 +54,7 @@ export default class MainWindow {
       show: false,
     })
 
-    const isMac = process.platform === 'darwin'
-    this.appMenu = Menu.buildFromTemplate(buildAppMenuTemplate({
-      isMac,
-      resetServer: () => this.viewManager.switchServer(undefined),
-      onToggleMainViewDevTools: this.viewManager.toggleViewDevTools,
-      onToggleTitleBarDevTools: this.toggleTitleBarViewDevTools,
-    }))
-    this.win.setMenu(this.appMenu)
+    this.createAppMenu(this.viewManager.getServers())
 
     this.registerWinListeners()
     this.registerMenuListeners()
@@ -108,6 +101,20 @@ export default class MainWindow {
     })
   }
 
+  private createAppMenu = (servers: Server[]): void => {
+    throwIfPropertyUndefined('win', this.win)
+    const isMac = process.platform === 'darwin'
+    this.appMenu = Menu.buildFromTemplate(buildAppMenuTemplate({
+      isMac,
+      servers,
+      addServer: () => this.viewManager.switchServer(undefined),
+      switchServer: this.viewManager.switchServer,
+      toggleMainViewDevTools: this.viewManager.toggleViewDevTools,
+      toggleTitleBarDevTools: this.toggleTitleBarViewDevTools,
+    }))
+    this.win.setMenu(this.appMenu)
+  }
+
   private toggleTitleBarViewDevTools = (): void => {
     this.titleBarView?.toggleDevTools()
   }
@@ -121,6 +128,7 @@ export default class MainWindow {
   }
 
   private onServerSave = (servers: Server[]): void => {
+    this.createAppMenu(servers)
     this.titleBarView?.sendServerSave(servers)
   }
 

@@ -17,7 +17,7 @@ const TitleBar = (): React.ReactElement => {
     window.electronAPI.onServerSwitch(onServerSwitch)
   }, [])
 
-  const onSwitchServerClick = (): void => {
+  const onAddServerClick = (): void => {
     window.electronAPI.addServer()
   }
 
@@ -25,7 +25,7 @@ const TitleBar = (): React.ReactElement => {
   const onAppMenuClose = (): void => {
     menuButtonRef.current.blur()
   }
-  // onSwitchServerClick is not the only method to switch servers (e.g. via app menu), so it's necessary to listen on server switching
+  // onAddServerClick is not the only method to switch servers (e.g. via app menu), so it's necessary to listen on server switching
   const onServerSwitch = (server: Server | undefined): void => {
     setSwitchServerButtonDisabled(server == null)
   }
@@ -47,9 +47,9 @@ const TitleBar = (): React.ReactElement => {
       <button
         className={styles.switchServerButton}
         disabled={isSwitchServerButtonDisabled}
-        onClick={onSwitchServerClick}
+        onClick={onAddServerClick}
       >
-        {t('mainWindow.titleBarView.switchServer')}
+        {t('mainWindow.titleBarView.addServer')}
       </button>
     </div>
   )
