@@ -9,114 +9,110 @@ import { ServerOptions } from '../../../types/misc'
 import logoImg from '../../../../assets/general/logo_with_text.png'
 import backgroundImg from '../../../../assets/general/dark_background.jpg'
 
-const logger = new Logger('renderer/mainWindow/mainView/StartPage')
-const regexPattern = /^https:\/\/([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-z]+(?::[0-9]+)?(?:\/[^\s]*)?$/i
-const serverValidationBeginTimeout = 400
+const logger = new Logger('renderer/mainWindow/startView/StartPage')
+const URL_REGEX_PATTERN = /^https:\/\/([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-z]+(?::[0-9]+)?(?:\/[^\s]*)?$/i
+const URL_VALIDATION_BEGIN_TIMEOUT = 400
 
 const StartPage = (): React.ReactElement => {
   const { t } = useTranslation()
-  const [input, setInput] = useState('')
-  const [isValidFormat, setValidFormat] = useState(true)
-  const [serverValidationStatus, setServerValidationStatus] = useState<'notChecked' | 'checking' | 'valid' | 'invalid'>('notChecked')
-  const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const showSuccess = useMemo(() => isValidFormat && serverValidationStatus === 'valid', [isValidFormat, serverValidationStatus])
-  const messageText = useMemo(() =>
-    showSuccess
-      ? t('mainWindow.mainView.validServer')
-      : (!isValidFormat || serverValidationStatus === 'invalid')
-          ? serverValidationStatus === 'invalid'
-            ? t('mainWindow.mainView.invalidServer')
-            : t('mainWindow.mainView.error')
+  const [urlInput, setUrlInput] = useState('')
+  const [urlValidationStatus, setUrlValidationStatus] = useState<'notChecked' | 'invalidFormat' | 'checking' | 'invalidServer' | 'valid'>('notChecked')
+  const urlValidationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isUrlValid = useMemo(() => ['invalidServer', 'valid'].includes(urlValidationStatus), [urlValidationStatus])
+  const urlValidationFeedbackText = useMemo(() =>
+    urlValidationStatus === 'valid'
+      ? t('mainWindow.startView.urlValid')
+      : urlValidationStatus === 'invalidFormat'
+        ? t('mainWindow.startView.urlInvalidFormat')
+        : urlValidationStatus === 'invalidServer'
+          ? t('mainWindow.startView.urlInvalidServer')
           : '',
-  [showSuccess, isValidFormat, serverValidationStatus])
+  [urlValidationStatus])
 
   const onSend = async (): Promise<void> => {
-    if (!isValidFormat || ['notChecked', 'checking'].includes(serverValidationStatus))
+    if (!isUrlValid)
       return
 
-    const server: ServerOptions = { url: input }
+    const server: ServerOptions = { url: urlInput }
     logger.debug('onSend', 'New server:', server)
     window.electronAPI.saveServerAndReload(server)
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const val = e.target.value
-    setInput(val)
-
-    setServerValidationStatus('notChecked')
+    setUrlInput(val)
     if (!val) {
-      setValidFormat(true)
+      setUrlValidationStatus('notChecked')
       return
     }
-    const isFormatValid = regexPattern.test(val)
-    setValidFormat(isFormatValid)
+    if (!URL_REGEX_PATTERN.test(val)) {
+      setUrlValidationStatus('invalidFormat')
+      return
+    }
+    setUrlValidationStatus('notChecked')
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter' && isValidFormat && serverValidationStatus == 'valid') {
+    if (e.key === 'Enter') {
       onSend()
     }
   }
 
   useEffect(() => {
-    if (!input || !isValidFormat)
+    if (!urlInput || urlValidationStatus !== 'notChecked')
       return
-
-    validationTimeoutRef.current = setTimeout(async () => {
-      setServerValidationStatus('checking')
-      const serverValid = await window.electronAPI.validateServerUrl(input)
-      if (validationTimeoutRef.current != runId)
+    if (urlValidationTimeoutRef.current)
+      clearTimeout(urlValidationTimeoutRef.current)
+    urlValidationTimeoutRef.current = setTimeout(async () => {
+      setUrlValidationStatus('checking')
+      // logger.silly('handleChange.timeoutFunc', 'Validating url', urlInput, runId)
+      const serverValid = await window.electronAPI.validateServerUrl(urlInput)
+      // logger.silly('handleChange.timeoutFunc', 'Validation completed', urlInput, serverValid, urlValidationTimeoutRef.current, runId)
+      if (urlValidationTimeoutRef.current != runId)
         return
       if (serverValid)
-        setServerValidationStatus('valid')
+        setUrlValidationStatus('valid')
       else
-        setServerValidationStatus('invalid')
-    }, serverValidationBeginTimeout)
-    const runId = validationTimeoutRef.current
-
-    return (): void => {
-      if (validationTimeoutRef.current != null) {
-        clearTimeout(validationTimeoutRef.current)
-        validationTimeoutRef.current = null
-      }
-    }
-  }, [input, isValidFormat])
+        setUrlValidationStatus('invalidServer')
+    }, URL_VALIDATION_BEGIN_TIMEOUT)
+    const runId = urlValidationTimeoutRef.current
+  }, [urlInput, urlValidationStatus])
 
   return (
     <div className={styles.bg}>
       <img className={styles.bgImage} src={backgroundImg} />
       <div className={styles.content}>
         <img className={styles.logo} src={logoImg} alt="grommunio" />
-        <p className={`${styles.description} ${input ? styles.descriptionHidden : ''}`}>
-          {t('mainWindow.mainView.description')}
+        <p className={`${styles.description} ${urlInput ? styles.descriptionHidden : ''}`}>
+          {t('mainWindow.startView.description')}
         </p>
         <input
           className={styles.input}
-          value={input}
+          value={urlInput}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           type="url"
           autoCorrect="false"
           placeholder="https://mail.example.com"
           style={{
-            borderColor: ['notChecked', 'checking'].includes(serverValidationStatus) ? 'transparent' : serverValidationStatus === 'valid' ? 'green' : 'red',
+            borderColor: ['notChecked', 'checking'].includes(urlValidationStatus) ? 'transparent' : urlValidationStatus === 'valid' ? 'green' : 'red',
           }}
         />
         <div className={`${styles.validationFeedback}`}>
           {
-            messageText
+            urlValidationFeedbackText
               ? (
-                  <p className={`${styles.text} ${showSuccess ? styles.success : styles.error}`}>
-                    {messageText}
+                  <p className={`${styles.text} ${urlValidationStatus === 'valid' ? styles.success : styles.error}`}>
+                    {urlValidationFeedbackText}
                   </p>
                 )
-              : serverValidationStatus === 'checking'
+              : urlValidationStatus === 'checking'
                 ? <div className={styles.loader} />
                 : ''
           }
         </div>
-        <button className={styles.button} onClick={onSend} disabled={!isValidFormat || ['notChecked', 'checking'].includes(serverValidationStatus)}>
-          {t('mainWindow.mainView.submit')}
+        <button className={styles.button} onClick={onSend} disabled={!isUrlValid}>
+          {t('mainWindow.startView.submit')}
         </button>
       </div>
     </div>
