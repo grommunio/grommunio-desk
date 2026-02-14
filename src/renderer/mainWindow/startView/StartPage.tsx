@@ -14,6 +14,12 @@ const URL_REGEX_PATTERN = /^https:\/\/([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(?::[0-9]
 const URL_VALIDATION_BEGIN_TIMEOUT = 400
 const NAME_REGEX_PATTERN = /^[a-z0-9-_ ]*$/i
 const NAME_MAX_LENGTH = 20
+const INPUT_FIELD_VALID_COLOR = 'green'
+const INPUT_FIELD_INVALID_COLOR = 'red'
+const INPUT_FIELD_WARN_COLOR = 'orange'
+const FEEDBACK_TEXT_VALID_COLOR = 'rgba(120, 220, 160, 0.95)'
+const FEEDBACK_TEXT_INVALID_COLOR = 'rgba(255, 120, 120, 0.9)'
+const FEEDBACK_TEXT_WARN_COLOR = 'rgb(255, 168, 1.0)'
 
 const StartPage = (): React.ReactElement => {
   const { t } = useTranslation()
@@ -123,14 +129,18 @@ const StartPage = (): React.ReactElement => {
           autoCorrect="false"
           placeholder="Your server name"
           style={{
-            borderColor: nameValidationStatus === 'notChecked' ? 'transparent' : nameValidationStatus === 'valid' ? 'green' : 'red',
+            borderColor: nameValidationStatus === 'notChecked'
+              ? 'transparent'
+              : nameValidationStatus === 'valid'
+                ? INPUT_FIELD_VALID_COLOR
+                : INPUT_FIELD_INVALID_COLOR,
           }}
         />
         <div className={`${styles.validationFeedback}`}>
           {
             nameValidationStatus === 'invalidFormat'
               ? (
-                  <p className={`${styles.text} ${styles.error}`}>
+                  <p className={styles.text} style={{ color: FEEDBACK_TEXT_INVALID_COLOR }}>
                     {t('mainWindow.startView.nameInvalidFormat')}
                   </p>
                 )
@@ -147,14 +157,29 @@ const StartPage = (): React.ReactElement => {
           autoCorrect="false"
           placeholder="https://mail.example.com"
           style={{
-            borderColor: ['notChecked', 'checking'].includes(urlValidationStatus) ? 'transparent' : urlValidationStatus === 'valid' ? 'green' : 'red',
+            borderColor: ['notChecked', 'checking'].includes(urlValidationStatus)
+              ? 'transparent'
+              : urlValidationStatus === 'valid'
+                ? INPUT_FIELD_VALID_COLOR
+                : urlValidationStatus === 'invalidServer'
+                  ? INPUT_FIELD_WARN_COLOR
+                  : INPUT_FIELD_INVALID_COLOR,
           }}
         />
         <div className={`${styles.validationFeedback}`}>
           {
             urlValidationFeedbackText
               ? (
-                  <p className={`${styles.text} ${urlValidationStatus === 'valid' ? styles.success : styles.error}`}>
+                  <p
+                    className={styles.text}
+                    style={{
+                      color: urlValidationStatus === 'valid'
+                        ? FEEDBACK_TEXT_VALID_COLOR
+                        : urlValidationStatus === 'invalidServer'
+                          ? FEEDBACK_TEXT_WARN_COLOR
+                          : FEEDBACK_TEXT_INVALID_COLOR,
+                    }}
+                  >
                     {urlValidationFeedbackText}
                   </p>
                 )

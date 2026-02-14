@@ -65,14 +65,6 @@
     margin: 0;
     font-size: 13px;
     min-height: 16px;
-
-    &.success {
-      color: rgba(120, 220, 160, 0.95);
-    }
-    
-    &.error {
-      color: rgba(255, 120, 120, 0.9);
-    }
   }
 }
 @keyframes dots {
