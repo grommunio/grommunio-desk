@@ -1,11 +1,12 @@
 {
   "mainWindow": {
     "startView": {
-      "description": "Bitte geben Sie die URL Ihres grommunio Servers ein, um fortzufahren.",
+      "description": "Bitte geben Sie einen Namen und die URL Ihres grommunio Servers ein, um fortzufahren.",
       "urlInvalidFormat": "Bitte geben Sie eine gültige https:// URL ein.",
       "urlInvalidServer": "Ungültige Server URL.",
       "urlValid": "Server erfolgreich geprüft.",
-      "submit": "Senden"
+      "submit": "Senden",
+      "nameInvalidFormat": "Bitte geben Sie einen gültigen Server Namen ein."
     },
     "titleBarView": {
       "addServer": "Server hinzufügen"

@@ -2,6 +2,7 @@
 
 export interface ServerOptions {
   url: string
+  name: string
 }
 export interface Server extends ServerOptions {
   id: number

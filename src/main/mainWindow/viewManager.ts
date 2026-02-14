@@ -102,6 +102,7 @@ export default class ViewManager {
   }
 
   private onSaveServerAndReload = (_event: IpcMainEvent, server: ServerOptions): void => {
+    // TODO: improve getting new id: save last id in config as extra parameter to avoid collision with deleted servers (so they don't get the same cookie session)
     const id = this.servers.length == 0 ? 0 : this.servers[this.servers.length - 1].id + 1
     if (this.servers.find((srv: Server) => srv.id === id) != null)
       throw new Error(`New server id ${id} already exists`)

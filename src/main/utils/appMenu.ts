@@ -23,7 +23,7 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
     submenu: [
       ...options.servers.map(srv => ({
         click: () => options.switchServer(srv),
-        label: `Server ${srv.id}`,
+        label: `${srv.name}`,
       })),
       { type: 'separator' },
       {
