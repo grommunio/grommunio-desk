@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import React, { ChangeEvent, useEffect, useRef, useState, useMemo } from 'react'
+import React, { ChangeEvent, useRef, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styles from './StartPage.module.css'
@@ -50,14 +50,14 @@ const StartPage = (): React.ReactElement => {
   }
 
   const handleChange = (field: 'name' | 'url') => (e: ChangeEvent<HTMLInputElement>): void => {
-    const val = e.target.value
+    const inputVal = e.target.value
 
     if (field === 'name') {
-      setNameInput(val)
-      if (!val) {
+      setNameInput(inputVal)
+      if (!inputVal) {
         setNameValidationStatus('notChecked')
       }
-      else if (!NAME_REGEX_PATTERN.test(val) || val.length > NAME_MAX_LENGTH) {
+      else if (!NAME_REGEX_PATTERN.test(inputVal) || inputVal.length > NAME_MAX_LENGTH) {
         setNameValidationStatus('invalidFormat')
       }
       else {
@@ -65,17 +65,32 @@ const StartPage = (): React.ReactElement => {
       }
     }
     else {
-      setUrlInput(val)
+      setUrlInput(inputVal)
       setUrlValidationStatus('notChecked')
-      if (!val) {
-        setUrlValidationStatus('notChecked')
+      if (urlValidationTimeoutRef.current) {
+        clearTimeout(urlValidationTimeoutRef.current)
+        urlValidationTimeoutRef.current = null
+      }
+      if (!inputVal) {
         return
       }
-      if (!URL_REGEX_PATTERN.test(val)) {
+      if (!URL_REGEX_PATTERN.test(inputVal)) {
         setUrlValidationStatus('invalidFormat')
         return
       }
-      setUrlValidationStatus('notChecked')
+      urlValidationTimeoutRef.current = setTimeout(async () => {
+        setUrlValidationStatus('checking')
+        // logger.silly('handleChange.timeoutFunc', 'Validating url', inputVal, runId)
+        const serverValid = await window.electronAPI.validateServerUrl(inputVal)
+        // logger.silly('handleChange.timeoutFunc', 'Validation completed', inputVal, serverValid, urlValidationTimeoutRef.current, runId)
+        if (urlValidationTimeoutRef.current != runId)
+          return
+        if (serverValid)
+          setUrlValidationStatus('valid')
+        else
+          setUrlValidationStatus('invalidServer')
+      }, URL_VALIDATION_BEGIN_TIMEOUT)
+      const runId = urlValidationTimeoutRef.current
     }
   }
 
@@ -89,26 +104,6 @@ const StartPage = (): React.ReactElement => {
       }
     }
   }
-
-  useEffect(() => {
-    if (!urlInput || urlValidationStatus !== 'notChecked')
-      return
-    if (urlValidationTimeoutRef.current)
-      clearTimeout(urlValidationTimeoutRef.current)
-    urlValidationTimeoutRef.current = setTimeout(async () => {
-      setUrlValidationStatus('checking')
-      // logger.silly('handleChange.timeoutFunc', 'Validating url', urlInput, runId)
-      const serverValid = await window.electronAPI.validateServerUrl(urlInput)
-      // logger.silly('handleChange.timeoutFunc', 'Validation completed', urlInput, serverValid, urlValidationTimeoutRef.current, runId)
-      if (urlValidationTimeoutRef.current != runId)
-        return
-      if (serverValid)
-        setUrlValidationStatus('valid')
-      else
-        setUrlValidationStatus('invalidServer')
-    }, URL_VALIDATION_BEGIN_TIMEOUT)
-    const runId = urlValidationTimeoutRef.current
-  }, [urlInput, urlValidationStatus])
 
   // TODO: remove description and show information / feedback (for name field) text in a tooltip when hovering over input fields
   // TODO: improve name feedback: inform user about max-length and regex-check
