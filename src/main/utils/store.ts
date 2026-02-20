@@ -8,6 +8,7 @@ import { getUserDataPath } from './paths'
 interface ConfigData {
   lastUsedServer?: Server
   servers: Server[]
+  serverIdCount: number
   windowSize: number[]
 }
 
@@ -51,7 +52,8 @@ class Store<T extends ConfigData = ConfigData> {
 export default new Store<ConfigData>({
   configName: 'config',
   defaults: {
-    windowSize: [1000, 800],
+    serverIdCount: 0,
     servers: Array<Server>(),
+    windowSize: [1000, 800],
   },
 })
