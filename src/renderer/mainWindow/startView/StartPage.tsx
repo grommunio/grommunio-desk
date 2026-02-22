@@ -123,6 +123,7 @@ const StartPage = (): React.ReactElement => {
           type="text"
           autoCorrect="false"
           placeholder="Your server name"
+          autoFocus
           style={{
             borderColor: nameValidationStatus === 'notChecked'
               ? 'transparent'
