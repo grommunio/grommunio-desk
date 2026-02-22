@@ -15,6 +15,7 @@ const logger = new Logger('main/mainWindow/viewManager')
 
 export default class ViewManager {
   private currView?: View
+  private serverViews: Record<Server['id'], ServerView>
   private servers: Server[]
   private windowContentSize?: number[]
   private switchWindowView: (oldView: ElectronView | undefined, newView: ElectronView) => void
@@ -30,36 +31,37 @@ export default class ViewManager {
     this.switchWindowView = switchWindowView
     this.serverSwitchListener = serverSwitchListener
     this.serverSaveListener = serverSaveListener
+    this.serverViews = {}
 
     ipcMain.on(ADD_SERVER, this.onAddServer)
     ipcMain.on(SAVE_SERVER_AND_RELOAD, this.onSaveServerAndReload)
     ipcMain.on(SWITCH_SERVER, this.onSwitchServer)
   }
 
-  private switchCurrView(server: Server | undefined): void {
-    throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
+  private switchCurrView(newView: View): void {
     const oldWebView = this.currView?.getWebView()
-    if (this.currView != null)
+    if (this.currView != null && !(this.currView instanceof ServerView))
       this.currView.close()
-    if (server == null)
-      this.currView = new StartView(this.windowContentSize)
-    else
-      this.currView = new ServerView(this.windowContentSize, server)
+    this.currView = newView
     this.switchWindowView(oldWebView, this.currView.getWebView())
   }
 
-  createViews = (windowContentSize: number[]): void => {
-    logger.debug('createViews', 'Creating views')
-    if (this.currView != null) // TODO: throw error (?)
-      return
-    this.windowContentSize = windowContentSize
-    const server = store.get('lastUsedServer')
-    logger.verbose('createViews', 'Last used server:', server)
-    this.switchServer(server)
-  }
-
-  closeAllViews = (): void => {
-    this.currView?.close()
+  private createServerView(server: Server | undefined): void {
+    throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
+    if (server == null) {
+      this.switchCurrView(new StartView(this.windowContentSize))
+    }
+    else {
+      if (this.serverViews[server.id]) {
+        logger.debug('createServerView', `ServerView for server ${server.id} is already preloaded`)
+        this.switchCurrView(this.serverViews[server.id])
+      }
+      else {
+        const newView = new ServerView(this.windowContentSize, server)
+        this.serverViews[server.id] = newView
+        this.switchCurrView(newView)
+      }
+    }
   }
 
   switchServer = (server: Server | undefined): void => {
@@ -74,8 +76,23 @@ export default class ViewManager {
       return
     }
     store.set('lastUsedServer', server)
-    this.switchCurrView(server)
+    this.createServerView(server)
     this.serverSwitchListener?.(server)
+  }
+
+  createViews = (windowContentSize: number[]): void => {
+    logger.debug('createViews', 'Creating views')
+    if (this.currView != null) // TODO: throw error (?)
+      return
+    this.windowContentSize = windowContentSize
+    const server = store.get('lastUsedServer')
+    logger.verbose('createViews', 'Last used server:', server)
+    this.switchServer(server)
+  }
+
+  closeAllViews = (): void => {
+    this.currView?.close()
+    this.serverViews = {}
   }
 
   toggleViewDevTools = (): void => {
