@@ -74,8 +74,7 @@ export default class StartView implements View {
       this.view.webContents.closeDevTools()
   }
 
-  getWebView(): WebContentsView {
-    throwIfPropertyUndefined('view', this.view)
+  getWebView(): WebContentsView | undefined {
     return this.view
   }
 }

@@ -80,8 +80,7 @@ export default class ServerView implements View {
     return this.server
   }
 
-  getWebView(): WebContentsView {
-    throwIfPropertyUndefined('view', this.view)
+  getWebView(): WebContentsView | undefined {
     return this.view
   }
 }

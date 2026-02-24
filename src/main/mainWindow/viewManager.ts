@@ -43,7 +43,9 @@ export default class ViewManager {
     if (this.currView != null && !(this.currView instanceof ServerView))
       this.currView.close()
     this.currView = newView
-    this.switchWindowView(oldWebView, this.currView.getWebView())
+    const currWebView = this.currView.getWebView()
+    throwIfPropertyUndefined('currWebView', currWebView)
+    this.switchWindowView(oldWebView, currWebView)
   }
 
   private createServerView(server: Server | undefined): void {
@@ -54,6 +56,7 @@ export default class ViewManager {
     else {
       if (this.serverViews[server.id]) {
         logger.debug('createServerView', `ServerView for server ${server.id} is already preloaded`)
+        this.serverViews[server.id].adjustBounds(this.windowContentSize)
         this.switchCurrView(this.serverViews[server.id])
       }
       else {
@@ -91,8 +94,10 @@ export default class ViewManager {
   }
 
   closeAllViews = (): void => {
-    this.currView?.close()
+    Object.values(this.serverViews).forEach(srv => srv.close())
     this.serverViews = {}
+    if (this.currView?.getWebView() != null) // e.g. when this.currView instanceof StartView
+      this.currView.close()
   }
 
   toggleViewDevTools = (): void => {

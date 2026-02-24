@@ -62,7 +62,9 @@ export default class MainWindow {
     this.viewManager.createViews(this.win.getSize()) // TODO: check if that's the correct size
 
     this.titleBarView = new TitleBarView(this.win.getSize(), this.onTitleBarDidFinishLoad)
-    this.win.contentView.addChildView(this.titleBarView.getWebView())
+    const titleBarWebView = this.titleBarView.getWebView()
+    throwIfPropertyUndefined('titleBarWebView', titleBarWebView)
+    this.win.contentView.addChildView(titleBarWebView)
   }
 
   show = (): void => {

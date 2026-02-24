@@ -5,5 +5,5 @@ export default interface View {
   adjustBounds(contentSize: number[]): void
   close(): void
   toggleDevTools(): void
-  getWebView(): ElectronView
+  getWebView(): ElectronView | undefined
 }
