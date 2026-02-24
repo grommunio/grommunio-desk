@@ -1,6 +1,7 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import fs from 'fs'
+import { LevelOption } from 'electron-log'
 
 import { Server } from '../../types/misc'
 import { getUserDataPath } from './paths'
@@ -10,6 +11,7 @@ interface ConfigData {
   servers: Server[]
   serverIdCount: number
   windowSize: number[]
+  fileLogLevel: LevelOption
 }
 
 interface Opts<T extends ConfigData = ConfigData> {
@@ -55,5 +57,6 @@ export default new Store<ConfigData>({
     serverIdCount: 0,
     servers: Array<Server>(),
     windowSize: [1000, 800],
+    fileLogLevel: 'info',
   },
 })
