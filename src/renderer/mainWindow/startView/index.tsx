@@ -4,7 +4,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import './index.css'
-import StartPage from './StartPage'
+import StartPage from './startPage'
 import '../../i18n/i18n'
 
 const Root = (): React.ReactElement => {

@@ -9,7 +9,7 @@ import StartView from './mainViews/startView'
 import { ADD_SERVER, SAVE_SERVER_AND_RELOAD, SWITCH_SERVER } from '../constants/communication'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import Logger from '@utils/logger'
-import View from '../interfaces/view'
+import { View } from '../types/misc'
 
 const logger = new Logger('main/mainWindow/viewManager')
 

@@ -4,7 +4,7 @@ import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } fro
 
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS } from '../../constants/view'
-import View from '../../interfaces/view'
+import { View } from '../../types/misc'
 import { Server } from '../../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 

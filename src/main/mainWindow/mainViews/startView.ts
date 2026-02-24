@@ -5,7 +5,7 @@ import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } fro
 import { getAppPath } from '../../utils/paths'
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
-import View from '../../interfaces/view'
+import { View } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 import { IS_PRODUCTION } from '../../../constants/misc'
 
