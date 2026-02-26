@@ -3,7 +3,7 @@
 import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import { Server, ServerOptions } from '../../types/misc'
-import { UserNotificationButton } from '../../types/userNotification'
+import { UserNotification, UserNotificationButton } from '../../types/userNotification'
 import { View } from '../types/misc'
 import { ADD_SERVER, HANDLE_NOTIFICATION_BUTTON, SAVE_SERVER_AND_RELOAD, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
@@ -69,7 +69,7 @@ export default class ViewManager {
         serverView.adjustBounds(this.windowContentSize)
       }
       else {
-        serverView = new ServerView(this.windowContentSize, server)
+        serverView = new ServerView(this.windowContentSize, server, this.onServerViewDidFailLoad)
         this.serverViews.set(server.id, serverView)
       }
       this.switchCurrView(serverView)
@@ -106,9 +106,21 @@ export default class ViewManager {
     this.switchServer(server)
   }
 
+  private createNotification = (notification: UserNotification): void => {
+    throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
+    if (this.notificationView != null)
+      return
+    this.notificationView = new NotificationView(this.windowContentSize, notification)
+    this.addWindowView(this.notificationView.getWebView())
+  }
+
   private closeNotification = (): void => {
-    this.notificationView?.close()
-    this.notificationView = undefined
+    const notificationWebView = this.notificationView?.getWebView()
+    if (this.notificationView != null && notificationWebView != null) {
+      this.removeWindowView(notificationWebView)
+      this.notificationView.close()
+      this.notificationView = undefined
+    }
   }
 
   closeAllViews = (): void => {
@@ -118,7 +130,8 @@ export default class ViewManager {
       this.currView.close()
       this.currView = undefined
     }
-    this.closeNotification()
+    this.notificationView?.close()
+    this.notificationView = undefined
   }
 
   toggleMainViewDevTools = (): void => {
@@ -172,6 +185,11 @@ export default class ViewManager {
     this.serverSaveListener?.(this.servers)
     return status
   } */
+
+  private onServerViewDidFailLoad = (server: Server): void => {
+    logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
+    this.createNotification({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: ['returnToStartPage'] })
+  }
 
   // IPC functions
   private onAddServer = (_event: IpcMainEvent): void => {

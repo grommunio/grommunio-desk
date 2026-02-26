@@ -11,9 +11,11 @@ import { throwIfPropertyUndefined } from '../../utils/misc'
 export default class ServerView implements View {
   private view?: WebContentsView
   private server: Server
+  private onDidFailLoad?: (server: Server) => void
 
-  constructor(contentSize: number[], server: Server) {
+  constructor(contentSize: number[], server: Server, onDidFailLoad?: (server: Server) => void) {
     this.server = server
+    this.onDidFailLoad = onDidFailLoad
 
     this.create(contentSize)
   }
@@ -39,6 +41,10 @@ export default class ServerView implements View {
     this.view.webContents.setWindowOpenHandler(({ url }: HandlerDetails): WindowOpenHandlerResponse => {
       shell.openExternal(url)
       return { action: 'deny' }
+    })
+
+    this.view.webContents.on('did-fail-load', () => {
+      this.onDidFailLoad?.(this.server)
     })
 
     // TODO: prevent redirects to external pages
