@@ -15,7 +15,7 @@ const logger = new Logger('main/mainWindow/viewManager')
 
 export default class ViewManager {
   private currView?: View
-  private serverViews: Record<Server['id'], ServerView>
+  private serverViews: Map<Server['id'], ServerView>
   private servers: Server[]
   private windowContentSize?: number[]
   private switchWindowView: (oldView: ElectronView | undefined, newView: ElectronView) => void
@@ -28,10 +28,10 @@ export default class ViewManager {
     serverSaveListener?: (servers: Server[]) => void,
   ) {
     this.servers = store.get('servers')
+    this.serverViews = new Map()
     this.switchWindowView = switchWindowView
     this.serverSwitchListener = serverSwitchListener
     this.serverSaveListener = serverSaveListener
-    this.serverViews = {}
 
     ipcMain.on(ADD_SERVER, this.onAddServer)
     ipcMain.on(SAVE_SERVER_AND_RELOAD, this.onSaveServerAndReload)
@@ -54,16 +54,16 @@ export default class ViewManager {
       this.switchCurrView(new StartView(this.windowContentSize))
     }
     else {
-      if (this.serverViews[server.id]) {
-        logger.debug('createServerView', `ServerView for server ${server.id} is already preloaded`)
-        this.serverViews[server.id].adjustBounds(this.windowContentSize)
-        this.switchCurrView(this.serverViews[server.id])
+      let serverView = this.serverViews.get(server.id)
+      if (serverView) {
+        logger.debug('createServerView', `Loading ServerView for server ${server.id} from cache`)
+        serverView.adjustBounds(this.windowContentSize)
       }
       else {
-        const newView = new ServerView(this.windowContentSize, server)
-        this.serverViews[server.id] = newView
-        this.switchCurrView(newView)
+        serverView = new ServerView(this.windowContentSize, server)
+        this.serverViews.set(server.id, serverView)
       }
+      this.switchCurrView(serverView)
     }
   }
 
@@ -95,7 +95,7 @@ export default class ViewManager {
 
   closeAllViews = (): void => {
     Object.values(this.serverViews).forEach(srv => srv.close())
-    this.serverViews = {}
+    this.serverViews.clear()
     if (this.currView?.getWebView() != null) // e.g. when this.currView instanceof StartView
       this.currView.close()
   }
