@@ -1,0 +1,74 @@
+.bg {
+  backdrop-filter: blur(5px);
+  height: 100vh;
+  width: 100vw;
+}
+
+.notificationDiv {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  height: 200px;
+  width: 400px;
+  transform: translate(-50%, 0);
+  background-color: #1e1e1e;
+  border-color: #3b3b3b;
+  border-style: solid;
+  color: white;
+  border-radius: 25px;
+  border-width: 2px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  .textDiv {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .separator {
+    height: 2px;
+    width: 100%;
+    background-color: #3b3b3b;
+  }
+
+  .buttonDiv {
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+  }
+}
+
+.button {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #c2c7cf;
+  color: #1f2328;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  font-family: inherit;
+
+  &:focus-visible {
+    outline: 0;
+  }
+
+  &:focus,
+  &:hover:not(:disabled) {
+    background: #f4f4f5;
+  }
+
+  &:disabled {
+    background: #1c1c1c;
+    color: #888888; 
+    cursor: not-allowed;
+  }
+}
+

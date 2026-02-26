@@ -3,13 +3,15 @@
 import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import { Server, ServerOptions } from '../../types/misc'
+import { UserNotificationButton } from '../../types/userNotification'
+import { View } from '../types/misc'
+import { ADD_SERVER, HANDLE_NOTIFICATION_BUTTON, SAVE_SERVER_AND_RELOAD, SWITCH_SERVER } from '../constants/communication'
+import Logger from '@utils/logger'
+import { throwIfPropertyUndefined } from '../utils/misc'
 import store from '../utils/store'
 import ServerView from './mainViews/serverView'
 import StartView from './mainViews/startView'
-import { ADD_SERVER, SAVE_SERVER_AND_RELOAD, SWITCH_SERVER } from '../constants/communication'
-import { throwIfPropertyUndefined } from '../utils/misc'
-import Logger from '@utils/logger'
-import { View } from '../types/misc'
+import NotificationView from './mainViews/notificationView'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
@@ -18,24 +20,29 @@ export default class ViewManager {
   private serverViews: Map<Server['id'], ServerView>
   private servers: Server[]
   private windowContentSize?: number[]
-  private switchWindowView: (oldView: ElectronView | undefined, newView: ElectronView) => void
+  private notificationView?: NotificationView
+  private addWindowView: (newView: ElectronView) => void
+  private removeWindowView: (view: ElectronView) => void
   private serverSwitchListener?: (server: Server | undefined) => void
   private serverSaveListener?: (servers: Server[]) => void
 
   constructor(
-    switchWindowView: (oldView: ElectronView | undefined, newView: ElectronView) => void,
+    addWindowView: (newView: ElectronView) => void,
+    removeWindowView: (view: ElectronView) => void,
     serverSwitchListener?: (server: Server | undefined) => void,
     serverSaveListener?: (servers: Server[]) => void,
   ) {
     this.servers = store.get('servers')
     this.serverViews = new Map()
-    this.switchWindowView = switchWindowView
+    this.addWindowView = addWindowView
+    this.removeWindowView = removeWindowView
     this.serverSwitchListener = serverSwitchListener
     this.serverSaveListener = serverSaveListener
 
     ipcMain.on(ADD_SERVER, this.onAddServer)
     ipcMain.on(SAVE_SERVER_AND_RELOAD, this.onSaveServerAndReload)
     ipcMain.on(SWITCH_SERVER, this.onSwitchServer)
+    ipcMain.on(HANDLE_NOTIFICATION_BUTTON, this.onHandleNotificationButton)
   }
 
   private switchCurrView(newView: View): void {
@@ -45,7 +52,9 @@ export default class ViewManager {
     this.currView = newView
     const currWebView = this.currView.getWebView()
     throwIfPropertyUndefined('currWebView', currWebView)
-    this.switchWindowView(oldWebView, currWebView)
+    this.addWindowView(currWebView)
+    if (oldWebView != null)
+      this.removeWindowView(oldWebView)
   }
 
   private createServerView(server: Server | undefined): void {
@@ -74,6 +83,10 @@ export default class ViewManager {
       logger.debug('switchServer', 'Canceling switchServer-operation, because server is already loaded')
       return
     }
+    if (this.notificationView != null) {
+      logger.debug('switchServer', 'Canceling switchServer-operation due to active notification') // TODO: use log.scope (?)
+      return
+    }
     if (server != null && this.servers.find((srv: Server) => srv.id === server.id) == null) {
       logger.error('switchServer', `Could not find server ${server.url} with id ${server.id}`)
       return
@@ -93,21 +106,35 @@ export default class ViewManager {
     this.switchServer(server)
   }
 
+  private closeNotification = (): void => {
+    this.notificationView?.close()
+    this.notificationView = undefined
+  }
+
   closeAllViews = (): void => {
     Object.values(this.serverViews).forEach(srv => srv.close())
     this.serverViews.clear()
-    if (this.currView?.getWebView() != null) // e.g. when this.currView instanceof StartView
+    if (this.currView?.getWebView() != null) { // e.g. when this.currView instanceof StartView
       this.currView.close()
+      this.currView = undefined
+    }
+    this.closeNotification()
   }
 
-  toggleViewDevTools = (): void => {
+  toggleMainViewDevTools = (): void => {
     throwIfPropertyUndefined('currView', this.currView)
     this.currView.toggleDevTools()
+  }
+
+  toggleNotificationViewDevTools = (): void => {
+    throwIfPropertyUndefined('notificationView', this.notificationView)
+    this.notificationView.toggleDevTools()
   }
 
   adjustViewBounds = (contentSize: number[]): void => {
     this.windowContentSize = contentSize
     this.currView?.adjustBounds(contentSize)
+    this.notificationView?.adjustBounds(contentSize)
   }
 
   getCurrServer = (): Server | undefined => {
@@ -118,12 +145,7 @@ export default class ViewManager {
     return this.servers
   }
 
-  // IPC functions
-  private onAddServer = (_event: IpcMainEvent): void => {
-    this.switchServer(undefined)
-  }
-
-  private onSaveServerAndReload = (_event: IpcMainEvent, server: ServerOptions): void => {
+  private addServerToStore = (server: ServerOptions): Server => {
     const id = store.get('serverIdCount')
     store.set('serverIdCount', id + 1)
     if (this.servers.find((srv: Server) => srv.id === id) != null)
@@ -132,14 +154,49 @@ export default class ViewManager {
       ...server,
       id,
     }
-    logger.info('onSaveServerAndReload', 'Add server', newServer)
+    logger.info('addServerToStore', 'Add server', newServer)
     this.servers.push(newServer)
     store.set('servers', this.servers)
     this.serverSaveListener?.(this.servers)
+    return newServer
+  }
+
+  // TODO: remove?
+  /*
+  private removeServerFromStore = (server: Server): boolean => {
+    logger.debug('removeServerFromStore', 'Remove server', server)
+    const newServers = this.servers.filter(srv => srv.id !== server.id)
+    const status = this.servers.length !== newServers.length
+    this.servers = newServers
+    store.set('servers', this.servers)
+    this.serverSaveListener?.(this.servers)
+    return status
+  } */
+
+  // IPC functions
+  private onAddServer = (_event: IpcMainEvent): void => {
+    this.switchServer(undefined)
+  }
+
+  private onSaveServerAndReload = (_event: IpcMainEvent, server: ServerOptions): void => {
+    const newServer = this.addServerToStore(server)
     this.switchServer(newServer)
   }
 
   private onSwitchServer = (_event: IpcMainEvent, server: Server): void => {
     this.switchServer(server)
+  }
+
+  private onHandleNotificationButton = (_event: IpcMainEvent, button: UserNotificationButton): void => {
+    this.closeNotification()
+    if (button === 'returnToStartPage') {
+      if (this.currView instanceof ServerView) {
+        this.serverViews.delete(this.currView.getServer().id)
+      }
+      else {
+        logger.warn('onHandleNotificationButton', 'currView is not a ServerView')
+      }
+      this.switchServer(undefined)
+    }
   }
 }

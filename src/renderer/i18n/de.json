@@ -10,6 +10,10 @@
     },
     "titleBarView": {
       "addServer": "Server hinzufügen"
+    },
+    "notificationView": {
+      "loadFailedMessage": "Laden von {{url}} schlug fehl.",
+      "returnToStartPageButton": "Zurück"
     }
   }
 }

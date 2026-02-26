@@ -19,7 +19,8 @@ export default class MainWindow {
 
   constructor() {
     this.viewManager = new ViewManager(
-      this.switchWindowView,
+      this.addWindowView,
+      this.removeWindowView,
       this.onServerSwitch,
       this.onServerSave,
     )
@@ -111,8 +112,9 @@ export default class MainWindow {
       servers,
       addServer: () => this.viewManager.switchServer(undefined),
       switchServer: this.viewManager.switchServer,
-      toggleMainViewDevTools: this.viewManager.toggleViewDevTools,
-      toggleTitleBarDevTools: this.toggleTitleBarViewDevTools,
+      toggleMainViewDevTools: this.viewManager.toggleMainViewDevTools,
+      toggleTitleBarViewTools: this.toggleTitleBarViewDevTools,
+      toggleNotificationViewDevTools: this.viewManager.toggleNotificationViewDevTools,
     }))
     this.win.setMenu(this.appMenu)
   }
@@ -134,11 +136,14 @@ export default class MainWindow {
     this.titleBarView?.sendServerSave(servers)
   }
 
-  private switchWindowView = (oldView: View | undefined, newView: View): void => {
+  private addWindowView = (newView: View): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.addChildView(newView)
-    if (oldView != null)
-      this.win.contentView.removeChildView(oldView)
+  }
+
+  private removeWindowView = (view: View): void => {
+    throwIfPropertyUndefined('win', this.win)
+    this.win.contentView.removeChildView(view)
   }
 
   // IPC functions

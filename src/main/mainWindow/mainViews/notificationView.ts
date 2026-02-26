@@ -8,12 +8,16 @@ import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import { View } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 import { IS_PRODUCTION } from '../../../constants/misc'
+import { UserNotification } from '../../../types/userNotification'
+import { ON_NOTIFICATION } from '../../constants/communication'
 
-export default class StartView implements View {
-  private static readonly DEFAULT_HTML_FILE = 'main-start.html'
+export default class NotificationView implements View {
+  private static readonly DEFAULT_HTML_FILE = 'main-notification.html'
   private view?: WebContentsView
+  private notification: UserNotification
 
-  constructor(contentSize: number[]) {
+  constructor(contentSize: number[], notification: UserNotification) {
+    this.notification = notification
     this.create(contentSize)
   }
 
@@ -21,9 +25,9 @@ export default class StartView implements View {
     throwIfPropertyUndefined('view', this.view)
 
     if (IS_PRODUCTION)
-      this.view.webContents.loadFile(getAppPath(StartView.DEFAULT_HTML_FILE))
+      this.view.webContents.loadFile(getAppPath(NotificationView.DEFAULT_HTML_FILE))
     else
-      this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${StartView.DEFAULT_HTML_FILE}`)
+      this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${NotificationView.DEFAULT_HTML_FILE}`)
   }
 
   private registerListeners = (): void => {
@@ -35,6 +39,10 @@ export default class StartView implements View {
 
     this.view.webContents.setWindowOpenHandler((): WindowOpenHandlerResponse => {
       return { action: 'deny' }
+    })
+
+    this.view.webContents.on('did-finish-load', () => {
+      this.view?.webContents.send(ON_NOTIFICATION, this.notification)
     })
   }
 
@@ -48,9 +56,9 @@ export default class StartView implements View {
     this.view = new WebContentsView({
       webPreferences: {
         preload: getAppPath('preload.js'),
+        transparent: true,
       },
     })
-    this.view.setBackgroundColor('#2a2b30')
 
     this.registerListeners()
     this.adjustBounds(contentSize)
@@ -73,7 +81,8 @@ export default class StartView implements View {
       this.view.webContents.closeDevTools()
   }
 
-  getWebView(): WebContentsView | undefined {
+  getWebView(): WebContentsView {
+    throwIfPropertyUndefined('view', this.view)
     return this.view
   }
 }

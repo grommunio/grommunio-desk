@@ -13,6 +13,7 @@ module.exports = merge(baseConfig,
     entry: {
       'main-start': './src/renderer/mainWindow/startView/index.tsx',
       'main-titleBar': './src/renderer/mainWindow/titleBarView/index.tsx',
+      'main-notification': './src/renderer/mainWindow/notificationView/index.tsx'
     },
     output: {
       path: outputPath,
@@ -39,6 +40,13 @@ module.exports = merge(baseConfig,
         filename: 'main-titleBar.html',
         template: './src/index.html',
         chunks: ['main-titleBar'],
+        inject: true,
+      }),
+       new HtmlWebpackPlugin({
+        title: 'grommunio Desk',
+        filename: 'main-notification.html',
+        template: './src/index.html',
+        chunks: ['main-notification'],
         inject: true,
       }),
       isProduction && new MiniCssExtractPlugin(),

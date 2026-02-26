@@ -8,7 +8,8 @@ interface AppMenuTemplateOptions {
   addServer: () => void
   switchServer: (server: Server) => void
   toggleMainViewDevTools: () => void
-  toggleTitleBarDevTools: () => void
+  toggleTitleBarViewTools: () => void
+  toggleNotificationViewDevTools: () => void
 }
 
 export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
@@ -40,8 +41,12 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
         label: 'Toggle mainView developer tools',
       },
       {
-        click: options.toggleTitleBarDevTools,
+        click: options.toggleTitleBarViewTools,
         label: 'Toggle titleBarView developer tools',
+      },
+      {
+        click: options.toggleNotificationViewDevTools,
+        label: 'Toggle notificationView developer tools',
       },
     ],
   },
