@@ -11,10 +11,13 @@ import { throwIfPropertyUndefined } from '../../utils/misc'
 export default class ServerView implements View {
   private view?: WebContentsView
   private server: Server
+  private isLoadingFailure = false
+  private onDidFinishLoadSuccly?: (server: Server) => void
   private onDidFailLoad?: (server: Server) => void
 
-  constructor(contentSize: number[], server: Server, onDidFailLoad?: (server: Server) => void) {
+  constructor(contentSize: number[], server: Server, onDidFinishLoadSuccly?: (server: Server) => void, onDidFailLoad?: (server: Server) => void) {
     this.server = server
+    this.onDidFinishLoadSuccly = onDidFinishLoadSuccly
     this.onDidFailLoad = onDidFailLoad
 
     this.create(contentSize)
@@ -43,7 +46,13 @@ export default class ServerView implements View {
       return { action: 'deny' }
     })
 
+    this.view.webContents.on('did-finish-load', () => {
+      if (!this.isLoadingFailure)
+        this.onDidFinishLoadSuccly?.(this.server)
+    })
+
     this.view.webContents.on('did-fail-load', () => {
+      this.isLoadingFailure = true
       this.onDidFailLoad?.(this.server)
     })
 

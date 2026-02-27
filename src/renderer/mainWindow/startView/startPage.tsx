@@ -46,7 +46,7 @@ const StartPage = (): React.ReactElement => {
 
     const server: ServerOptions = { url: urlInput, name: nameInput }
     logger.debug('onSend', 'New server:', server)
-    window.electronAPI.saveServerAndReload(server)
+    window.electronAPI.loadNewServer(server)
   }
 
   const handleChange = (field: 'name' | 'url') => (e: ChangeEvent<HTMLInputElement>): void => {

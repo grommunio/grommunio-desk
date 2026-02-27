@@ -7,7 +7,7 @@ import { UserNotificationButton, UserNotification } from '../types/userNotificat
 
 import {
   ADD_SERVER,
-  SAVE_SERVER_AND_RELOAD,
+  LOAD_NEW_SERVER,
   SWITCH_SERVER,
   TOGGLE_APP_MENU,
   VALIDATE_SERVER_URL,
@@ -21,7 +21,7 @@ import {
 // TODO: check if it is possible to make the ipc functions type proof -> type checking when calling e.g. ipcMain.on(...)
 contextBridge.exposeInMainWorld('electronAPI', {
   addServer: () => ipcRenderer.send(ADD_SERVER),
-  saveServerAndReload: (server: ServerOptions) => ipcRenderer.send(SAVE_SERVER_AND_RELOAD, server),
+  loadNewServer: (server: ServerOptions) => ipcRenderer.send(LOAD_NEW_SERVER, server),
   switchServer: (server: Server) => ipcRenderer.send(SWITCH_SERVER, server),
   toggleAppMenu: () => ipcRenderer.send(TOGGLE_APP_MENU),
   handleNotificationButton: (button: UserNotificationButton) => ipcRenderer.send(HANDLE_NOTIFICATION_BUTTON, button),

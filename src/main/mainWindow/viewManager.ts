@@ -5,7 +5,7 @@ import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 import { Server, ServerOptions } from '../../types/misc'
 import { UserNotification, UserNotificationButton } from '../../types/userNotification'
 import { View } from '../types/misc'
-import { ADD_SERVER, HANDLE_NOTIFICATION_BUTTON, SAVE_SERVER_AND_RELOAD, SWITCH_SERVER } from '../constants/communication'
+import { ADD_SERVER, HANDLE_NOTIFICATION_BUTTON, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import store from '../utils/store'
@@ -40,7 +40,7 @@ export default class ViewManager {
     this.serverSaveListener = serverSaveListener
 
     ipcMain.on(ADD_SERVER, this.onAddServer)
-    ipcMain.on(SAVE_SERVER_AND_RELOAD, this.onSaveServerAndReload)
+    ipcMain.on(LOAD_NEW_SERVER, this.onLoadNewServer)
     ipcMain.on(SWITCH_SERVER, this.onSwitchServer)
     ipcMain.on(HANDLE_NOTIFICATION_BUTTON, this.onHandleNotificationButton)
   }
@@ -57,26 +57,27 @@ export default class ViewManager {
       this.removeWindowView(oldWebView)
   }
 
-  private createServerView(server: Server | undefined): void {
+  private createServerView(server: Server | undefined): [View, boolean] { // boolean return value indicates, if the server was loaded from scratch (so it was not cached, except StartView)
     throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
     if (server == null) {
-      this.switchCurrView(new StartView(this.windowContentSize))
+      return [new StartView(this.windowContentSize), false]
     }
     else {
       let serverView = this.serverViews.get(server.id)
       if (serverView) {
         logger.debug('createServerView', `Loading ServerView for server ${server.id} from cache`)
         serverView.adjustBounds(this.windowContentSize)
+        return [serverView, false]
       }
       else {
-        serverView = new ServerView(this.windowContentSize, server, this.onServerViewDidFailLoad)
+        serverView = new ServerView(this.windowContentSize, server, this.onServerViewDidFinishLoadSuccly, this.onServerViewDidFailLoad)
         this.serverViews.set(server.id, serverView)
+        return [serverView, true]
       }
-      this.switchCurrView(serverView)
     }
   }
 
-  switchServer = (server: Server | undefined): void => {
+  switchServer = (server: Server | undefined, skipServerStoreCheck = false): void => {
     logger.verbose('switchServer', 'Server:', server)
     if ((this.currView instanceof StartView && (server == null))
       || (this.currView instanceof ServerView && server?.id === this.currView.getServer().id)) {
@@ -87,12 +88,14 @@ export default class ViewManager {
       logger.debug('switchServer', 'Canceling switchServer-operation due to active notification') // TODO: use log.scope (?)
       return
     }
-    if (server != null && this.servers.find((srv: Server) => srv.id === server.id) == null) {
+    if (!skipServerStoreCheck && server != null && this.servers.find((srv: Server) => srv.id === server.id) == null) {
       logger.error('switchServer', `Could not find server ${server.url} with id ${server.id}`)
       return
     }
-    store.set('lastUsedServer', server)
-    this.createServerView(server)
+    const [view, loadedFromSratch] = this.createServerView(server)
+    this.switchCurrView(view)
+    if (!loadedFromSratch) // for new (loaded from scratch) servers, do not set lastUsedServer until the server has loaded successfully (see onServerViewDidFinishLoadSuccly)
+      store.set('lastUsedServer', server)
     this.serverSwitchListener?.(server)
   }
 
@@ -158,20 +161,13 @@ export default class ViewManager {
     return this.servers
   }
 
-  private addServerToStore = (server: ServerOptions): Server => {
-    const id = store.get('serverIdCount')
-    store.set('serverIdCount', id + 1)
-    if (this.servers.find((srv: Server) => srv.id === id) != null)
-      throw new Error(`New server id ${id} already exists`)
-    const newServer: Server = {
-      ...server,
-      id,
-    }
-    logger.info('addServerToStore', 'Add server', newServer)
-    this.servers.push(newServer)
+  private addServerToStore = (server: Server): void => {
+    if (this.servers.find((srv: Server) => srv.id === server.id) != null)
+      return
+    logger.info('addServerToStore', 'Add server', server)
+    this.servers.push(server)
     store.set('servers', this.servers)
     this.serverSaveListener?.(this.servers)
-    return newServer
   }
 
   // TODO: remove?
@@ -186,6 +182,12 @@ export default class ViewManager {
     return status
   } */
 
+  private onServerViewDidFinishLoadSuccly = (server: Server): void => {
+    logger.debug('onServerViewDidFinishLoadSuccly', 'Finished loading of server successfully', server)
+    this.addServerToStore(server)
+    store.set('lastUsedServer', server)
+  }
+
   private onServerViewDidFailLoad = (server: Server): void => {
     logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
     this.createNotification({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: ['returnToStartPage'] })
@@ -196,9 +198,16 @@ export default class ViewManager {
     this.switchServer(undefined)
   }
 
-  private onSaveServerAndReload = (_event: IpcMainEvent, server: ServerOptions): void => {
-    const newServer = this.addServerToStore(server)
-    this.switchServer(newServer)
+  private onLoadNewServer = (_event: IpcMainEvent, server: ServerOptions): void => {
+    const id = store.get('serverIdCount')
+    store.set('serverIdCount', id + 1)
+    if (this.servers.find((srv: Server) => srv.id === id) != null)
+      throw new Error(`New server id ${id} already exists`)
+    const newServer: Server = {
+      ...server,
+      id,
+    }
+    this.switchServer(newServer, true)
   }
 
   private onSwitchServer = (_event: IpcMainEvent, server: Server): void => {

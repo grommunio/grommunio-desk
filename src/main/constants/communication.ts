@@ -1,7 +1,7 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 export const ADD_SERVER = 'add_server'
-export const SAVE_SERVER_AND_RELOAD = 'save_server_and_reload'
+export const LOAD_NEW_SERVER = 'load_new_server'
 export const SWITCH_SERVER = 'switch_server'
 export const TOGGLE_APP_MENU = 'toggle_app_menu'
 export const HANDLE_NOTIFICATION_BUTTON = 'handle_notification_button'

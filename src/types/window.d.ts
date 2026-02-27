@@ -7,7 +7,7 @@ declare global {
   interface Window {
     electronAPI: {
       addServer: () => void
-      saveServerAndReload: (server: ServerOptions) => void
+      loadNewServer: (server: ServerOptions) => void
       switchServer: (server: Server) => void
       toggleAppMenu: () => void
       handleNotificationButton: (button: UserNotificationButton) => void
