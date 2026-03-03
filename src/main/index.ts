@@ -7,6 +7,7 @@ import { getExtraResourcesPath } from './utils/paths'
 import Logger from '@utils/logger'
 import registerIpcFunctions from './intercom'
 import { IS_PRODUCTION } from '../constants/misc'
+import { APP_ID, APP_PRODUCT_NAME } from './constants/app'
 
 const logger = new Logger('main/index')
 
@@ -17,8 +18,11 @@ let mainWindow: MainWindow | undefined
 app.on('ready', () => {
   registerIpcFunctions()
 
+  if (process.platform === 'win32')
+    app.setAppUserModelId(APP_ID)
+
   app.setAboutPanelOptions({
-    applicationName: 'grommunio Desk',
+    applicationName: APP_PRODUCT_NAME,
     applicationVersion: app.getVersion(),
     copyright: `Copyright (c) 2020-${new Date().getFullYear()} grommunio GmbH. All Rights Reserved.`,
     version: app.getVersion(),

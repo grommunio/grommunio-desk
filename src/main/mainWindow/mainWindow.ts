@@ -10,6 +10,7 @@ import { TOGGLE_APP_MENU } from '../constants/communication'
 import { Server } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import ViewManager from './viewManager'
+import { APP_PRODUCT_NAME } from '../constants/app'
 
 export default class MainWindow {
   private win?: BaseWindow
@@ -40,7 +41,7 @@ export default class MainWindow {
       minHeight: 600,
       width: windowSize[0],
       height: windowSize[1],
-      title: 'grommunio Desk',
+      title: APP_PRODUCT_NAME,
       titleBarStyle: 'hidden',
       ...(process.platform !== 'darwin'
         ? { titleBarOverlay:
