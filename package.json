@@ -24,7 +24,7 @@
     "email": "dev@grommunio.com",
     "url": "https://grommunio.com"
   },
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "description": "Desktop App for grommunio",
   "homepage": "https://grommunio.com",
   "repository": {
