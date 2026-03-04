@@ -32,7 +32,7 @@
     "icon": "assets/mac/icon.icns"
   },
   "win": {
-    "icon": "assets/windows/icon.ico",
+    "icon": "assets/windows/icon_256x256_all.ico",
     "target": [
       "nsis"
     ]

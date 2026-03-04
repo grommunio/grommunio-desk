@@ -8,7 +8,7 @@ Developed using [Electron](https://www.electronjs.org)
 
 ### Installation
 
-[Download](https://grommunio.com/download/) the desktop app and install it.
+[Download](https://www.grommunio.com/download/) the desktop app and install it.
 
 ### Configuration
 - `~/.config/grommunio-desk/config.json` on Linux

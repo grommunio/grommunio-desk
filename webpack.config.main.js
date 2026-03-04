@@ -21,7 +21,7 @@ module.exports = merge(baseConfig,
     plugins: [
       new CopyPlugin({
         patterns: [
-          { from: "assets/mac/icon.iconset/icon_512x512.png", to: "app_icon.png" },
+          { from: "assets/general/icons/icon_512x512.png", to: "icon.png" },
         ],
       }),
     ],

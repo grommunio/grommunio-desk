@@ -31,3 +31,7 @@ $ npm run dev
 ```bash
 $ npm run package
 ```
+
+### Creating icons
+
+- for Windows: use the [online tool](https://www.png2ico.com/) to convert a 256x256 PNG file to an ICO file (use default options)

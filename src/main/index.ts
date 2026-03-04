@@ -28,7 +28,7 @@ app.on('ready', () => {
     version: app.getVersion(),
     credits: 'grommunio GmbH',
     website: 'https://grommunio.com',
-    iconPath: getExtraResourcesPath('app_icon.png'),
+    iconPath: getExtraResourcesPath('icon.png'),
   })
 
   mainWindow = new MainWindow()
