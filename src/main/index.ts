@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { app, BrowserWindow } from 'electron'
+import { app } from 'electron'
 
 import MainWindow from './mainWindow'
 import { getExtraResourcesPath } from './utils/paths'
@@ -26,14 +26,18 @@ const createWindow = (): void => {
 }
 
 const onOpenAppClick = (): void => {
-  const wins = BrowserWindow.getAllWindows()
-  if (wins.length === 0)
-    createWindow()
+  if (mainWindow?.isWindowDefined())
+    mainWindow.focus()
   else
-    wins[0].focus()
+    createWindow()
 }
 
 app.on('ready', () => {
+  if (!app.requestSingleInstanceLock()) {
+    app.quit()
+    return
+  }
+
   registerIpcFunctions()
 
   if (systemPlatform === 'win')
@@ -61,7 +65,11 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no
   // other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
+  if (!mainWindow?.isWindowDefined()) {
     createWindow()
   }
+})
+
+app.on('second-instance', () => {
+  onOpenAppClick()
 })

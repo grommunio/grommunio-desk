@@ -147,6 +147,18 @@ export default class MainWindow {
     this.win.contentView.removeChildView(view)
   }
 
+  focus = (): void => {
+    throwIfPropertyUndefined('win', this.win)
+
+    if (this.win.isMinimized())
+      this.win.restore()
+    this.win.focus()
+  }
+
+  isWindowDefined = (): boolean => {
+    return this.win != null
+  }
+
   // IPC functions
   private onToggleAppMenu = (_event: IpcMainEvent): void => {
     this.appMenu?.popup({
