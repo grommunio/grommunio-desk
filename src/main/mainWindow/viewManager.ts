@@ -126,13 +126,21 @@ export default class ViewManager {
     }
   }
 
-  closeAllViews = (): void => {
-    Object.values(this.serverViews).forEach(srv => srv.close())
-    this.serverViews.clear()
-    if (this.currView?.getWebView() != null) { // e.g. when this.currView instanceof StartView
+  // Closes currView (if is not an instance of ServerView or failed to load) and notificationView.
+  // Note that this method is used when the BrowserWindow closes. Therefore, it will not remove the views from the window.
+  closeCurrView = (): void => {
+    // e.g. when currView is an instance of StartView
+    if (this.currView != null && !(this.currView instanceof ServerView)) {
+      logger.debug('closeCurrView', 'currView is closed (because currView is not an instance of ServerView)')
       this.currView.close()
-      this.currView = undefined
     }
+    // when currView failed to load, it is / should be already included in serverViews
+    else if (this.currView != null && this.serverViews.values().find(view => view === this.currView)?.hasFailedLoading()) {
+      logger.debug('closeCurrView', 'currView is closed (because currView failed to load)')
+      this.serverViews.delete(this.currView.getServer().id)
+      this.currView.close()
+    }
+    this.currView = undefined // necessary because switchCurrView needs to re-add the currView to BrowserWindow
     this.notificationView?.close()
     this.notificationView = undefined
   }

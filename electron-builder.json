@@ -20,7 +20,7 @@
   "extraResources": [
     {
       "from": "build/",
-      "filter": ["**/*.@(png)"]
+      "filter": ["**/*.@(png|ico)"]
     }
   ],
   "beforePack": "scripts/beforepack.cjs",

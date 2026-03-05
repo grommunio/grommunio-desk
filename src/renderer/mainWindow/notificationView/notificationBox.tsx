@@ -27,7 +27,7 @@ const NotificationBox = (): React.ReactElement => {
 
   // IPC functions
   const onNotification = (notification: UserNotification): void => {
-    logger.debug('onNotification', 'New notification', notification)
+    logger.silly('onNotification', 'New notification', notification)
     setNotification(notification)
   }
 

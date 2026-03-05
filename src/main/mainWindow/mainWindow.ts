@@ -11,6 +11,7 @@ import { Server } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import ViewManager from './viewManager'
 import { APP_PRODUCT_NAME } from '../constants/app'
+import { systemPlatform } from '../constants/system'
 
 export default class MainWindow {
   private win?: BaseWindow
@@ -43,7 +44,7 @@ export default class MainWindow {
       height: windowSize[1],
       title: APP_PRODUCT_NAME,
       titleBarStyle: 'hidden',
-      ...(process.platform !== 'darwin'
+      ...(systemPlatform !== 'mac'
         ? { titleBarOverlay:
             {
               color: TITLE_BAR.BACKGROUND_COLOR,
@@ -80,13 +81,12 @@ export default class MainWindow {
 
     this.win.on('close', () => {
       throwIfPropertyUndefined('win', this.win)
-
       store.set('windowSize', this.win.getSize())
-      this.win = undefined
     })
     this.win.on('closed', () => {
-      this.viewManager.closeAllViews()
+      this.viewManager.closeCurrView()
       this.titleBarView?.close()
+      this.win = undefined
     })
     this.win.on('resize', () => {
       throwIfPropertyUndefined('win', this.win)
@@ -107,7 +107,7 @@ export default class MainWindow {
 
   private createAppMenu = (servers: Server[]): void => {
     throwIfPropertyUndefined('win', this.win)
-    const isMac = process.platform === 'darwin'
+    const isMac = systemPlatform === 'mac'
     this.appMenu = Menu.buildFromTemplate(buildAppMenuTemplate({
       isMac,
       servers,

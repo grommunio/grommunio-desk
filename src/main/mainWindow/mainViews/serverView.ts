@@ -11,7 +11,7 @@ import { throwIfPropertyUndefined } from '../../utils/misc'
 export default class ServerView implements View {
   private view?: WebContentsView
   private server: Server
-  private isLoadingFailure = false
+  private failedLoading = false
   private onDidFinishLoadSuccly?: (server: Server) => void
   private onDidFailLoad?: (server: Server) => void
 
@@ -47,12 +47,12 @@ export default class ServerView implements View {
     })
 
     this.view.webContents.on('did-finish-load', () => {
-      if (!this.isLoadingFailure)
+      if (!this.failedLoading)
         this.onDidFinishLoadSuccly?.(this.server)
     })
 
     this.view.webContents.on('did-fail-load', () => {
-      this.isLoadingFailure = true
+      this.failedLoading = true
       this.onDidFailLoad?.(this.server)
     })
 
@@ -97,5 +97,9 @@ export default class ServerView implements View {
 
   getWebView(): WebContentsView | undefined {
     return this.view
+  }
+
+  hasFailedLoading = (): boolean => {
+    return this.failedLoading
   }
 }

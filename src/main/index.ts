@@ -8,6 +8,8 @@ import Logger from '@utils/logger'
 import registerIpcFunctions from './intercom'
 import { IS_PRODUCTION } from '../constants/misc'
 import { APP_ID, APP_PRODUCT_NAME } from './constants/app'
+import TrayMenu from './trayMenu'
+import { systemPlatform } from './constants/system'
 
 const logger = new Logger('main/index')
 
@@ -15,10 +17,26 @@ logger.verbose('isProduction', `Production: ${IS_PRODUCTION}`)
 
 let mainWindow: MainWindow | undefined
 
+const createWindow = (): void => {
+  if (mainWindow == null)
+    mainWindow = new MainWindow()
+  else
+    mainWindow.createWindow()
+  mainWindow.show()
+}
+
+const onOpenAppClick = (): void => {
+  const wins = BrowserWindow.getAllWindows()
+  if (wins.length === 0)
+    createWindow()
+  else
+    wins[0].focus()
+}
+
 app.on('ready', () => {
   registerIpcFunctions()
 
-  if (process.platform === 'win32')
+  if (systemPlatform === 'win')
     app.setAppUserModelId(APP_ID)
 
   app.setAboutPanelOptions({
@@ -28,25 +46,22 @@ app.on('ready', () => {
     version: app.getVersion(),
     credits: 'grommunio GmbH',
     website: 'https://grommunio.com',
-    iconPath: getExtraResourcesPath('icon.png'),
+    iconPath: getExtraResourcesPath('icon_512x512.png'),
   })
 
-  mainWindow = new MainWindow()
-  mainWindow.show()
+  createWindow()
+
+  new TrayMenu(onOpenAppClick)
 })
 
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar to stay active until the user quits
-  // explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  // stay active in background
 })
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no
   // other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    mainWindow?.createWindow()
+    createWindow()
   }
 })

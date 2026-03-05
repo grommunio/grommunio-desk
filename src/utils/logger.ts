@@ -28,6 +28,7 @@ abstract class Logger {
   abstract error(functionName: string, message: string, ...args: unknown[]): void
 }
 
+// TODO: log object parameters as one liners (but still pretty-formatted), even if they are quite long
 export function createLogClass(log: ElectronLogger): new (fileName?: string) => Logger {
   return class ProcessLogger extends Logger {
     // TODO: improve logging functions: add functionality for formatted message string (%s for strings, ...)
