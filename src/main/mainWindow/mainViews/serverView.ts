@@ -3,7 +3,7 @@
 import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } from 'electron'
 
 import { TITLE_BAR } from '../../../constants/window'
-import { DEV_TOOLS_OPTIONS } from '../../constants/view'
+import { BACKGROUND_COLOR, DEV_TOOLS_OPTIONS } from '../../constants/view'
 import { View } from '../../types/misc'
 import { Server } from '../../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
@@ -68,7 +68,7 @@ export default class ServerView implements View {
   private create = (contentSize: number[]): void => {
     // TODO: set (cookies) session partition
     this.view = new WebContentsView()
-    this.view.setBackgroundColor('#2a2b30')
+    this.view.setBackgroundColor(BACKGROUND_COLOR)
 
     this.registerListeners()
     this.adjustBounds(contentSize)

@@ -16,6 +16,7 @@ import {
   ON_SERVER_SAVE,
   ON_NOTIFICATION,
   HANDLE_NOTIFICATION_BUTTON,
+  SET_TITLE_BAR_SERVER_MENU_OPEN,
 } from './constants/communication'
 
 // TODO: check if it is possible to make the ipc functions type proof -> type checking when calling e.g. ipcMain.on(...)
@@ -25,6 +26,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   switchServer: (server: Server) => ipcRenderer.send(SWITCH_SERVER, server),
   toggleAppMenu: () => ipcRenderer.send(TOGGLE_APP_MENU),
   handleNotificationButton: (button: UserNotificationButton) => ipcRenderer.send(HANDLE_NOTIFICATION_BUTTON, button),
+  setTitleBarServerMenuOpen: (isOpen: boolean) => ipcRenderer.send(SET_TITLE_BAR_SERVER_MENU_OPEN, isOpen),
 
   validateServerUrl: (server: string) => ipcRenderer.invoke(VALIDATE_SERVER_URL, server),
 

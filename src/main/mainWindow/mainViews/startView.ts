@@ -4,7 +4,7 @@ import { WebContentsView, WindowOpenHandlerResponse } from 'electron'
 
 import { getAppPath } from '../../utils/paths'
 import { TITLE_BAR } from '../../../constants/window'
-import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
+import { DEV_SERVER_BASE_URL, BACKGROUND_COLOR, DEV_TOOLS_OPTIONS } from '../../constants/view'
 import { View } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 import { IS_PRODUCTION } from '../../../constants/misc'
@@ -50,7 +50,7 @@ export default class StartView implements View {
         preload: getAppPath('preload.js'),
       },
     })
-    this.view.setBackgroundColor('#2a2b30')
+    this.view.setBackgroundColor(BACKGROUND_COLOR)
 
     this.registerListeners()
     this.adjustBounds(contentSize)
