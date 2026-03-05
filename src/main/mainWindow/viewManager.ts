@@ -151,8 +151,7 @@ export default class ViewManager {
   }
 
   toggleNotificationViewDevTools = (): void => {
-    throwIfPropertyUndefined('notificationView', this.notificationView)
-    this.notificationView.toggleDevTools()
+    this.notificationView?.toggleDevTools()
   }
 
   adjustViewBounds = (contentSize: number[]): void => {
