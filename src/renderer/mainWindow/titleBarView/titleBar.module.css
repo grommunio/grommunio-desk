@@ -1,20 +1,32 @@
 .titleBarDiv {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 0 8px;
+  pointer-events: auto;
 }
 
-.menuButton {
+.serverMenuBackdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 1;
   app-region: no-drag;
-  background: unset;
-  border: unset;
+  -webkit-app-region: no-drag;
+}
+
+.appMenuButton {
+  background: transparent;
+  border: transparent;
   border-radius: 20px;
-  margin-left: 10px;
   width: 25px;
   height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
+  app-region: no-drag;
+  -webkit-app-region: no-drag;
 
   &:focus-visible {
     outline: 0;
@@ -33,29 +45,149 @@
   }
 }
 
-.switchServerButton {
-  app-region: no-drag;
-  padding: 5px 5px;
-  border-radius: 8px;
-  border: none;
-  background: #c2c7cf;
-  color: #1f2328;
-  font-weight: 600;
+.serverChooser {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+.serverButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: unset;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 4px 8px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  font-family: inherit;
+  app-region: no-drag;
+  -webkit-app-region: no-drag;
 
   &:focus-visible {
     outline: 0;
   }
 
-  &:hover:not(:disabled) {
-    background: #d2d6dd;
+  &:hover,
+  &:focus {
+    background-color: transparent;
   }
+}
 
-  &:disabled {
-    background: #1c1c1c;
-    color: #888888; 
-    cursor: not-allowed;
+.serverIcon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.serverName {
+  font-size: 12px;
+  letter-spacing: 0.1px;
+}
+
+.serverCaret {
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #ffffff;
+  opacity: 0.8;
+}
+
+.serverMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 200px;
+  min-height: 12px;
+  border: 1px solid #3a3d4d;
+  border-radius: 6px;
+  box-shadow: 0 12px 24px #00000040;
+  padding: 6px 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  app-region: no-drag;
+  -webkit-app-region: no-drag;
+}
+
+.serverMenuOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.serverMenuHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  color: inherit;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.serverMenuItemButton {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: flex-start;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 8px 12px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+
+  &:hover,
+  &:focus {
+    background-color: #1f2229;
   }
+}
+
+.serverMenuCheck {
+  width: 16px;
+  color: #ffffff;
+  font-size: 14px;
+  display: inline-flex;
+  justify-content: center;
+  opacity: 0.9;
+}
+
+.serverMenuLabel {
+  font-size: 13px;
+  margin-left: 8px;
+}
+
+.serverMenuDivider {
+  height: 1px;
+  margin: 4px 0;
+  background-color: #3a3d4d;
+}
+
+.serverMenuAddContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.serverMenuAddIcon {
+  display: inline-block;
+  color: currentColor;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.serverMenuAddLabel {
+  font-size: 13px;
 }

@@ -11,6 +11,7 @@ declare global {
       switchServer: (server: Server) => void
       toggleAppMenu: () => void
       handleNotificationButton: (button: UserNotificationButton) => void
+      setTitleBarServerMenuOpen: (isOpen: boolean) => void
 
       validateServerUrl: (server: string) => Promise<boolean>
 

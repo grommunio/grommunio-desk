@@ -6,12 +6,13 @@ import store from '../utils/store'
 import { buildAppMenuTemplate } from '../utils/appMenu'
 import TitleBarView from './titleBarView'
 import { TITLE_BAR } from '../../constants/window'
-import { TOGGLE_APP_MENU } from '../constants/communication'
+import { SET_TITLE_BAR_SERVER_MENU_OPEN, TOGGLE_APP_MENU } from '../constants/communication'
 import { Server } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import ViewManager from './viewManager'
 import { APP_PRODUCT_NAME } from '../constants/app'
 import { systemPlatform } from '../constants/system'
+import { BACKGROUND_COLOR } from '../constants/view'
 
 export default class MainWindow {
   private win?: BaseWindow
@@ -28,6 +29,7 @@ export default class MainWindow {
     )
 
     ipcMain.on(TOGGLE_APP_MENU, this.onToggleAppMenu)
+    ipcMain.on(SET_TITLE_BAR_SERVER_MENU_OPEN, this.onSetTitleBarServerMenuOpen)
 
     this.createWindow()
   }
@@ -43,6 +45,7 @@ export default class MainWindow {
       width: windowSize[0],
       height: windowSize[1],
       title: APP_PRODUCT_NAME,
+      backgroundColor: BACKGROUND_COLOR,
       titleBarStyle: 'hidden',
       ...(systemPlatform !== 'mac'
         ? { titleBarOverlay:
@@ -126,6 +129,7 @@ export default class MainWindow {
 
   private onTitleBarDidFinishLoad = (): void => {
     this.titleBarView?.sendServerSwitch(this.viewManager.getCurrServer())
+    this.titleBarView?.sendServerSave(this.viewManager.getServers())
   }
 
   private onServerSwitch = (server: Server | undefined): void => {
@@ -140,11 +144,19 @@ export default class MainWindow {
   private addWindowView = (newView: View): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.addChildView(newView)
+    this.resetTitleBarViewStackPos()
   }
 
   private removeWindowView = (view: View): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.removeChildView(view)
+  }
+
+  private resetTitleBarViewStackPos = (): void => {
+    const titleBarWebView = this.titleBarView?.getWebView()
+    if (this.win == null || titleBarWebView == null)
+      return
+    this.win.contentView.addChildView(titleBarWebView)
   }
 
   focus = (): void => {
@@ -166,5 +178,11 @@ export default class MainWindow {
       x: 18,
       y: 18,
     })
+  }
+
+  private onSetTitleBarServerMenuOpen = (_event: IpcMainEvent, isOpen: boolean): void => {
+    this.titleBarView?.setServerMenuOpen(isOpen)
+    if (isOpen)
+      this.resetTitleBarViewStackPos()
   }
 }

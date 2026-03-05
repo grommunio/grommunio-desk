@@ -15,6 +15,8 @@ export default class TitleBarView implements View {
   private static readonly DEFAULT_HTML_FILE = 'main-titleBar.html'
   private view?: WebContentsView
   private onDidFinishLoad?: () => void
+  private isServerMenuOpen = false
+  private winContentSize?: number[]
 
   constructor(contentSize: number[], onDidFinishLoad?: () => void) {
     this.onDidFinishLoad = onDidFinishLoad
@@ -50,7 +52,13 @@ export default class TitleBarView implements View {
   adjustBounds = (contentSize: number[]): void => {
     throwIfPropertyUndefined('view', this.view)
 
-    this.view.setBounds({ x: 0, y: 0, width: contentSize[0], height: TITLE_BAR.HEIGHT })
+    this.winContentSize = contentSize
+    this.view.setBounds({
+      x: 0,
+      y: 0,
+      width: contentSize[0],
+      height: this.isServerMenuOpen ? contentSize[1] : TITLE_BAR.HEIGHT,
+    })
   }
 
   private create = (contentSize: number[]): void => {
@@ -59,7 +67,7 @@ export default class TitleBarView implements View {
         preload: getAppPath('preload.js'),
       },
     })
-    this.view.setBackgroundColor(TITLE_BAR.BACKGROUND_COLOR)
+    this.view.setBackgroundColor('#00000000')
 
     this.registerListeners()
     this.adjustBounds(contentSize)
@@ -84,6 +92,12 @@ export default class TitleBarView implements View {
 
   getWebView(): WebContentsView | undefined {
     return this.view
+  }
+
+  setServerMenuOpen = (isOpen: boolean): void => {
+    this.isServerMenuOpen = isOpen
+    if (this.winContentSize != null)
+      this.adjustBounds(this.winContentSize)
   }
 
   // IPC functions
