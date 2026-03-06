@@ -118,7 +118,7 @@ export default class MainWindow {
       switchServer: this.viewManager.switchServer,
       toggleMainViewDevTools: this.viewManager.toggleMainViewDevTools,
       toggleTitleBarViewTools: this.toggleTitleBarViewDevTools,
-      toggleNotificationViewDevTools: this.viewManager.toggleNotificationViewDevTools,
+      toggleDialogViewDevTools: this.viewManager.toggleDialogViewDevTools,
     }))
     this.win.setMenu(this.appMenu)
   }

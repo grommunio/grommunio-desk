@@ -1,0 +1,19 @@
+// Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
+
+import { InterpolationOptions } from 'i18next'
+
+type UserDialogText = 'loadFailed'
+
+export type UserDialogButton = 'returnToStartPage'
+
+interface UserDialogTextArgs {
+  loadFailed: { url: string, interpolation?: InterpolationOptions }
+}
+
+interface UserDialogGeneric<T extends UserDialogText> {
+  text: T
+  textArgs: UserDialogTextArgs[T]
+  buttons: UserDialogButton[]
+}
+
+export type UserDialog = { [K in keyof UserDialogTextArgs]: UserDialogGeneric<K> }[keyof UserDialogTextArgs]

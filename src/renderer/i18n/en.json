@@ -11,7 +11,7 @@
     "titleBarView": {
       "addServer": "Add server"
     },
-    "notificationView": {
+    "dialogView": {
       "loadFailedMessage": "Loading of {{url}} failed.",
       "returnToStartPageButton": "Return"
     }

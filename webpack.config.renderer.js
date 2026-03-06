@@ -13,7 +13,7 @@ module.exports = merge(baseConfig,
     entry: {
       'main-start': './src/renderer/mainWindow/startView/index.tsx',
       'main-titleBar': './src/renderer/mainWindow/titleBarView/index.tsx',
-      'main-notification': './src/renderer/mainWindow/notificationView/index.tsx'
+      'main-dialog': './src/renderer/mainWindow/dialogView/index.tsx'
     },
     output: {
       path: outputPath,
@@ -44,9 +44,9 @@ module.exports = merge(baseConfig,
       }),
        new HtmlWebpackPlugin({
         title: 'grommunio Desk',
-        filename: 'main-notification.html',
+        filename: 'main-dialog.html',
         template: './src/index.html',
-        chunks: ['main-notification'],
+        chunks: ['main-dialog'],
         inject: true,
       }),
       isProduction && new MiniCssExtractPlugin(),

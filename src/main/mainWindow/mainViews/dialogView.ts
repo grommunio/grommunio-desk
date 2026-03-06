@@ -8,16 +8,16 @@ import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import { View } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 import { IS_PRODUCTION } from '../../../constants/misc'
-import { UserNotification } from '../../../types/userNotification'
-import { ON_NOTIFICATION } from '../../constants/communication'
+import { UserDialog } from '../../../types/dialog'
+import { ON_DIALOG_OPEN } from '../../constants/communication'
 
-export default class NotificationView implements View {
-  private static readonly DEFAULT_HTML_FILE = 'main-notification.html'
+export default class DialogView implements View {
+  private static readonly DEFAULT_HTML_FILE = 'main-dialog.html'
   private view?: WebContentsView
-  private notification: UserNotification
+  private userDialog: UserDialog
 
-  constructor(contentSize: number[], notification: UserNotification) {
-    this.notification = notification
+  constructor(contentSize: number[], userDialog: UserDialog) {
+    this.userDialog = userDialog
     this.create(contentSize)
   }
 
@@ -25,9 +25,9 @@ export default class NotificationView implements View {
     throwIfPropertyUndefined('view', this.view)
 
     if (IS_PRODUCTION)
-      this.view.webContents.loadFile(getAppPath(NotificationView.DEFAULT_HTML_FILE))
+      this.view.webContents.loadFile(getAppPath(DialogView.DEFAULT_HTML_FILE))
     else
-      this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${NotificationView.DEFAULT_HTML_FILE}`)
+      this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${DialogView.DEFAULT_HTML_FILE}`)
   }
 
   private registerListeners = (): void => {
@@ -42,7 +42,7 @@ export default class NotificationView implements View {
     })
 
     this.view.webContents.on('did-finish-load', () => {
-      this.view?.webContents.send(ON_NOTIFICATION, this.notification)
+      this.view?.webContents.send(ON_DIALOG_OPEN, this.userDialog)
     })
   }
 

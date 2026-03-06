@@ -3,15 +3,15 @@
 import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import { Server, ServerOptions } from '../../types/misc'
-import { UserNotification, UserNotificationButton } from '../../types/userNotification'
+import { UserDialog, UserDialogButton } from '../../types/dialog'
 import { View } from '../types/misc'
-import { ADD_SERVER, HANDLE_NOTIFICATION_BUTTON, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
+import { ADD_SERVER, HANDLE_DIALOG_BUTTON, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import store from '../utils/store'
 import ServerView from './mainViews/serverView'
 import StartView from './mainViews/startView'
-import NotificationView from './mainViews/notificationView'
+import DialogView from './mainViews/dialogView'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
@@ -20,7 +20,7 @@ export default class ViewManager {
   private serverViews: Map<Server['id'], ServerView>
   private servers: Server[]
   private windowContentSize?: number[]
-  private notificationView?: NotificationView
+  private dialogView?: DialogView
   private addWindowView: (newView: ElectronView) => void
   private removeWindowView: (view: ElectronView) => void
   private serverSwitchListener?: (server: Server | undefined) => void
@@ -42,7 +42,7 @@ export default class ViewManager {
     ipcMain.on(ADD_SERVER, this.onAddServer)
     ipcMain.on(LOAD_NEW_SERVER, this.onLoadNewServer)
     ipcMain.on(SWITCH_SERVER, this.onSwitchServer)
-    ipcMain.on(HANDLE_NOTIFICATION_BUTTON, this.onHandleNotificationButton)
+    ipcMain.on(HANDLE_DIALOG_BUTTON, this.onHandleDialogButton)
   }
 
   private switchCurrView(newView: View): void {
@@ -84,8 +84,8 @@ export default class ViewManager {
       logger.debug('switchServer', 'Canceling switchServer-operation, because server is already loaded')
       return
     }
-    if (this.notificationView != null) {
-      logger.debug('switchServer', 'Canceling switchServer-operation due to active notification') // TODO: use log.scope (?)
+    if (this.dialogView != null) {
+      logger.debug('switchServer', 'Canceling switchServer-operation due to active dialog') // TODO: use log.scope (?)
       return
     }
     if (!skipServerStoreCheck && server != null && this.servers.find((srv: Server) => srv.id === server.id) == null) {
@@ -109,24 +109,24 @@ export default class ViewManager {
     this.switchServer(server)
   }
 
-  private createNotification = (notification: UserNotification): void => {
+  private createDialog = (dialog: UserDialog): void => {
     throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
-    if (this.notificationView != null)
+    if (this.dialogView != null)
       return
-    this.notificationView = new NotificationView(this.windowContentSize, notification)
-    this.addWindowView(this.notificationView.getWebView())
+    this.dialogView = new DialogView(this.windowContentSize, dialog)
+    this.addWindowView(this.dialogView.getWebView())
   }
 
-  private closeNotification = (): void => {
-    const notificationWebView = this.notificationView?.getWebView()
-    if (this.notificationView != null && notificationWebView != null) {
-      this.removeWindowView(notificationWebView)
-      this.notificationView.close()
-      this.notificationView = undefined
+  private closeDialog = (): void => {
+    const dialogWebView = this.dialogView?.getWebView()
+    if (this.dialogView != null && dialogWebView != null) {
+      this.removeWindowView(dialogWebView)
+      this.dialogView.close()
+      this.dialogView = undefined
     }
   }
 
-  // Closes currView (if is not an instance of ServerView or failed to load) and notificationView.
+  // Closes currView (if is not an instance of ServerView or failed to load) and dialogView.
   // Note that this method is used when the BrowserWindow closes. Therefore, it will not remove the views from the window.
   closeCurrView = (): void => {
     // e.g. when currView is an instance of StartView
@@ -141,8 +141,8 @@ export default class ViewManager {
       this.currView.close()
     }
     this.currView = undefined // necessary because switchCurrView needs to re-add the currView to BrowserWindow
-    this.notificationView?.close()
-    this.notificationView = undefined
+    this.dialogView?.close()
+    this.dialogView = undefined
   }
 
   toggleMainViewDevTools = (): void => {
@@ -150,14 +150,14 @@ export default class ViewManager {
     this.currView.toggleDevTools()
   }
 
-  toggleNotificationViewDevTools = (): void => {
-    this.notificationView?.toggleDevTools()
+  toggleDialogViewDevTools = (): void => {
+    this.dialogView?.toggleDevTools()
   }
 
   adjustViewBounds = (contentSize: number[]): void => {
     this.windowContentSize = contentSize
     this.currView?.adjustBounds(contentSize)
-    this.notificationView?.adjustBounds(contentSize)
+    this.dialogView?.adjustBounds(contentSize)
   }
 
   getCurrServer = (): Server | undefined => {
@@ -197,7 +197,7 @@ export default class ViewManager {
 
   private onServerViewDidFailLoad = (server: Server): void => {
     logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
-    this.createNotification({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: ['returnToStartPage'] })
+    this.createDialog({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: ['returnToStartPage'] })
   }
 
   // IPC functions
@@ -221,14 +221,14 @@ export default class ViewManager {
     this.switchServer(server)
   }
 
-  private onHandleNotificationButton = (_event: IpcMainEvent, button: UserNotificationButton): void => {
-    this.closeNotification()
+  private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton): void => {
+    this.closeDialog()
     if (button === 'returnToStartPage') {
       if (this.currView instanceof ServerView) {
         this.serverViews.delete(this.currView.getServer().id)
       }
       else {
-        logger.warn('onHandleNotificationButton', 'currView is not a ServerView')
+        logger.warn('onHandleDialogButton', 'currView is not a ServerView')
       }
       this.switchServer(undefined)
     }

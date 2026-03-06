@@ -3,7 +3,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 import { ServerOptions, Server } from '../types/misc'
-import { UserNotificationButton, UserNotification } from '../types/userNotification'
+import { UserDialogButton, UserDialog } from '../types/dialog'
 
 import {
   ADD_SERVER,
@@ -14,8 +14,8 @@ import {
   ON_APP_MENU_CLOSE,
   ON_SERVER_SWITCH,
   ON_SERVER_SAVE,
-  ON_NOTIFICATION,
-  HANDLE_NOTIFICATION_BUTTON,
+  ON_DIALOG_OPEN,
+  HANDLE_DIALOG_BUTTON,
   SET_TITLE_BAR_SERVER_MENU_OPEN,
 } from './constants/communication'
 
@@ -25,7 +25,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadNewServer: (server: ServerOptions) => ipcRenderer.send(LOAD_NEW_SERVER, server),
   switchServer: (server: Server) => ipcRenderer.send(SWITCH_SERVER, server),
   toggleAppMenu: () => ipcRenderer.send(TOGGLE_APP_MENU),
-  handleNotificationButton: (button: UserNotificationButton) => ipcRenderer.send(HANDLE_NOTIFICATION_BUTTON, button),
+  handleDialogButton: (button: UserDialogButton) => ipcRenderer.send(HANDLE_DIALOG_BUTTON, button),
   setTitleBarServerMenuOpen: (isOpen: boolean) => ipcRenderer.send(SET_TITLE_BAR_SERVER_MENU_OPEN, isOpen),
 
   validateServerUrl: (server: string) => ipcRenderer.invoke(VALIDATE_SERVER_URL, server),
@@ -33,5 +33,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onAppMenuClose: (listener: () => void) => ipcRenderer.on(ON_APP_MENU_CLOSE, (_event: IpcRendererEvent) => listener()),
   onServerSwitch: (listener: (server: Server | undefined) => void) => ipcRenderer.on(ON_SERVER_SWITCH, (_event: IpcRendererEvent, server: Server | undefined) => listener(server)),
   onServerSave: (listener: (servers: Server[]) => void) => ipcRenderer.on(ON_SERVER_SAVE, (_event: IpcRendererEvent, servers: Server[]) => listener(servers)),
-  onNotification: (listener: (notification: UserNotification) => void) => ipcRenderer.on(ON_NOTIFICATION, (_event: IpcRendererEvent, notification: UserNotification) => listener(notification)),
+  onDialogOpen: (listener: (dialog: UserDialog) => void) => ipcRenderer.on(ON_DIALOG_OPEN, (_event: IpcRendererEvent, dialog: UserDialog) => listener(dialog)),
 })
