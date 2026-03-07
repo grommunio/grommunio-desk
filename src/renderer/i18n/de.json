@@ -12,7 +12,8 @@
       "addServer": "Server hinzufügen"
     },
     "dialogView": {
-      "loadFailedMessage": "Laden von {{url}} schlug fehl.",
+      "loadFailedTitle": "Fehlgeschlagenes Laden",
+      "loadFailedText": "Laden von {{url}} schlug fehl.",
       "returnToStartPageButton": "Zurück"
     }
   }

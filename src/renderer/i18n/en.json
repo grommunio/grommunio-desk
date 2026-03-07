@@ -12,7 +12,8 @@
       "addServer": "Add server"
     },
     "dialogView": {
-      "loadFailedMessage": "Loading of {{url}} failed.",
+      "loadFailedTitle": "Loading failed",
+      "loadFailedText": "Loading of {{url}} failed.",
       "returnToStartPageButton": "Return"
     }
   }

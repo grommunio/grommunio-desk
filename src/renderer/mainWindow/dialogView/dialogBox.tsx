@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styles from './dialogBox.module.css'
@@ -14,8 +14,12 @@ const DialogBox = (): React.ReactElement => {
   const [userDialog, setUserDialog] = useState<UserDialog | undefined>(undefined)
   const buttons = useMemo(() => userDialog
     ? userDialog.buttons.map((button, idx) => (
-        <button className={styles.button} onClick={() => window.electronAPI.handleDialogButton(button)} key={`button-${idx}`}>
-          {t(`mainWindow.dialogView.${button}Button`)}
+        <button
+          className={`${styles.button} ${styles[`${button.name}Button`]}`}
+          onClick={() => window.electronAPI.handleDialogButton(button)}
+          key={`button-${idx}`}
+        >
+          {t(`mainWindow.dialogView.${button.name}Button`)}
         </button>
       ))
     : [],
@@ -25,6 +29,38 @@ const DialogBox = (): React.ReactElement => {
     window.electronAPI.onDialogOpen(onDialogOpen)
   }, [])
 
+  // only the first button with triggerOnEscape / triggerOnEnter === true will be triggered
+  const onEscapeKeyDown = useCallback(() => {
+    const button = userDialog?.buttons.find(button => button.triggerOnEscape === true)
+    if (button != null)
+      window.electronAPI.handleDialogButton(button)
+  }, [userDialog])
+
+  const onEnterKeyDown = useCallback(() => {
+    const button = userDialog?.buttons.find(button => button.triggerOnEnter === true)
+    if (button != null)
+      window.electronAPI.handleDialogButton(button)
+  }, [userDialog])
+
+  const onKeyDown = useCallback((event: globalThis.KeyboardEvent): void => {
+    if (event.key === 'Escape')
+      onEscapeKeyDown()
+    else if (event.key === 'Enter')
+      onEnterKeyDown()
+  }, [onEscapeKeyDown, onEnterKeyDown])
+
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown)
+
+    return (): void => {
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [onKeyDown])
+
+  const onBackdropClick = useCallback((): void => {
+    onEscapeKeyDown()
+  }, [onEscapeKeyDown])
+
   // IPC functions
   const onDialogOpen = (userDialog: UserDialog): void => {
     logger.silly('onDialogOpen', 'New dialog', userDialog)
@@ -32,20 +68,30 @@ const DialogBox = (): React.ReactElement => {
   }
 
   return (
-    <div className={styles.bg}>
-      <div className={styles.dialogDiv}>
-        <div className={styles.textDiv}>
-          {
-            userDialog
-              ? t(`mainWindow.dialogView.${userDialog.text}Message`, userDialog.textArgs)
-              : ''
-          }
-        </div>
-        <div className={styles.separator} />
-        <div className={styles.buttonDiv}>
-          {buttons}
-        </div>
-      </div>
+    <div
+      className={styles.backdrop}
+      onMouseDown={onBackdropClick}
+    >
+      {
+        userDialog
+          ? (
+              <div
+                className={styles.dialogDiv}
+                onMouseDown={event => event.stopPropagation()}
+              >
+                <h3 className={styles.title}>
+                  {t(`mainWindow.dialogView.${userDialog.text}Title`, userDialog.textArgs)}
+                </h3>
+                <p className={styles.text}>
+                  {t(`mainWindow.dialogView.${userDialog.text}Text`, userDialog.textArgs)}
+                </p>
+                <div className={styles.buttonDiv}>
+                  {buttons}
+                </div>
+              </div>
+            )
+          : ''
+      }
     </div>
   )
 }

@@ -1,60 +1,55 @@
-.bg {
+.backdrop {
   backdrop-filter: blur(5px);
-  height: 100vh;
-  width: 100vw;
+  position: fixed;
+  inset: 0;
 }
 
 .dialogDiv {
-  position: absolute;
-  top: 100px;
+  position: fixed;
+  top: 56px;
   left: 50%;
-  height: 200px;
-  width: 400px;
-  transform: translate(-50%, 0);
-  background-color: #1e1e1e;
-  border-color: #3b3b3b;
-  border-style: solid;
-  color: white;
-  border-radius: 25px;
-  border-width: 2px;
+  min-width: 320px;
+  max-width: 80vw;
+  min-height: 120px;
+  padding: 14px;
+  z-index: 22;
   display: flex;
   flex-direction: column;
+  transform: translate(-50%, 0);
+  background-color: #1b1e25;
+  border: 1px solid #3a3d4d;
+  border-radius: 8px;
+  color: white;
   box-sizing: border-box;
+  box-shadow: 0 16px 32px #00000066;
+}
 
-  .textDiv {
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
+.title {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
 
-  .separator {
-    height: 2px;
-    width: 100%;
-    background-color: #3b3b3b;
-  }
+.text {
+  margin: 0 0 12px;
+  font-size: 13px;
+  opacity: 0.92;
+}
 
-  .buttonDiv {
-    height: 70px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 50px;
-  }
+.buttonDiv {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
 }
 
 .button {
-  padding: 8px 18px;
-  border-radius: 8px;
-  border: none;
-  background: #c2c7cf;
-  color: #1f2328;
-  font-weight: 600;
+  border: 1px solid #3a3d4d;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 6px 10px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  font-family: inherit;
 
   &:focus-visible {
     outline: 0;
@@ -62,13 +57,6 @@
 
   &:focus,
   &:hover:not(:disabled) {
-    background: #f4f4f5;
-  }
-
-  &:disabled {
-    background: #1c1c1c;
-    color: #888888; 
-    cursor: not-allowed;
+    background: #2a2f3b;
   }
 }
-

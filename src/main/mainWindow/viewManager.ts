@@ -120,7 +120,7 @@ export default class ViewManager {
   private closeDialog = (): void => {
     const dialogWebView = this.dialogView?.getWebView()
     if (this.dialogView != null && dialogWebView != null) {
-      this.removeWindowView(dialogWebView)
+      this.removeWindowView(dialogWebView) // TODO: move webView == null check to addWindowView / removeWindowView (?)
       this.dialogView.close()
       this.dialogView = undefined
     }
@@ -197,7 +197,7 @@ export default class ViewManager {
 
   private onServerViewDidFailLoad = (server: Server): void => {
     logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
-    this.createDialog({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: ['returnToStartPage'] })
+    this.createDialog({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: [{ name: 'returnToStartPage', triggerOnEnter: true }] })
   }
 
   // IPC functions
@@ -223,7 +223,7 @@ export default class ViewManager {
 
   private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton): void => {
     this.closeDialog()
-    if (button === 'returnToStartPage') {
+    if (button.name === 'returnToStartPage') {
       if (this.currView instanceof ServerView) {
         this.serverViews.delete(this.currView.getServer().id)
       }
