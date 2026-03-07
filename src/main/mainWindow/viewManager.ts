@@ -5,7 +5,7 @@ import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 import { Server, ServerOptions } from '../../types/misc'
 import { UserDialog, UserDialogButton } from '../../types/dialog'
 import { View } from '../types/misc'
-import { ADD_SERVER, HANDLE_DIALOG_BUTTON, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
+import { ADD_SERVER, HANDLE_DIALOG_BUTTON, LOAD_NEW_SERVER, OPEN_DIALOG, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import store from '../utils/store'
@@ -43,6 +43,7 @@ export default class ViewManager {
     ipcMain.on(LOAD_NEW_SERVER, this.onLoadNewServer)
     ipcMain.on(SWITCH_SERVER, this.onSwitchServer)
     ipcMain.on(HANDLE_DIALOG_BUTTON, this.onHandleDialogButton)
+    ipcMain.on(OPEN_DIALOG, this.onOpenDialog)
   }
 
   private switchCurrView(newView: View): void {
@@ -111,8 +112,10 @@ export default class ViewManager {
 
   private createDialog = (dialog: UserDialog): void => {
     throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
-    if (this.dialogView != null)
+    if (this.dialogView != null) {
+      logger.warn('createDialog', 'Canceling createDialog-operation because a dialog is already active', dialog)
       return
+    }
     this.dialogView = new DialogView(this.windowContentSize, dialog)
     this.addWindowView(this.dialogView.getWebView())
   }
@@ -232,5 +235,9 @@ export default class ViewManager {
       }
       this.switchServer(undefined)
     }
+  }
+
+  private onOpenDialog = (_event: IpcMainEvent, userDialog: UserDialog): void => {
+    this.createDialog(userDialog)
   }
 }

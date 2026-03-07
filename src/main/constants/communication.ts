@@ -6,6 +6,7 @@ export const SWITCH_SERVER = 'switch_server'
 export const TOGGLE_APP_MENU = 'toggle_app_menu'
 export const HANDLE_DIALOG_BUTTON = 'handle_dialog_button'
 export const SET_TITLE_BAR_SERVER_MENU_OPEN = 'set_title_bar_server_menu_open'
+export const OPEN_DIALOG = 'open_dialog'
 
 export const VALIDATE_SERVER_URL = 'validate_server_url'
 

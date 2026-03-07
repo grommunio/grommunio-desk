@@ -17,6 +17,7 @@ import {
   ON_DIALOG_OPEN,
   HANDLE_DIALOG_BUTTON,
   SET_TITLE_BAR_SERVER_MENU_OPEN,
+  OPEN_DIALOG,
 } from './constants/communication'
 
 // TODO: check if it is possible to make the ipc functions type proof -> type checking when calling e.g. ipcMain.on(...)
@@ -27,11 +28,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   toggleAppMenu: () => ipcRenderer.send(TOGGLE_APP_MENU),
   handleDialogButton: (button: UserDialogButton) => ipcRenderer.send(HANDLE_DIALOG_BUTTON, button),
   setTitleBarServerMenuOpen: (isOpen: boolean) => ipcRenderer.send(SET_TITLE_BAR_SERVER_MENU_OPEN, isOpen),
+  openDialog: (userDialog: UserDialog) => ipcRenderer.send(OPEN_DIALOG, userDialog),
 
   validateServerUrl: (server: string) => ipcRenderer.invoke(VALIDATE_SERVER_URL, server),
 
   onAppMenuClose: (listener: () => void) => ipcRenderer.on(ON_APP_MENU_CLOSE, (_event: IpcRendererEvent) => listener()),
   onServerSwitch: (listener: (server: Server | undefined) => void) => ipcRenderer.on(ON_SERVER_SWITCH, (_event: IpcRendererEvent, server: Server | undefined) => listener(server)),
   onServerSave: (listener: (servers: Server[]) => void) => ipcRenderer.on(ON_SERVER_SAVE, (_event: IpcRendererEvent, servers: Server[]) => listener(servers)),
-  onDialogOpen: (listener: (dialog: UserDialog) => void) => ipcRenderer.on(ON_DIALOG_OPEN, (_event: IpcRendererEvent, dialog: UserDialog) => listener(dialog)),
+  onDialogOpen: (listener: (userDialog: UserDialog) => void) => ipcRenderer.on(ON_DIALOG_OPEN, (_event: IpcRendererEvent, userDialog: UserDialog) => listener(userDialog)),
 })

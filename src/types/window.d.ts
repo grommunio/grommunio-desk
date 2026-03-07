@@ -12,6 +12,7 @@ declare global {
       toggleAppMenu: () => void
       handleDialogButton: (button: UserDialogButton) => void
       setTitleBarServerMenuOpen: (isOpen: boolean) => void
+      openDialog: (userDialog: UserDialog) => void
 
       validateServerUrl: (server: string) => Promise<boolean>
 
