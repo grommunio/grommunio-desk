@@ -1,6 +1,11 @@
-# grommunio Desk Development Guide
+# grommunio Desk - Development Guide
 
-## Prerequisites
+## Project Structure
+
+- `src/main/`: Electron main process, window/view lifecycle, IPC handlers
+- `src/main/preload.ts`: Secure API bridge via `contextBridge`
+- `src/renderer/`: Renderer views built with React
+- `docs/` Additional documentation
 
 ## Installing dependencies
 
@@ -28,10 +33,12 @@ $ npm run dev
 
 ## Packaging
 
+Application packaging with `electron-builder`
+
 ```bash
 $ npm run package
 ```
 
 ### Creating icons
 
-- for Windows: use the [online tool](https://www.png2ico.com/) to convert a 256x256 PNG file to an ICO file (use default options)
+- for Windows: use an online tool (e.g. [png2ico](https://www.png2ico.com/)) to convert a 256x256 PNG file to an ICO file (use default options)
