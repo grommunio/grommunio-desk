@@ -10,7 +10,7 @@ import logoImg from '../../../../assets/general/logo_with_text.png'
 import backgroundImg from '../../../../assets/general/dark_background.jpg'
 
 const logger = new Logger('renderer/mainWindow/startView/startPage')
-const URL_REGEX_PATTERN = /^https:\/\/([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(?::[0-9]+)?(?:\/[^\s]*)?$/i
+const URL_REGEX_PATTERN = /^https:\/\/([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]+)*\/?$/i
 const URL_VALIDATION_BEGIN_TIMEOUT = 400
 const NAME_REGEX_PATTERN = /^[a-z0-9-_ ]*$/i
 const NAME_MAX_LENGTH = 20
