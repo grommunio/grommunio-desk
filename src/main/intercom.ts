@@ -7,25 +7,49 @@ import {
   VALIDATE_SERVER_URL,
 } from './constants/communication'
 
+const MAX_VERSION_BODY_LENGTH = 4096
+const VERSION_ENDPOINT_PATH = '/web/version'
+const VERSION_REGEX = /^\d+\.\d+\.\d+\.[a-z0-9]+-lp\d+\.\d+\.\d+$/
+
 function validateServerUrl(server: string): Promise<boolean> {
-  const url = server.replace(/\/$/, '') + '/web/version' // TODO: replace necessary?
+  let parsedUrl: URL
+  try {
+    parsedUrl = new URL(server)
+  }
+  catch {
+    return Promise.resolve(false)
+  }
+  parsedUrl.pathname += VERSION_ENDPOINT_PATH
+  parsedUrl.search = ''
+  parsedUrl.hash = ''
 
   return new Promise((resolve) => {
-    try {
-      const req = https.get(url, (res) => {
+    const req = https.get(parsedUrl, (res) => {
+      if (res.statusCode !== 200) {
         res.resume()
-        resolve(res.statusCode === 200)
-      })
+        return resolve(false)
+      }
 
-      req.on('error', () => resolve(false))
-      req.setTimeout(3000, () => {
-        req.destroy()
-        resolve(false)
+      let rawBody = ''
+      res.setEncoding('utf8')
+      res.on('data', (chunk: string) => {
+        rawBody += chunk
+        if (rawBody.length > MAX_VERSION_BODY_LENGTH) {
+          req.destroy()
+          resolve(false)
+        }
       })
-    }
-    catch {
+      res.on('end', () => {
+        const trimmedBody = rawBody.trim()
+        resolve(trimmedBody != null && VERSION_REGEX.test(trimmedBody))
+      })
+    })
+
+    req.on('error', () => resolve(false))
+    req.setTimeout(3000, () => {
+      req.destroy()
       resolve(false)
-    }
+    })
   })
 }
 
