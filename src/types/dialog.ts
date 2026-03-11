@@ -5,12 +5,14 @@ import { InterpolationOptions } from 'i18next'
 type UserDialogText = 'loadFailed'
 
 interface UserDialogButtonTemplate {
-  callbackParams?: undefined
+  name: string
+  callbackParams?: unknown
   triggerOnEnter?: boolean
   triggerOnEscape?: boolean
 }
 interface UserDialogReturnToStartPageButton extends UserDialogButtonTemplate {
   name: 'returnToStartPage'
+  callbackParams?: undefined
 }
 export type UserDialogButton = UserDialogReturnToStartPageButton
 
