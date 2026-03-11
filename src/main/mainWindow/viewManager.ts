@@ -48,7 +48,7 @@ export default class ViewManager {
 
   private switchCurrView(newView: View): void {
     const oldWebView = this.currView?.getWebView()
-    if (this.currView != null && !(this.currView instanceof ServerView))
+    if (this.currView != null && (!(this.currView instanceof ServerView) || !this.serverViews.has(this.currView.getServer().id)))
       this.currView.close()
     this.currView = newView
     const currWebView = this.currView.getWebView()
@@ -93,9 +93,9 @@ export default class ViewManager {
       logger.error('switchServer', `Could not find server ${server.url} with id ${server.id}`)
       return
     }
-    const [view, loadedFromSratch] = this.createServerView(server)
+    const [view, loadedFromScratch] = this.createServerView(server)
     this.switchCurrView(view)
-    if (!loadedFromSratch) // for new (loaded from scratch) servers, do not set lastUsedServer until the server has loaded successfully (see onServerViewDidFinishLoadSuccly)
+    if (!loadedFromScratch) // for new (loaded from scratch) servers, do not set lastUsedServer until the server has loaded successfully (see onServerViewDidFinishLoadSuccly)
       store.set('lastUsedServer', server)
     this.serverSwitchListener?.(server)
   }
@@ -143,7 +143,7 @@ export default class ViewManager {
       this.serverViews.delete(this.currView.getServer().id)
       this.currView.close()
     }
-    this.currView = undefined // necessary because switchCurrView needs to re-add the currView to BrowserWindow
+    this.currView = undefined // necessary because switchCurrView needs to re-add the currView to the BrowserWindow when the window is reopened
     this.dialogView?.close()
     this.dialogView = undefined
   }

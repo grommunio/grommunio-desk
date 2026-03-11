@@ -24,7 +24,7 @@ export default class TrayMenu {
         label: 'Open App',
         click: onOpenAppClick,
       },
-      { role: 'quit' }, // TODO: check if there is no memory leak
+      { role: 'quit' }, // TODO: check for memory leaks because some views are not explicitly closed
     ])
     this.tray.setContextMenu(contextMenu)
   }
