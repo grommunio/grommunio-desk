@@ -15,27 +15,29 @@ import DialogView from './mainViews/dialogView'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
+const formatViewToString = (view: View): string => view.constructor.name + (view instanceof ServerView ? `[ ${view.getServer().name} ]` : '')
+
 export default class ViewManager {
   private currView?: View
   private serverViews: Map<Server['id'], ServerView>
   private servers: Server[]
   private windowContentSize?: number[]
   private dialogView?: DialogView
-  private addWindowView: (newView: ElectronView) => void
-  private removeWindowView: (view: ElectronView) => void
+  private addViewToMainWindow: (newView: ElectronView) => void
+  private removeViewFromMainWindow: (view: ElectronView) => void
   private serverSwitchListener?: (server: Server | undefined) => void
   private serverSaveListener?: (servers: Server[]) => void
 
   constructor(
-    addWindowView: (newView: ElectronView) => void,
-    removeWindowView: (view: ElectronView) => void,
+    addViewToMainWindow: (newView: ElectronView) => void,
+    removeViewFromMainWindow: (view: ElectronView) => void,
     serverSwitchListener?: (server: Server | undefined) => void,
     serverSaveListener?: (servers: Server[]) => void,
   ) {
     this.servers = store.get('servers')
     this.serverViews = new Map()
-    this.addWindowView = addWindowView
-    this.removeWindowView = removeWindowView
+    this.addViewToMainWindow = addViewToMainWindow
+    this.removeViewFromMainWindow = removeViewFromMainWindow
     this.serverSwitchListener = serverSwitchListener
     this.serverSaveListener = serverSaveListener
 
@@ -46,16 +48,31 @@ export default class ViewManager {
     ipcMain.on(OPEN_DIALOG, this.onOpenDialog)
   }
 
+  private addWindowView = (view: View): void => {
+    logger.silly('addWindowView', 'Add', formatViewToString(view))
+    const webView = view.getWebView()
+    throwIfPropertyUndefined('view', webView)
+    this.addViewToMainWindow(webView)
+  }
+
+  private removeWindowView = (view: View): void => {
+    logger.silly('removeWindowView', 'Remove', formatViewToString(view))
+    const webView = view.getWebView()
+    throwIfPropertyUndefined('view', webView)
+    this.removeViewFromMainWindow(webView)
+  }
+
   private switchCurrView(newView: View): void {
-    const oldWebView = this.currView?.getWebView()
-    if (this.currView != null && (!(this.currView instanceof ServerView) || !this.serverViews.has(this.currView.getServer().id)))
-      this.currView.close()
+    const oldView = this.currView
     this.currView = newView
-    const currWebView = this.currView.getWebView()
-    throwIfPropertyUndefined('currWebView', currWebView)
-    this.addWindowView(currWebView)
-    if (oldWebView != null)
-      this.removeWindowView(oldWebView)
+    this.addWindowView(this.currView)
+    if (oldView != null) {
+      this.removeWindowView(oldView)
+      if (!(oldView instanceof ServerView) || !this.serverViews.has(oldView.getServer().id)) {
+        logger.silly('switchCurrView', 'Close', formatViewToString(oldView))
+        oldView.close()
+      }
+    }
   }
 
   private createServerView(server: Server | undefined): [View, boolean] { // boolean return value indicates, if the server was loaded from scratch (so it was not cached, except StartView)
@@ -117,13 +134,12 @@ export default class ViewManager {
       return
     }
     this.dialogView = new DialogView(this.windowContentSize, dialog)
-    this.addWindowView(this.dialogView.getWebView())
+    this.addWindowView(this.dialogView)
   }
 
   private closeDialog = (): void => {
-    const dialogWebView = this.dialogView?.getWebView()
-    if (this.dialogView != null && dialogWebView != null) {
-      this.removeWindowView(dialogWebView) // TODO: move webView == null check to addWindowView / removeWindowView (?)
+    if (this.dialogView != null) {
+      this.removeWindowView(this.dialogView)
       this.dialogView.close()
       this.dialogView = undefined
     }
@@ -134,12 +150,12 @@ export default class ViewManager {
   closeCurrView = (): void => {
     // e.g. when currView is an instance of StartView
     if (this.currView != null && !(this.currView instanceof ServerView)) {
-      logger.debug('closeCurrView', 'currView is closed (because currView is not an instance of ServerView)')
+      logger.debug('closeCurrView', 'Close', formatViewToString(this.currView))
       this.currView.close()
     }
     // when currView failed to load, it is / should be already included in serverViews
     else if (this.currView != null && this.serverViews.values().find(view => view === this.currView)?.hasFailedLoading()) {
-      logger.debug('closeCurrView', 'currView is closed (because currView failed to load)')
+      logger.debug('closeCurrView', `Close ${formatViewToString(this.currView)} because it failed to load`)
       this.serverViews.delete(this.currView.getServer().id)
       this.currView.close()
     }
