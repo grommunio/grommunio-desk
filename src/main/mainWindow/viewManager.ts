@@ -5,13 +5,12 @@ import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 import { Server, ServerOptions } from '../../types/misc'
 import { UserDialog, UserDialogButton } from '../../types/dialog'
 import { View } from '../types/misc'
-import { ADD_SERVER, HANDLE_DIALOG_BUTTON, LOAD_NEW_SERVER, OPEN_DIALOG, SWITCH_SERVER } from '../constants/communication'
+import { ADD_SERVER, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import store from '../utils/store'
 import ServerView from './mainViews/serverView'
 import StartView from './mainViews/startView'
-import DialogView from './mainViews/dialogView'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
@@ -22,15 +21,18 @@ export default class ViewManager {
   private serverViews: Map<Server['id'], ServerView>
   private servers: Server[]
   private windowContentSize?: number[]
-  private dialogView?: DialogView
   private addViewToMainWindow: (newView: ElectronView) => void
   private removeViewFromMainWindow: (view: ElectronView) => void
+  private createDialog: (userDialog: UserDialog) => void
+  private isDialogActive: () => boolean
   private serverSwitchListener?: (server: Server | undefined) => void
   private serverSaveListener?: (servers: Server[]) => void
 
   constructor(
     addViewToMainWindow: (newView: ElectronView) => void,
     removeViewFromMainWindow: (view: ElectronView) => void,
+    createDialog: (userDialog: UserDialog) => void,
+    isDialogActive: () => boolean,
     serverSwitchListener?: (server: Server | undefined) => void,
     serverSaveListener?: (servers: Server[]) => void,
   ) {
@@ -38,14 +40,14 @@ export default class ViewManager {
     this.serverViews = new Map()
     this.addViewToMainWindow = addViewToMainWindow
     this.removeViewFromMainWindow = removeViewFromMainWindow
+    this.createDialog = createDialog
+    this.isDialogActive = isDialogActive
     this.serverSwitchListener = serverSwitchListener
     this.serverSaveListener = serverSaveListener
 
     ipcMain.on(ADD_SERVER, this.onAddServer)
     ipcMain.on(LOAD_NEW_SERVER, this.onLoadNewServer)
     ipcMain.on(SWITCH_SERVER, this.onSwitchServer)
-    ipcMain.on(HANDLE_DIALOG_BUTTON, this.onHandleDialogButton)
-    ipcMain.on(OPEN_DIALOG, this.onOpenDialog)
   }
 
   private addWindowView = (view: View): void => {
@@ -102,7 +104,7 @@ export default class ViewManager {
       logger.debug('switchServer', 'Canceling switchServer-operation, because server is already loaded')
       return
     }
-    if (this.dialogView != null) {
+    if (this.isDialogActive()) {
       logger.debug('switchServer', 'Canceling switchServer-operation due to active dialog') // TODO: use log.scope (?)
       return
     }
@@ -127,24 +129,6 @@ export default class ViewManager {
     this.switchServer(server)
   }
 
-  private createDialog = (dialog: UserDialog): void => {
-    throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
-    if (this.dialogView != null) {
-      logger.warn('createDialog', 'Canceling createDialog-operation because a dialog is already active', dialog)
-      return
-    }
-    this.dialogView = new DialogView(this.windowContentSize, dialog)
-    this.addWindowView(this.dialogView)
-  }
-
-  private closeDialog = (): void => {
-    if (this.dialogView != null) {
-      this.removeWindowView(this.dialogView)
-      this.dialogView.close()
-      this.dialogView = undefined
-    }
-  }
-
   // Closes currView (if is not an instance of ServerView or failed to load) and dialogView.
   // Note that this method is used when the BrowserWindow closes. Therefore, it will not remove the views from the window.
   closeCurrView = (): void => {
@@ -160,8 +144,6 @@ export default class ViewManager {
       this.currView.close()
     }
     this.currView = undefined // necessary because switchCurrView needs to re-add the currView to the BrowserWindow when the window is reopened
-    this.dialogView?.close()
-    this.dialogView = undefined
   }
 
   toggleMainViewDevTools = (): void => {
@@ -169,14 +151,9 @@ export default class ViewManager {
     this.currView.toggleDevTools()
   }
 
-  toggleDialogViewDevTools = (): void => {
-    this.dialogView?.toggleDevTools()
-  }
-
   adjustViewBounds = (contentSize: number[]): void => {
     this.windowContentSize = contentSize
     this.currView?.adjustBounds(contentSize)
-    this.dialogView?.adjustBounds(contentSize)
   }
 
   getCurrServer = (): Server | undefined => {
@@ -219,6 +196,18 @@ export default class ViewManager {
     this.createDialog({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: [{ name: 'returnToStartPage', triggerOnEnter: true }] })
   }
 
+  handleDialogButton = (button: UserDialogButton): void => {
+    if (button.name === 'returnToStartPage') {
+      if (this.currView instanceof ServerView) {
+        this.serverViews.delete(this.currView.getServer().id)
+      }
+      else {
+        logger.warn('handleDialogButton', 'currView is not a ServerView')
+      }
+      this.switchServer(undefined)
+    }
+  }
+
   // IPC functions
   private onAddServer = (_event: IpcMainEvent): void => {
     this.switchServer(undefined)
@@ -238,22 +227,5 @@ export default class ViewManager {
 
   private onSwitchServer = (_event: IpcMainEvent, server: Server): void => {
     this.switchServer(server)
-  }
-
-  private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton): void => {
-    this.closeDialog()
-    if (button.name === 'returnToStartPage') {
-      if (this.currView instanceof ServerView) {
-        this.serverViews.delete(this.currView.getServer().id)
-      }
-      else {
-        logger.warn('onHandleDialogButton', 'currView is not a ServerView')
-      }
-      this.switchServer(undefined)
-    }
-  }
-
-  private onOpenDialog = (_event: IpcMainEvent, userDialog: UserDialog): void => {
-    this.createDialog(userDialog)
   }
 }

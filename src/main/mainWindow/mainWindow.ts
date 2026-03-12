@@ -1,35 +1,45 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { BaseWindow, Menu, ipcMain, IpcMainEvent, View } from 'electron'
+import { BaseWindow, Menu, ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import store from '../utils/store'
 import { buildAppMenuTemplate } from '../utils/appMenu'
 import TitleBarView from './titleBarView'
 import { TITLE_BAR } from '../../constants/window'
-import { SET_TITLE_BAR_SERVER_MENU_OPEN, TOGGLE_APP_MENU } from '../constants/communication'
+import { SET_TITLE_BAR_SERVER_MENU_OPEN, TOGGLE_APP_MENU, HANDLE_DIALOG_BUTTON, OPEN_DIALOG } from '../constants/communication'
 import { Server } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import ViewManager from './viewManager'
 import { APP_PRODUCT_NAME } from '../constants/app'
 import { systemPlatform } from '../constants/system'
 import { BACKGROUND_COLOR } from '../constants/view'
+import DialogView from './mainViews/dialogView'
+import { UserDialog, UserDialogButton } from '../../types/dialog'
+import Logger from '@utils/logger'
+
+const logger = new Logger('main/mainWindow/mainWindow')
 
 export default class MainWindow {
   private win?: BaseWindow
   private appMenu?: Menu
   private viewManager: ViewManager
   private titleBarView?: TitleBarView
+  private dialogView?: DialogView
 
   constructor() {
     this.viewManager = new ViewManager(
       this.addWindowView,
       this.removeWindowView,
+      this.createDialog,
+      this.isDialogActive,
       this.onServerSwitch,
       this.onServerSave,
     )
 
     ipcMain.on(TOGGLE_APP_MENU, this.onToggleAppMenu)
     ipcMain.on(SET_TITLE_BAR_SERVER_MENU_OPEN, this.onSetTitleBarServerMenuOpen)
+    ipcMain.on(HANDLE_DIALOG_BUTTON, this.onHandleDialogButton)
+    ipcMain.on(OPEN_DIALOG, this.onOpenDialog)
 
     this.createWindow()
   }
@@ -65,12 +75,14 @@ export default class MainWindow {
     this.registerWinListeners()
     this.registerMenuListeners()
 
-    this.viewManager.createViews(this.win.getSize()) // TODO: check if that's the correct size
+    const winSize = this.getWinContentSize()
 
-    this.titleBarView = new TitleBarView(this.win.getSize(), this.onTitleBarDidFinishLoad)
+    this.titleBarView = new TitleBarView(winSize, this.onTitleBarDidFinishLoad)
     const titleBarWebView = this.titleBarView.getWebView()
     throwIfPropertyUndefined('titleBarWebView', titleBarWebView)
-    this.win.contentView.addChildView(titleBarWebView)
+    this.addWindowView(titleBarWebView)
+
+    this.viewManager.createViews(winSize) // TODO: check if that's the correct size
   }
 
   show = (): void => {
@@ -84,19 +96,22 @@ export default class MainWindow {
 
     this.win.on('close', () => {
       throwIfPropertyUndefined('win', this.win)
-      store.set('windowSize', this.win.getSize())
+      store.set('windowSize', this.getWinContentSize())
     })
     this.win.on('closed', () => {
       this.viewManager.closeCurrView()
       this.titleBarView?.close()
+      this.dialogView?.close()
+      this.dialogView = undefined
       this.win = undefined
     })
     this.win.on('resize', () => {
       throwIfPropertyUndefined('win', this.win)
 
-      const winSize = this.win.getSize()
+      const winSize = this.getWinContentSize()
       this.viewManager.adjustViewBounds(winSize)
       this.titleBarView?.adjustBounds(winSize)
+      this.dialogView?.adjustBounds(winSize)
     })
   }
 
@@ -118,7 +133,7 @@ export default class MainWindow {
       switchServer: this.viewManager.switchServer,
       toggleMainViewDevTools: this.viewManager.toggleMainViewDevTools,
       toggleTitleBarViewTools: this.toggleTitleBarViewDevTools,
-      toggleDialogViewDevTools: this.viewManager.toggleDialogViewDevTools,
+      toggleDialogViewDevTools: () => this.dialogView?.toggleDevTools(),
     }))
     this.win.setMenu(this.appMenu)
   }
@@ -141,22 +156,19 @@ export default class MainWindow {
     this.titleBarView?.sendServerSave(servers)
   }
 
-  private addWindowView = (newView: View): void => {
+  private addWindowView = (newView: ElectronView): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.addChildView(newView)
-    this.resetTitleBarViewStackPos()
+    const titleBarWebView = this.titleBarView?.getWebView()
+    if (titleBarWebView != null)
+      this.win.contentView.addChildView(titleBarWebView)
+    if (this.dialogView != null)
+      this.win.contentView.addChildView(this.dialogView.getWebView())
   }
 
-  private removeWindowView = (view: View): void => {
+  private removeWindowView = (view: ElectronView): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.removeChildView(view)
-  }
-
-  private resetTitleBarViewStackPos = (): void => {
-    const titleBarWebView = this.titleBarView?.getWebView()
-    if (this.win == null || titleBarWebView == null)
-      return
-    this.win.contentView.addChildView(titleBarWebView)
   }
 
   focus = (): void => {
@@ -171,6 +183,32 @@ export default class MainWindow {
     return this.win != null
   }
 
+  private getWinContentSize = (): number[] => {
+    throwIfPropertyUndefined('win', this.win)
+    return this.win.getSize()
+  }
+
+  private createDialog = (userDialog: UserDialog): void => {
+    if (this.dialogView != null) {
+      logger.warn('createDialog', 'Canceling createDialog-operation because a dialog is already active', userDialog)
+      return
+    }
+    this.dialogView = new DialogView(this.getWinContentSize(), userDialog)
+    this.addWindowView(this.dialogView.getWebView())
+  }
+
+  private closeDialog = (): void => {
+    if (this.dialogView != null) {
+      this.removeWindowView(this.dialogView.getWebView())
+      this.dialogView.close()
+      this.dialogView = undefined
+    }
+  }
+
+  private isDialogActive = (): boolean => {
+    return this.dialogView != null
+  }
+
   // IPC functions
   private onToggleAppMenu = (_event: IpcMainEvent): void => {
     this.appMenu?.popup({
@@ -182,7 +220,14 @@ export default class MainWindow {
 
   private onSetTitleBarServerMenuOpen = (_event: IpcMainEvent, isOpen: boolean): void => {
     this.titleBarView?.setServerMenuOpen(isOpen)
-    if (isOpen)
-      this.resetTitleBarViewStackPos()
+  }
+
+  private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton): void => {
+    this.closeDialog()
+    this.viewManager.handleDialogButton(button)
+  }
+
+  private onOpenDialog = (_event: IpcMainEvent, userDialog: UserDialog): void => {
+    this.createDialog(userDialog)
   }
 }

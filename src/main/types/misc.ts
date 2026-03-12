@@ -6,5 +6,5 @@ export interface View {
   adjustBounds(contentSize: number[]): void
   close(): void
   toggleDevTools(): void
-  getWebView(): ElectronView | undefined
+  getWebView(): ElectronView | undefined // TODO: fix inconsistent defintions
 }
