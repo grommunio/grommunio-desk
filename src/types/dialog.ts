@@ -2,8 +2,6 @@
 
 import { InterpolationOptions } from 'i18next'
 
-type UserDialogText = 'loadFailed'
-
 interface UserDialogButtonTemplate {
   name: string
   callbackParams?: unknown
@@ -19,8 +17,7 @@ export type UserDialogButton = UserDialogReturnToStartPageButton
 interface UserDialogTextArgs {
   loadFailed: { url: string, interpolation?: InterpolationOptions }
 }
-
-interface UserDialogGeneric<T extends UserDialogText> {
+interface UserDialogGeneric<T extends keyof UserDialogTextArgs> {
   text: T
   textArgs: UserDialogTextArgs[T]
   buttons: UserDialogButton[]
