@@ -6,7 +6,7 @@ import { getAppPath } from '../../utils/paths'
 import { TITLE_BAR } from '../../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
 import { View } from '../../types/misc'
-import { throwIfPropertyUndefined } from '../../utils/misc'
+import { sendIpc, throwIfPropertyUndefined } from '../../utils/misc'
 import { IS_PRODUCTION } from '../../../constants/misc'
 import { UserDialog } from '../../../types/dialog'
 import { ON_DIALOG_OPEN } from '../../constants/communication'
@@ -42,7 +42,7 @@ export default class DialogView implements View {
     })
 
     this.view.webContents.on('did-finish-load', () => {
-      this.view?.webContents.send(ON_DIALOG_OPEN, this.userDialog)
+      sendIpc(this.view, ON_DIALOG_OPEN, this.userDialog)
     })
   }
 

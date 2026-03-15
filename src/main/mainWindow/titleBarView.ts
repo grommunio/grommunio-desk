@@ -7,7 +7,7 @@ import { TITLE_BAR } from '../../constants/window'
 import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../constants/view'
 import { View } from '../types/misc'
 import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH, ON_SERVER_SAVE } from '../constants/communication'
-import { throwIfPropertyUndefined } from '../utils/misc'
+import { sendIpc, throwIfPropertyUndefined } from '../utils/misc'
 import { Server } from '../../types/misc'
 import { IS_PRODUCTION } from '../../constants/misc'
 
@@ -102,14 +102,14 @@ export default class TitleBarView implements View {
 
   // IPC functions
   sendAppMenuClose = (): void => {
-    this.view?.webContents.send(ON_APP_MENU_CLOSE)
+    sendIpc(this.view, ON_APP_MENU_CLOSE)
   }
 
   sendServerSwitch = (server: Server | undefined): void => {
-    this.view?.webContents.send(ON_SERVER_SWITCH, server) // TODO: add undefined check (possibly throw an error)
+    sendIpc(this.view, ON_SERVER_SWITCH, server)
   }
 
   sendServerSave = (servers: Server[]): void => {
-    this.view?.webContents.send(ON_SERVER_SAVE, servers)
+    sendIpc(this.view, ON_SERVER_SAVE, servers)
   }
 }
