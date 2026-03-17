@@ -13,30 +13,18 @@
 $ npm install
 ```
 
-## Building
-
-```bash
-$ npm run prod
-```
-
-and start the application
+## Starting the application
 
 ```bash
 $ npm start
 ```
 
-## Starting development environment
-
-```bash
-$ npm run dev
-```
-
 ## Packaging
 
-Application packaging with `electron-builder`
+Application packaging with Electron Forge / electron-packager
 
 ```bash
-$ npm run package
+$ npm run make
 ```
 
 ### Creating icons
