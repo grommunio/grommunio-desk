@@ -2,17 +2,17 @@
 
 import { WebContentsView, WindowOpenHandlerResponse } from 'electron'
 
-import { getAppPath } from '../../utils/paths'
 import { TITLE_BAR } from '../../../constants/window'
-import { DEV_TOOLS_OPTIONS, DEV_SERVER_BASE_URL } from '../../constants/view'
+import { DEV_TOOLS_OPTIONS } from '../../constants/view'
 import { View } from '../../types/misc'
 import { sendIpc, throwIfPropertyUndefined } from '../../utils/misc'
-import { IS_PRODUCTION } from '../../../constants/misc'
 import { UserDialog } from '../../../types/dialog'
 import { ON_DIALOG_OPEN } from '../../constants/communication'
 
+declare const MAIN_DIALOG_WEBPACK_ENTRY: string
+declare const MAIN_DIALOG_PRELOAD_WEBPACK_ENTRY: string
+
 export default class DialogView implements View {
-  private static readonly DEFAULT_HTML_FILE = 'main-dialog.html'
   private view?: WebContentsView
   private userDialog: UserDialog
 
@@ -24,10 +24,7 @@ export default class DialogView implements View {
   private load = (): void => {
     throwIfPropertyUndefined('view', this.view)
 
-    if (IS_PRODUCTION)
-      this.view.webContents.loadFile(getAppPath(DialogView.DEFAULT_HTML_FILE))
-    else
-      this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${DialogView.DEFAULT_HTML_FILE}`)
+    this.view.webContents.loadURL(MAIN_DIALOG_WEBPACK_ENTRY)
   }
 
   private registerListeners = (): void => {
@@ -55,7 +52,7 @@ export default class DialogView implements View {
   private create = (contentSize: number[]): void => {
     this.view = new WebContentsView({
       webPreferences: {
-        preload: getAppPath('preload.js'),
+        preload: MAIN_DIALOG_PRELOAD_WEBPACK_ENTRY,
         transparent: true,
       },
     })

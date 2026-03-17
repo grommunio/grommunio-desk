@@ -9,7 +9,7 @@ export function getResourcesPath(...paths: string[]): string {
 }
 
 export function getExtraResourcesPath(...paths: string[]): string {
-  return IS_PRODUCTION ? path.join(app.getAppPath(), '../', ...paths) : path.join(app.getAppPath(), ...paths)
+  return IS_PRODUCTION ? path.join(process.resourcesPath, ...paths) : path.join(app.getAppPath(), '.webpack/main', ...paths)
 }
 
 export function getAppPath(...paths: string[]): string {

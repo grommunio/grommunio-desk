@@ -3,6 +3,5 @@
 import { OpenDevToolsOptions } from 'electron'
 
 export const DEV_TOOLS_OPTIONS = { mode: 'detach' } as OpenDevToolsOptions
-export const DEV_SERVER_BASE_URL = 'http://localhost:8080/'
 
 export const BACKGROUND_COLOR = '#2a2b30'

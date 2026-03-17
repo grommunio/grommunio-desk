@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next'
 import styles from './startPage.module.css'
 import Logger from '@utils/logger'
 import { ServerOptions } from '../../../types/misc'
-import logoImg from '../../../../assets/general/logo_with_text.png'
-import backgroundImg from '../../../../assets/general/dark_background.jpg'
 
 const logger = new Logger('renderer/mainWindow/startView/startPage')
 const URL_REGEX_PATTERN = /^https:\/\/([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]+)*\/?$/i
@@ -109,9 +107,9 @@ const StartPage = (): React.ReactElement => {
   // TODO: improve name feedback: inform user about max-length and regex-check
   return (
     <div className={styles.bg}>
-      <img className={styles.bgImage} src={backgroundImg} />
+      <img className={styles.bgImage} src="static://dark_background.jpg" />
       <div className={styles.content}>
-        <img className={styles.logo} src={logoImg} alt="grommunio" />
+        <img className={styles.logo} src="static://logo_with_text.png" alt="grommunio" />
         <p className={`${styles.description} ${(urlInput || nameInput) ? styles.descriptionHidden : ''}`}>
           {t('mainWindow.startView.description')}
         </p>

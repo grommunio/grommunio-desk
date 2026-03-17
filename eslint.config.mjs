@@ -9,11 +9,10 @@ import licenseHeader from 'eslint-plugin-license-header'
 export default defineConfig(
   eslint.configs.recommended,
   globalIgnores([
-    'webpack.config.*',
-    'eslint.config.mjs',
     'resources/',
-    'build/',
+    '.webpack/',
     'dist/',
+    'node_modules/',
   ]),
   {
     files: ['**/*.ts', '**/*.tsx'],
@@ -30,12 +29,12 @@ export default defineConfig(
     rules: {
       'license-header/header': ['error', './resources/license-header.js'],
       '@typescript-eslint/explicit-function-return-type': 'error',
-      "@typescript-eslint/no-unused-vars": [
-        "error",
+      '@typescript-eslint/no-unused-vars': [
+        'error',
         {
-          "argsIgnorePattern": "^_",
-        }
-      ]
+          argsIgnorePattern: '^_',
+        },
+      ],
     },
   },
   {

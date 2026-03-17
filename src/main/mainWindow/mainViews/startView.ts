@@ -2,15 +2,15 @@
 
 import { WebContentsView, WindowOpenHandlerResponse } from 'electron'
 
-import { getAppPath } from '../../utils/paths'
 import { TITLE_BAR } from '../../../constants/window'
-import { DEV_SERVER_BASE_URL, BACKGROUND_COLOR, DEV_TOOLS_OPTIONS } from '../../constants/view'
+import { BACKGROUND_COLOR, DEV_TOOLS_OPTIONS } from '../../constants/view'
 import { View } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
-import { IS_PRODUCTION } from '../../../constants/misc'
+
+declare const MAIN_START_WEBPACK_ENTRY: string
+declare const MAIN_START_PRELOAD_WEBPACK_ENTRY: string
 
 export default class StartView implements View {
-  private static readonly DEFAULT_HTML_FILE = 'main-start.html'
   private view?: WebContentsView
 
   constructor(contentSize: number[]) {
@@ -20,10 +20,7 @@ export default class StartView implements View {
   private load = (): void => {
     throwIfPropertyUndefined('view', this.view)
 
-    if (IS_PRODUCTION)
-      this.view.webContents.loadFile(getAppPath(StartView.DEFAULT_HTML_FILE))
-    else
-      this.view.webContents.loadURL(`${DEV_SERVER_BASE_URL}${StartView.DEFAULT_HTML_FILE}`)
+    this.view.webContents.loadURL(MAIN_START_WEBPACK_ENTRY)
   }
 
   private registerListeners = (): void => {
@@ -47,7 +44,7 @@ export default class StartView implements View {
   private create = (contentSize: number[]): void => {
     this.view = new WebContentsView({
       webPreferences: {
-        preload: getAppPath('preload.js'),
+        preload: MAIN_START_PRELOAD_WEBPACK_ENTRY,
       },
     })
     this.view.setBackgroundColor(BACKGROUND_COLOR)

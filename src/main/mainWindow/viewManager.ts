@@ -138,7 +138,7 @@ export default class ViewManager {
       this.currView.close()
     }
     // when currView failed to load, it is / should be already included in serverViews
-    else if (this.currView != null && this.serverViews.values().find(view => view === this.currView)?.hasFailedLoading()) {
+    else if (this.currView != null && Array.from(this.serverViews.values()).find(view => view === this.currView)?.hasFailedLoading()) {
       logger.debug('closeCurrView', `Close ${formatViewToString(this.currView)} because it failed to load`)
       this.serverViews.delete(this.currView.getServer().id)
       this.currView.close()

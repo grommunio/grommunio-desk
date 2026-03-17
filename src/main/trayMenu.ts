@@ -12,10 +12,8 @@ export default class TrayMenu {
   constructor(onOpenAppClick: () => void) {
     this.tray = new Tray(
       systemPlatform === 'win'
-        ? nativeImage.createFromPath(getExtraResourcesPath('favicon.ico'))
-        : systemPlatform === 'mac'
-          ? nativeImage.createFromPath(getExtraResourcesPath('favicon_32x32@2x.png'))
-          : nativeImage.createFromPath(getExtraResourcesPath('favicon_32x32.png')),
+        ? nativeImage.createFromPath(getExtraResourcesPath('favicon_256x256_all.ico'))
+        : nativeImage.createFromPath(getExtraResourcesPath('favicon_32x32.png')),
     )
     this.tray.setToolTip(APP_PRODUCT_NAME)
     // TODO: add translation to labels (also for appmenu)

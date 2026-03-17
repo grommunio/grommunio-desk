@@ -1,10 +1,20 @@
-# build
-build/
-dist/
-.tsconfig-temp.json
+# Metadata
+.DS_Store
 
-# dependencies
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Editors
+.vscode/
+
+# Dependency directories
 node_modules/
 
-# editors
-.vscode/
+# Webpack
+.webpack/
+
+# Electron-Forge
+out/

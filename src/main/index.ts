@@ -1,19 +1,27 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { app } from 'electron'
+import { app, session, net } from 'electron'
+import started from 'electron-squirrel-startup'
+import path from 'node:path'
+import url from 'node:url'
 
-import MainWindow from './mainWindow'
-import { getExtraResourcesPath } from './utils/paths'
 import Logger from '@utils/logger'
+import { APP_ID, APP_PRODUCT_NAME } from './constants/app'
+import { getExtraResourcesPath } from './utils/paths'
+import { systemPlatform } from './constants/system'
+import MainWindow from './mainWindow'
 import registerIpcFunctions from './intercom'
 import { IS_PRODUCTION } from '../constants/misc'
-import { APP_ID, APP_PRODUCT_NAME } from './constants/app'
 import TrayMenu from './trayMenu'
-import { systemPlatform } from './constants/system'
 
 const logger = new Logger('main/index')
 
 logger.verbose('isProduction', `Production: ${IS_PRODUCTION}`)
+
+// handle creating/removing shortcuts on Windows when installing / uninstalling
+if (started) {
+  app.quit()
+}
 
 let mainWindow: MainWindow | undefined
 
@@ -38,10 +46,16 @@ app.on('ready', () => {
     return
   }
 
-  registerIpcFunctions()
+  session.defaultSession.protocol.handle('static', (request) => {
+    const fileUrl = request.url.replace('static://', '')
+    const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl)
+    return net.fetch(url.pathToFileURL(filePath).toString())
+  })
 
   if (systemPlatform === 'win')
     app.setAppUserModelId(APP_ID)
+
+  registerIpcFunctions()
 
   app.setAboutPanelOptions({
     applicationName: APP_PRODUCT_NAME,

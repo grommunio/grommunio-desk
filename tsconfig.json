@@ -1,22 +1,24 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "es2020",
-    "moduleResolution": "bundler",
+    "target": "ES6",
+    "allowJs": true,
+    "module": "commonjs",
     "strict": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "jsx": "react",
-    "plugins": [{"name": "typescript-plugin-css-modules"}],
+    "sourceMap": true,
     "baseUrl": ".",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
     "paths": {
       "@utils/*": ["src/main/utils/*", "src/renderer/utils/*"],
+      "*": ["node_modules/*"]
     }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src/**/*"]
 }
