@@ -16,6 +16,7 @@ import { BACKGROUND_COLOR } from '../constants/view'
 import DialogView from './mainViews/dialogView'
 import { UserDialog, UserDialogButton } from '../../types/dialog'
 import Logger from '@utils/logger'
+import { getExtraResourcesPath } from '../utils/paths'
 
 const logger = new Logger('main/mainWindow/mainWindow')
 
@@ -65,6 +66,10 @@ export default class MainWindow {
               height: TITLE_BAR.HEIGHT,
             },
           }
+        : {}
+      ),
+      ...(systemPlatform === 'linux'
+        ? { icon: getExtraResourcesPath('app_icon.png') }
         : {}
       ),
       show: false,

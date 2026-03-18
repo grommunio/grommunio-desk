@@ -14,6 +14,7 @@ import StartView from './mainViews/startView'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
+// TODO: bug: in production mode view.constructor.name does not work (empty string / undefined)
 const formatViewToString = (view: View): string => view.constructor.name + (view instanceof ServerView ? `[ ${view.getServer().name} ]` : '')
 
 export default class ViewManager {
@@ -130,7 +131,7 @@ export default class ViewManager {
   }
 
   // Closes currView (if is not an instance of ServerView or failed to load) and dialogView.
-  // Note that this method is used when the BrowserWindow closes. Therefore, it will not remove the views from the window.
+  // Note that this method is used when the window closes. Therefore, it will not remove the views from the window.
   closeCurrView = (): void => {
     // e.g. when currView is an instance of StartView
     if (this.currView != null && !(this.currView instanceof ServerView)) {
@@ -143,7 +144,7 @@ export default class ViewManager {
       this.serverViews.delete(this.currView.getServer().id)
       this.currView.close()
     }
-    this.currView = undefined // necessary because switchCurrView needs to re-add the currView to the BrowserWindow when the window is reopened
+    this.currView = undefined // necessary because switchCurrView needs to re-add the currView to the window when the window is reopened
   }
 
   toggleMainViewDevTools = (): void => {

@@ -19,17 +19,24 @@ const config: ForgeConfig = {
       './assets/general/icons/icon_512x512.png', // about-panel icon
       './assets/windows/favicon_256x256_all.ico', // win trayicon
       './assets/general/favicons/favicon_32x32.png', // mac & linux trayicon
+      './assets/os_icons/app_icon.png', // linux icon
     ],
     executableName: 'grommunio-desk',
-    name: 'grommunio Desk',
+    icon: './assets/os_icons/app_icon',
   },
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({
       name: 'grommunioDesk',
+      setupIcon: './assets/os_icons/app_icon.ico',
+      // TODO: iconUrl: 'https://url/to/icon.ico',
     }),
     new MakerZIP({}, ['darwin']),
-    new MakerDeb({}),
+    new MakerDeb({
+      options: {
+        icon: './assets/os_icons/app_icon.png',
+      },
+    }),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),

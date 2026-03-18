@@ -20,6 +20,7 @@ export const mainConfig: Configuration = merge(baseConfig, {
         { from: 'assets/general/icons/icon_512x512.png', to: 'icon_512x512.png' }, // about-panel icon
         { from: 'assets/windows/favicon_256x256_all.ico', to: 'favicon_256x256_all.ico' }, // win trayicon
         { from: 'assets/general/favicons/favicon_32x32.png', to: 'favicon_32x32.png' }, // mac & linux trayicon
+        { from: './assets/os_icons/app_icon.png', to: 'app_icon.png' }, // linux icon
       ],
     }),
   ],
