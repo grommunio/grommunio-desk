@@ -2,6 +2,8 @@
 
 import { InterpolationOptions } from 'i18next'
 
+import { Server } from './misc'
+
 interface UserDialogButtonTemplate {
   name: string
   callbackParams?: unknown
@@ -12,10 +14,19 @@ interface UserDialogReturnToStartPageButton extends UserDialogButtonTemplate {
   name: 'returnToStartPage'
   callbackParams?: undefined
 }
-export type UserDialogButton = UserDialogReturnToStartPageButton
+interface UserDialogCancelButton extends UserDialogButtonTemplate {
+  name: 'cancel'
+  callbackParams?: undefined
+}
+interface UserDialogRemoveServerButton extends UserDialogButtonTemplate {
+  name: 'removeServer'
+  callbackParams: { server: Server }
+}
+export type UserDialogButton = UserDialogReturnToStartPageButton | UserDialogCancelButton | UserDialogRemoveServerButton
 
 interface UserDialogTextArgs {
   loadFailed: { url: string, interpolation?: InterpolationOptions }
+  removeServer: { server: Server }
 }
 interface UserDialogGeneric<T extends keyof UserDialogTextArgs> {
   text: T

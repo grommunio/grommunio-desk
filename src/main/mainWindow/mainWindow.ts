@@ -195,6 +195,7 @@ export default class MainWindow {
     }
     this.dialogView = new DialogView(this.getWinContentSize(), userDialog)
     this.addWindowView(this.dialogView.getWebView())
+    this.titleBarView?.sendDialogChange(true)
   }
 
   private closeDialog = (): void => {
@@ -202,6 +203,7 @@ export default class MainWindow {
       this.removeWindowView(this.dialogView.getWebView())
       this.dialogView.close()
       this.dialogView = undefined
+      this.titleBarView?.sendDialogChange(false)
     }
   }
 

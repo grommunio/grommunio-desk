@@ -17,6 +17,7 @@ const DialogBox = (): React.ReactElement => {
         <button
           className={`${styles.button} ${styles[`${button.name}Button`]}`}
           onClick={() => window.electronAPI.handleDialogButton(button)}
+          onKeyDown={event => event.stopPropagation()} // when a button is focused and the Enter key is pressed, any other onKeyDown functionality should not be triggered
           key={`button-${idx}`}
         >
           {t(`mainWindow.dialogView.${button.name}Button`)}

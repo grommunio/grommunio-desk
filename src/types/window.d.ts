@@ -20,6 +20,7 @@ declare global {
       onServerSwitch: (listener: (server: Server | undefined) => void) => void
       onServerSave: (listener: (servers: Server[]) => void) => void
       onDialogOpen: (listener: (userDialog: UserDialog) => void) => void
+      onDialogChange: (listener: (isDialogOpen: boolean) => void) => void
     }
   }
 }

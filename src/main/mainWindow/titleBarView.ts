@@ -5,7 +5,7 @@ import { WebContentsView, WindowOpenHandlerResponse } from 'electron'
 import { TITLE_BAR } from '../../constants/window'
 import { DEV_TOOLS_OPTIONS } from '../constants/view'
 import { View } from '../types/misc'
-import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH, ON_SERVER_SAVE } from '../constants/communication'
+import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH, ON_SERVER_SAVE, ON_DIALOG_CHANGE } from '../constants/communication'
 import { sendIpc, throwIfPropertyUndefined } from '../utils/misc'
 import { Server } from '../../types/misc'
 
@@ -108,5 +108,9 @@ export default class TitleBarView implements View {
 
   sendServerSave = (servers: Server[]): void => {
     sendIpc(this.view, ON_SERVER_SAVE, servers)
+  }
+
+  sendDialogChange = (isDialogOpen: boolean): void => {
+    sendIpc(this.view, ON_DIALOG_CHANGE, isDialogOpen)
   }
 }
