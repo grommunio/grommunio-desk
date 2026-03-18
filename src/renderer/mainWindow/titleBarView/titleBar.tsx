@@ -7,6 +7,7 @@ import styles from './titleBar.module.css'
 import { TITLE_BAR } from '../../../constants/window'
 import { Server } from '../../../types/misc'
 import ServerIcon from './serverIcon'
+import RemoveIcon from './removeIcon'
 
 const formatServerLabel = (server?: Server): string => {
   if (!server)
@@ -17,9 +18,10 @@ const formatServerLabel = (server?: Server): string => {
 const TitleBar = (): React.ReactElement => {
   const { t } = useTranslation()
   const appMenuButtonRef = useRef<HTMLDivElement>(null)
-  const [isServerMenuOpen, setIsServerMenuOpen] = useState(false)
+  const [isServerMenuOpen, setServerMenuOpen] = useState(false)
   const [servers, setServers] = useState<Server[]>([])
   const [currentServer, setCurrentServer] = useState<Server | undefined>(undefined)
+  const [isDisabled, setDisabled] = useState(false)
   const currentServerName = useMemo(() => formatServerLabel(currentServer), [currentServer])
   const formattedServers = useMemo(() => {
     return servers.map(server => ({
@@ -32,16 +34,17 @@ const TitleBar = (): React.ReactElement => {
     window.electronAPI.onAppMenuClose(onAppMenuClose)
     window.electronAPI.onServerSwitch(onServerSwitch)
     window.electronAPI.onServerSave(onServerSave)
+    window.electronAPI.onDialogChange(onDialogChange)
   }, [])
 
   const onToggleServerMenu = (): void => {
     const next = !isServerMenuOpen
-    setIsServerMenuOpen(next)
+    setServerMenuOpen(next)
     window.electronAPI.setTitleBarServerMenuOpen(next)
   }
 
   const closeServerMenu = (): void => {
-    setIsServerMenuOpen(false)
+    setServerMenuOpen(false)
     window.electronAPI.setTitleBarServerMenuOpen(false)
   }
 
@@ -59,6 +62,17 @@ const TitleBar = (): React.ReactElement => {
     window.electronAPI.switchServer(server)
   }
 
+  const onRemoveServerClick = (server: Server): void => {
+    window.electronAPI.openDialog({
+      text: 'removeServer',
+      textArgs: { server },
+      buttons: [
+        { name: 'cancel', triggerOnEscape: true },
+        { name: 'removeServer', callbackParams: { server }, triggerOnEnter: true },
+      ],
+    })
+  }
+
   // IPC functions
   const onAppMenuClose = (): void => {
     appMenuButtonRef.current?.blur()
@@ -72,6 +86,14 @@ const TitleBar = (): React.ReactElement => {
     setServers(savedServers)
   }
 
+  const onDialogChange = (isDialogOpen: boolean): void => {
+    setDisabled(isDialogOpen)
+    if (isDialogOpen)
+      closeServerMenu()
+  }
+
+  // TODO: bug: when buttons are disabled (isDisabled === true) and dev tools is opened, the view disappears
+  // TODO: bug: when titleBar is focused and the Tab key is pressed, the view also disappears
   return (
     <div
       className={styles.titleBarDiv}
@@ -97,6 +119,7 @@ const TitleBar = (): React.ReactElement => {
           className={styles.serverButton}
           type="button"
           onClick={onToggleServerMenu}
+          disabled={isDisabled}
         >
           <div className={styles.serverIcon}>
             <ServerIcon />
@@ -112,20 +135,27 @@ const TitleBar = (): React.ReactElement => {
           }}
         >
           <div className={styles.serverMenuHeader}>
-            <span>Servers</span>
+            <span>{t('mainWindow.titleBarView.servers')}</span>
           </div>
           <div className={styles.serverMenuDivider} />
           {servers.length > 0 && (
             <>
               {formattedServers.map(server => (
-                <button
-                  key={server.id}
-                  className={styles.serverMenuItemButton}
-                  onClick={() => onServerClick(server)}
-                >
-                  <span className={styles.serverMenuCheck}>{currentServer?.id === server.id ? '✓' : ''}</span>
-                  <span className={styles.serverMenuLabel}>{server.formattedLabel}</span>
-                </button>
+                <div className={styles.serverMenuElement} key={server.id}>
+                  <button
+                    className={styles.serverMenuItemButton}
+                    onClick={() => onServerClick(server)}
+                  >
+                    <span className={styles.serverMenuCheck}>{currentServer?.id === server.id ? '✓' : ''}</span>
+                    <span className={styles.serverMenuLabel}>{server.formattedLabel}</span>
+                  </button>
+                  <button
+                    className={styles.serverMenuRemoveButton}
+                    onClick={() => onRemoveServerClick(server)}
+                  >
+                    <RemoveIcon />
+                  </button>
+                </div>
               ))}
               <div className={styles.serverMenuDivider} />
             </>

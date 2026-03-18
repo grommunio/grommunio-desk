@@ -9,12 +9,17 @@
       "nameInvalidFormat": "Bitte geben Sie einen gültigen Server Namen ein."
     },
     "titleBarView": {
+      "servers": "Server",
       "addServer": "Server hinzufügen"
     },
     "dialogView": {
       "loadFailedTitle": "Fehlgeschlagenes Laden",
       "loadFailedText": "Laden von {{url}} schlug fehl.",
-      "returnToStartPageButton": "Zurück"
+      "removeServerTitle": "Server löschen?",
+      "removeServerText": "Möchten Sie den Server „{{server.name}}“ wirklich löschen?",
+      "returnToStartPageButton": "Zurück",
+      "cancelButton": "Abbrechen",
+      "removeServerButton": "Löschen"
     }
   }
 }

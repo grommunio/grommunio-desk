@@ -74,6 +74,10 @@
   &:focus {
     background-color: transparent;
   }
+
+  &:disabled * {
+    color: #a0a0a0;
+  }
 }
 
 .serverIcon {
@@ -100,6 +104,10 @@
   border-right: 4px solid transparent;
   border-top: 5px solid #ffffff;
   opacity: 0.8;
+
+  .serverButton:disabled & {
+    border-top: 5px solid #a0a0a0;
+  }
 }
 
 .serverMenu {
@@ -135,6 +143,21 @@
   letter-spacing: 0.6px;
 }
 
+.serverMenuDivider {
+  height: 1px;
+  margin: 4px 0;
+  background-color: #3a3d4d;
+}
+
+.serverMenuElement {
+  display: flex;
+
+  &:hover,
+  &:focus {
+    background-color: #1f2229;
+  }
+}
+
 .serverMenuItemButton {
   display: flex;
   align-items: center;
@@ -148,7 +171,7 @@
   cursor: pointer;
   font: inherit;
   font-size: 13px;
-
+  
   &:hover,
   &:focus {
     background-color: #1f2229;
@@ -169,12 +192,6 @@
   margin-left: 8px;
 }
 
-.serverMenuDivider {
-  height: 1px;
-  margin: 4px 0;
-  background-color: #3a3d4d;
-}
-
 .serverMenuAddContent {
   display: inline-flex;
   align-items: center;
@@ -190,4 +207,22 @@
 
 .serverMenuAddLabel {
   font-size: 13px;
+}
+
+.serverMenuRemoveButton {
+  border-radius: 6px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: 2px;
+  color: white;
+  cursor: pointer;
+  background-color: transparent;
+
+  &:hover {
+    color: red;
+  }
 }

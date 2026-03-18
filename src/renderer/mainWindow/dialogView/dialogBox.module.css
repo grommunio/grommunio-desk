@@ -60,3 +60,10 @@
     background: #2a2f3b;
   }
 }
+
+.removeServerButton {
+  &:focus,
+  &:hover:not(:disabled) {
+    color: red;
+  }
+}

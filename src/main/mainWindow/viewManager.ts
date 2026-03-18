@@ -173,8 +173,6 @@ export default class ViewManager {
     this.serverSaveListener?.(this.servers)
   }
 
-  // TODO: remove?
-  /*
   private removeServerFromStore = (server: Server): boolean => {
     logger.debug('removeServerFromStore', 'Remove server', server)
     const newServers = this.servers.filter(srv => srv.id !== server.id)
@@ -183,7 +181,7 @@ export default class ViewManager {
     store.set('servers', this.servers)
     this.serverSaveListener?.(this.servers)
     return status
-  } */
+  }
 
   private onServerViewDidFinishLoadSuccly = (server: Server): void => {
     logger.debug('onServerViewDidFinishLoadSuccly', 'Finished loading of server successfully', server)
@@ -205,6 +203,14 @@ export default class ViewManager {
         logger.warn('handleDialogButton', 'currView is not a ServerView')
       }
       this.switchServer(undefined)
+    }
+    else if (button.name === 'removeServer') {
+      if (this.currView instanceof ServerView && this.currView.getServer().id === button.callbackParams.server.id) {
+        this.serverViews.delete(this.currView.getServer().id)
+        this.switchServer(undefined)
+      }
+      if (!this.removeServerFromStore(button.callbackParams.server))
+        logger.warn('handleDialogButton', 'Server could not be removed from store because it does not exist there')
     }
   }
 
