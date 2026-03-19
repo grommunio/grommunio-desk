@@ -2,12 +2,13 @@
 
 import type { ForgeConfig } from '@electron-forge/shared-types'
 import { MakerSquirrel } from '@electron-forge/maker-squirrel'
-import { MakerZIP } from '@electron-forge/maker-zip'
 import { MakerDeb } from '@electron-forge/maker-deb'
+import { MakerMSIX } from '@electron-forge/maker-msix'
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
 import { WebpackPlugin } from '@electron-forge/plugin-webpack'
 import { FusesPlugin } from '@electron-forge/plugin-fuses'
 import { FuseV1Options, FuseVersion } from '@electron/fuses'
+import path from 'node:path'
 
 import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
@@ -29,9 +30,22 @@ const config: ForgeConfig = {
     new MakerSquirrel({
       name: 'grommunioDesk',
       setupIcon: './assets/os_icons/app_icon.ico',
-      // TODO: iconUrl: 'https://url/to/icon.ico',
+      iconUrl: 'https://download.grommunio.com/desk/windows/app_icon.ico',
+      windowsSign: undefined,
     }),
-    new MakerZIP({}, ['darwin']),
+    new MakerMSIX({
+      manifestVariables: {
+        publisher: '',
+        publisherDisplayName: 'grommunio GmbH',
+        packageIdentity: 'com.grommunio.desk',
+        appExecutable: 'grommunio-desk.exe',
+        packageDisplayName: 'grommunio Desk',
+        appDisplayName: 'grommunio Desk',
+      },
+      packageAssets: path.resolve('./assets/windows/msix_assets'),
+      sign: false,
+      // logLevel: 'debug',
+    }),
     new MakerDeb({
       options: {
         icon: './assets/os_icons/app_icon.png',
