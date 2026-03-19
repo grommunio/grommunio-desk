@@ -18,7 +18,7 @@ const logger = new Logger('main/index')
 
 logger.verbose('isProduction', `Production: ${IS_PRODUCTION}`)
 
-// handle creating/removing shortcuts on Windows when installing / uninstalling
+// handle squirrel installing / uninstalling process
 if (started) {
   app.quit()
 }
@@ -41,6 +41,11 @@ const onOpenAppClick = (): void => {
 }
 
 app.on('ready', () => {
+  // handle squirrel installing / uninstalling proces
+  if (started) {
+    return
+  }
+
   if (!app.requestSingleInstanceLock()) {
     app.quit()
     return
