@@ -9,7 +9,7 @@ import {
 
 const MAX_VERSION_BODY_LENGTH = 4096
 const VERSION_ENDPOINT_PATH = '/web/version'
-const VERSION_REGEX = /^\d+\.\d+\.\d+\.[a-z0-9]+-lp\d+\.\d+\.\d+$/
+const VERSION_REGEX = /^\d+\.\d+\.\d+\.[a-z0-9]+-(lp\d+\.|\d+\+)\d+\.\d+$/
 
 function validateServerUrl(server: string): Promise<boolean> {
   let parsedUrl: URL
