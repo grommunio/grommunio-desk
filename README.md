@@ -36,9 +36,9 @@ grommunio Desk stores application data in the `userData` directory.
 
 Typical locations are:
 
-- Linux: `~/.config/grommunio-desk/config.json`
-- macOS: `~/Library/Application Support/grommunio-desk/config.json`
-- Windows: `%APPDATA%\\grommunio-desk\\config.json`
+- Linux: `~/.config/grommunio\ Desk/config.json`
+- macOS: `~/Library/Application\ Support/grommunio\ Desk/config.json`
+- Windows: `%APPDATA%\grommunio Desk\config.json`
 
 ### Log Files
 
@@ -50,9 +50,9 @@ fileLogLevel: 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly' | false
 
 When file logging is enabled, logs are written to:
 
-- Linux: `~/.config/grommunio-desk/logs/main.log` and `~/.config/grommunio-desk/logs/renderer.log`
-- macOS: `~/Library/Application Support/grommunio-desk/logs/main.log` and `~/Library/Application Support/grommunio-desk/logs/renderer.log`
-- Windows: `%APPDATA%\\grommunio-desk\\logs\\main.log` and `%APPDATA%\\grommunio-desk\\logs\\renderer.log`
+- Linux: `~/.config/grommunio\ Desk/logs/main.log` and `~/.config/grommunio\ Desk/logs/renderer.log`
+- macOS: `~/Library/Application\ Support/grommunio\ Desk/logs/main.log` and `~/Library/Application\ Support/grommunio\ Desk/logs/renderer.log`
+- Windows: `%APPDATA%\grommunio Desk\logs\main.log` and `%APPDATA%\grommunio Desk\logs\renderer.log`
 
 ## Development
 
