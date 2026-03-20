@@ -1,11 +1,12 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { Server, ServerOptions } from './misc'
+import { SystemPlatform, Server, ServerOptions } from './misc'
 import { UserDialogButton, UserDialog } from './dialog'
 
 declare global {
   interface Window {
     electronAPI: {
+      // ipcRenderer.send one-way
       addServer: () => void
       loadNewServer: (server: ServerOptions) => void
       switchServer: (server: Server) => void
@@ -14,8 +15,13 @@ declare global {
       setTitleBarServerMenuOpen: (isOpen: boolean) => void
       openDialog: (userDialog: UserDialog) => void
 
+      // ipcRenderer.sendSync two-way (synchronous)
+      getSystemPlatform: () => SystemPlatform
+
+      // ipcRenderer.invoke two-way (asynchronous)
       validateServerUrl: (server: string) => Promise<boolean>
 
+      // ipcRenderer.on one-way
       onAppMenuClose: (listener: () => void) => void
       onServerSwitch: (listener: (server: Server | undefined) => void) => void
       onServerSave: (listener: (servers: Server[]) => void) => void

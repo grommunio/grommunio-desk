@@ -29,6 +29,7 @@ const TitleBar = (): React.ReactElement => {
       formattedLabel: formatServerLabel(server),
     }))
   }, [servers])
+  const isMacPlatform = useMemo(() => window.electronAPI.getSystemPlatform() === 'mac', [window])
 
   useEffect(() => {
     window.electronAPI.onAppMenuClose(onAppMenuClose)
@@ -96,7 +97,7 @@ const TitleBar = (): React.ReactElement => {
   // TODO: bug: when titleBar is focused and the Tab key is pressed, the view also disappears
   return (
     <div
-      className={styles.titleBarDiv}
+      className={`${styles.titleBarDiv} ${isMacPlatform ? styles.titleBarMac : ''}`}
       style={{
         color: TITLE_BAR.COLOR,
         backgroundColor: TITLE_BAR.BACKGROUND_COLOR,
@@ -109,11 +110,13 @@ const TitleBar = (): React.ReactElement => {
           onMouseDown={onServerMenuBackdropMouseDown}
         />
       )}
-      <div
-        className={styles.appMenuButton}
-        ref={appMenuButtonRef}
-        onClick={window.electronAPI.toggleAppMenu}
-      />
+      {!isMacPlatform && (
+        <div
+          className={styles.appMenuButton}
+          ref={appMenuButtonRef}
+          onClick={window.electronAPI.toggleAppMenu}
+        />
+      )}
       <div className={styles.serverChooser}>
         <button
           className={styles.serverButton}

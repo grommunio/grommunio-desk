@@ -1,4 +1,5 @@
 {
   "css.customData": ["./editors_options/vscode/css.css-data.json"],
-  "js/ts.preferences.quoteStyle": "single"
+  "js/ts.preferences.quoteStyle": "single",
+  "js/ts.preferences.importModuleSpecifier": "relative"
 }

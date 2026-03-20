@@ -226,3 +226,8 @@
     color: red;
   }
 }
+
+.titleBarMac .serverChooser {
+  position: relativ;
+  left: 70px;
+}

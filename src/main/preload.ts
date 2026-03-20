@@ -2,7 +2,7 @@
 
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
-import { ServerOptions, Server } from '../types/misc'
+import { ServerOptions, Server, SystemPlatform } from '../types/misc'
 import { UserDialogButton, UserDialog } from '../types/dialog'
 
 import {
@@ -19,10 +19,12 @@ import {
   SET_TITLE_BAR_SERVER_MENU_OPEN,
   OPEN_DIALOG,
   ON_DIALOG_CHANGE,
+  GET_SYSTEM_PLATFORM,
 } from './constants/communication'
 
 // TODO: check if it is possible to make the ipc functions type proof -> type checking when calling e.g. ipcMain.on(...)
 contextBridge.exposeInMainWorld('electronAPI', {
+  // ipcRenderer.send one-way
   addServer: () => ipcRenderer.send(ADD_SERVER),
   loadNewServer: (server: ServerOptions) => ipcRenderer.send(LOAD_NEW_SERVER, server),
   switchServer: (server: Server) => ipcRenderer.send(SWITCH_SERVER, server),
@@ -31,8 +33,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setTitleBarServerMenuOpen: (isOpen: boolean) => ipcRenderer.send(SET_TITLE_BAR_SERVER_MENU_OPEN, isOpen),
   openDialog: (userDialog: UserDialog) => ipcRenderer.send(OPEN_DIALOG, userDialog),
 
+  // ipcRenderer.sendSync two-way (synchronous)
+  getSystemPlatform: (): SystemPlatform => ipcRenderer.sendSync(GET_SYSTEM_PLATFORM),
+
+  // ipcRenderer.invoke two-way (asynchronous)
   validateServerUrl: (server: string) => ipcRenderer.invoke(VALIDATE_SERVER_URL, server),
 
+  // ipcRenderer.on one-way
   onAppMenuClose: (listener: () => void) => ipcRenderer.on(ON_APP_MENU_CLOSE, (_event: IpcRendererEvent) => listener()), // TODO: remove extra anonymous arrow function (listener must handle event parameter) (?)
   onServerSwitch: (listener: (server: Server | undefined) => void) => ipcRenderer.on(ON_SERVER_SWITCH, (_event: IpcRendererEvent, server: Server | undefined) => listener(server)),
   onServerSave: (listener: (servers: Server[]) => void) => ipcRenderer.on(ON_SERVER_SAVE, (_event: IpcRendererEvent, servers: Server[]) => listener(servers)),

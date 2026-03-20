@@ -7,3 +7,5 @@ export interface ServerOptions {
 export interface Server extends ServerOptions {
   id: number
 }
+
+export type SystemPlatform = 'linux' | 'mac' | 'win'

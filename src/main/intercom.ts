@@ -1,17 +1,19 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { ipcMain, IpcMainInvokeEvent } from 'electron'
+import { ipcMain, IpcMainInvokeEvent, IpcMainEvent } from 'electron'
 import https from 'https'
 
 import {
+  GET_SYSTEM_PLATFORM,
   VALIDATE_SERVER_URL,
 } from './constants/communication'
+import { systemPlatform } from './constants/system'
 
-const MAX_VERSION_BODY_LENGTH = 4096
-const VERSION_ENDPOINT_PATH = '/web/version'
-const VERSION_REGEX = /^\d+\.\d+\.\d+\.[a-z0-9]+-(lp\d+\.|\d+\+)\d+\.\d+$/
+async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): Promise<boolean> {
+  const MAX_VERSION_BODY_LENGTH = 4096
+  const VERSION_ENDPOINT_PATH = '/web/version'
+  const VERSION_REGEX = /^\d+\.\d+\.\d+\.[a-z0-9]+-(lp\d+\.|\d+\+)\d+\.\d+$/
 
-function validateServerUrl(server: string): Promise<boolean> {
   let parsedUrl: URL
   try {
     parsedUrl = new URL(server)
@@ -53,8 +55,11 @@ function validateServerUrl(server: string): Promise<boolean> {
   })
 }
 
+function onGetSystemPlatform(event: IpcMainEvent): void {
+  event.returnValue = systemPlatform
+}
+
 export default function registerIpcFunctions(): void {
-  ipcMain.handle(VALIDATE_SERVER_URL, async (_event: IpcMainInvokeEvent, server: string) => {
-    return validateServerUrl(server)
-  })
+  ipcMain.handle(VALIDATE_SERVER_URL, onValidateServerUrl)
+  ipcMain.on(GET_SYSTEM_PLATFORM, onGetSystemPlatform)
 }

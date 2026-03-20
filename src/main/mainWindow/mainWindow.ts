@@ -130,6 +130,7 @@ export default class MainWindow {
 
   private createAppMenu = (servers: Server[]): void => {
     throwIfPropertyUndefined('win', this.win)
+
     const isMac = systemPlatform === 'mac'
     this.appMenu = Menu.buildFromTemplate(buildAppMenuTemplate({
       isMac,
@@ -141,6 +142,7 @@ export default class MainWindow {
       toggleDialogViewDevTools: () => this.dialogView?.toggleDevTools(),
     }))
     this.win.setMenu(this.appMenu)
+    Menu.setApplicationMenu(this.appMenu)
   }
 
   private toggleTitleBarViewDevTools = (): void => {
