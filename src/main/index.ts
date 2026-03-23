@@ -18,11 +18,6 @@ const logger = new Logger('main/index')
 
 logger.verbose('isProduction', `Production: ${IS_PRODUCTION}`)
 
-// handle squirrel installing / uninstalling process
-if (started) {
-  app.quit()
-}
-
 let mainWindow: MainWindow | undefined
 
 const createWindow = (): void => {
@@ -43,6 +38,7 @@ const onOpenAppClick = (): void => {
 app.on('ready', () => {
   // handle squirrel installing / uninstalling proces
   if (started) {
+    app.quit()
     return
   }
 
