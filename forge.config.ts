@@ -28,7 +28,7 @@ const config: ForgeConfig = {
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({
-      name: 'grommunioDesk',
+      name: 'grommunio-desk',
       setupIcon: './assets/os_icons/app_icon.ico',
       iconUrl: 'https://download.grommunio.com/desk/windows/app_icon.ico',
       windowsSign: undefined,
