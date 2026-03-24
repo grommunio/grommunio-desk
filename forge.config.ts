@@ -1,15 +1,18 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
+// TODO: add ts type checking for files in root directory (forge.config.ts, webpack.base.config.ts, ...)
 import type { ForgeConfig } from '@electron-forge/shared-types'
 import { MakerSquirrel } from '@electron-forge/maker-squirrel'
 import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerMSIX } from '@electron-forge/maker-msix'
+import { MakerDMG } from '@electron-forge/maker-dmg'
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
 import { WebpackPlugin } from '@electron-forge/plugin-webpack'
 import { FusesPlugin } from '@electron-forge/plugin-fuses'
 import { FuseV1Options, FuseVersion } from '@electron/fuses'
 import path from 'node:path'
 
+import envconfig from './envconfig'
 import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
 
@@ -25,6 +28,13 @@ const config: ForgeConfig = {
     ],
     executableName: 'grommunio-desk',
     icon: './assets/os_icons/app_icon',
+    appBundleId: 'com.grommunio.grommunio-desk',
+    osxSign: {},
+    osxNotarize: {
+      appleId: envconfig.get('APPLE_ID', ['mac']),
+      appleIdPassword: envconfig.get('APPLE_PASSWORD', ['mac']), // despite the name, it is not the password of the Apple ID account
+      teamId: envconfig.get('APPLE_TEAM_ID', ['mac']),
+    },
   },
   rebuildConfig: {},
   makers: [
@@ -52,6 +62,7 @@ const config: ForgeConfig = {
         icon: './assets/os_icons/app_icon.png',
       },
     }),
+    new MakerDMG({}),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
