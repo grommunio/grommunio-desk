@@ -18,6 +18,7 @@ import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
 
 const APP_IDENTIFIER = 'com.grommunio.grommunio-desk'
+const APP_PRODUCT_NAME = 'grommunio Desk'
 
 const getIconPath = (ext?: 'png' | 'icns' | 'icon' | 'ico'): string => path.resolve(`./assets/os_icons/app_icon${ext == null ? '' : `.${ext}`}`)
 
@@ -51,8 +52,8 @@ const config: ForgeConfig = {
         publisherDisplayName: 'grommunio GmbH',
         packageIdentity: APP_IDENTIFIER,
         appExecutable: 'grommunio-desk.exe',
-        packageDisplayName: 'grommunio Desk',
-        appDisplayName: 'grommunio Desk',
+        packageDisplayName: APP_PRODUCT_NAME,
+        appDisplayName: APP_PRODUCT_NAME,
       },
       packageAssets: path.resolve('./assets/windows/msix_assets'),
       sign: false,
@@ -63,7 +64,20 @@ const config: ForgeConfig = {
         icon: getIconPath('png'),
       },
     }),
-    new MakerDMG({}),
+    new MakerDMG(arch => ({
+      icon: getIconPath('icns'),
+      background: './assets/mac/dmg_background.png',
+      contents: [
+        { x: 192, y: 249, type: 'file', path: `out/${APP_PRODUCT_NAME}-darwin-${arch}/${APP_PRODUCT_NAME}.app` },
+        { x: 448, y: 249, type: 'link', path: '/Applications' },
+      ],
+      additionalDMGOptions: {
+        'code-sign': {
+          'signing-identity': envConfig.get('APPLE_SIGNING_IDENTITY'),
+          'identifier': APP_IDENTIFIER,
+        },
+      },
+    })),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
