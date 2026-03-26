@@ -12,7 +12,7 @@ import { FusesPlugin } from '@electron-forge/plugin-fuses'
 import { FuseV1Options, FuseVersion } from '@electron/fuses'
 import path from 'node:path'
 
-import envconfig from './envconfig'
+import envConfig from './envConfig'
 import { STATIC_RESOURCES } from './constants'
 import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
@@ -29,12 +29,12 @@ const config: ForgeConfig = {
     icon: getIconPath(),
     appBundleId: APP_IDENTIFIER,
     osxSign: {
-      identity: envconfig.get('APPLE_SIGNING_IDENTITY', ['mac']),
+      identity: envConfig.get('APPLE_SIGNING_IDENTITY'),
     },
     osxNotarize: {
-      appleId: envconfig.get('APPLE_ID', ['mac']),
-      appleIdPassword: envconfig.get('APPLE_PASSWORD', ['mac']), // despite the name, it is not the password of the Apple ID account
-      teamId: envconfig.get('APPLE_TEAM_ID', ['mac']),
+      appleId: envConfig.get('APPLE_ID'),
+      appleIdPassword: envConfig.get('APPLE_PASSWORD'), // despite the name, it is not the password of the Apple ID account
+      teamId: envConfig.get('APPLE_TEAM_ID'),
     },
   },
   rebuildConfig: {},
