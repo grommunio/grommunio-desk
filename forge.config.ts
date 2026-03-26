@@ -13,23 +13,24 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses'
 import path from 'node:path'
 
 import envconfig from './envconfig'
+import { STATIC_RESOURCES } from './constants'
 import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
+
+const APP_IDENTIFIER = 'com.grommunio.grommunio-desk'
+
+const getIconPath = (ext?: 'png' | 'icns' | 'icon' | 'ico'): string => path.resolve(`./assets/os_icons/app_icon${ext == null ? '' : `.${ext}`}`)
 
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    extraResource: [
-      './assets/general/icons/icon_512x512.png', // about-panel icon
-      './assets/windows/favicon_256x256_all.ico', // win trayicon
-      './assets/general/favicons/favicon_32x32.png', // linux trayicon
-      './assets/general/favicons/favicon_16x16.png', // mac trayicon
-      './assets/os_icons/app_icon.png', // linux icon
-    ],
+    extraResource: STATIC_RESOURCES,
     executableName: 'grommunio-desk',
-    icon: './assets/os_icons/app_icon',
-    appBundleId: 'com.grommunio.grommunio-desk',
-    osxSign: {},
+    icon: getIconPath(),
+    appBundleId: APP_IDENTIFIER,
+    osxSign: {
+      identity: envconfig.get('APPLE_SIGNING_IDENTITY', ['mac']),
+    },
     osxNotarize: {
       appleId: envconfig.get('APPLE_ID', ['mac']),
       appleIdPassword: envconfig.get('APPLE_PASSWORD', ['mac']), // despite the name, it is not the password of the Apple ID account
@@ -40,7 +41,7 @@ const config: ForgeConfig = {
   makers: [
     new MakerSquirrel({
       name: 'grommunio-desk',
-      setupIcon: './assets/os_icons/app_icon.ico',
+      setupIcon: getIconPath('ico'),
       iconUrl: 'https://download.grommunio.com/desk/windows/app_icon.ico',
       windowsSign: undefined,
     }),
@@ -48,7 +49,7 @@ const config: ForgeConfig = {
       manifestVariables: {
         publisher: '',
         publisherDisplayName: 'grommunio GmbH',
-        packageIdentity: 'com.grommunio.desk',
+        packageIdentity: APP_IDENTIFIER,
         appExecutable: 'grommunio-desk.exe',
         packageDisplayName: 'grommunio Desk',
         appDisplayName: 'grommunio Desk',
@@ -59,7 +60,7 @@ const config: ForgeConfig = {
     }),
     new MakerDeb({
       options: {
-        icon: './assets/os_icons/app_icon.png',
+        icon: getIconPath('png'),
       },
     }),
     new MakerDMG({}),

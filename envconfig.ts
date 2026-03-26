@@ -3,7 +3,7 @@
 import dotenv from 'dotenv'
 
 const systemPlatform = process.platform === 'win32' ? 'win' : process.platform === 'darwin' ? 'mac' : 'linux' // redundant code to avoid ./src dependencies
-type EnvConfigDataKeys = 'APPLE_ID' | 'APPLE_PASSWORD' | 'APPLE_TEAM_ID'
+type EnvConfigDataKeys = 'APPLE_ID' | 'APPLE_PASSWORD' | 'APPLE_TEAM_ID' | 'APPLE_SIGNING_IDENTITY'
 
 type SystemPlatform = 'linux' | 'mac' | 'win'
 
