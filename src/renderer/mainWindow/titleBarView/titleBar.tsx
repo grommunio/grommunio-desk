@@ -68,8 +68,8 @@ const TitleBar = (): React.ReactElement => {
       text: 'removeServer',
       textArgs: { server },
       buttons: [
-        { name: 'cancel', triggerOnEscape: true },
-        { name: 'removeServer', callbackParams: { server }, triggerOnEnter: true },
+        { type: 'cancel', triggerOnEscape: true },
+        { type: 'removeServer', callbackParams: { server }, triggerOnEnter: true },
       ],
     })
   }

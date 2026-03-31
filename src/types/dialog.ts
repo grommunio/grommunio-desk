@@ -5,21 +5,21 @@ import { InterpolationOptions } from 'i18next'
 import { Server } from './misc'
 
 interface UserDialogButtonTemplate {
-  name: string
+  type: string
   callbackParams?: unknown
   triggerOnEnter?: boolean
   triggerOnEscape?: boolean
 }
 interface UserDialogReturnToStartPageButton extends UserDialogButtonTemplate {
-  name: 'returnToStartPage'
+  type: 'returnToStartPage'
   callbackParams?: undefined
 }
 interface UserDialogCancelButton extends UserDialogButtonTemplate {
-  name: 'cancel'
+  type: 'cancel'
   callbackParams?: undefined
 }
 interface UserDialogRemoveServerButton extends UserDialogButtonTemplate {
-  name: 'removeServer'
+  type: 'removeServer'
   callbackParams: { server: Server }
 }
 export type UserDialogButton = UserDialogReturnToStartPageButton | UserDialogCancelButton | UserDialogRemoveServerButton

@@ -15,12 +15,12 @@ const DialogBox = (): React.ReactElement => {
   const buttons = useMemo(() => userDialog
     ? userDialog.buttons.map((button, idx) => (
         <button
-          className={`${styles.button} ${styles[`${button.name}Button`]}`}
+          className={`${styles.button} ${styles[`${button.type}Button`]}`}
           onClick={() => window.electronAPI.handleDialogButton(button)}
           onKeyDown={event => event.stopPropagation()} // when a button is focused and the Enter key is pressed, any other onKeyDown functionality should not be triggered
           key={`button-${idx}`}
         >
-          {t(`mainWindow.dialogView.${button.name}Button`)}
+          {t(`mainWindow.dialogView.${button.type}Button`)}
         </button>
       ))
     : [],

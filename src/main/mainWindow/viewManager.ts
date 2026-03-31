@@ -192,11 +192,20 @@ export default class ViewManager {
 
   private onServerViewDidFailLoad = (server: Server): void => {
     logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
-    this.createDialog({ text: 'loadFailed', textArgs: { url: server.url, interpolation: { escapeValue: false } }, buttons: [{ name: 'returnToStartPage', triggerOnEnter: true }] })
+    this.createDialog({
+      text: 'loadFailed',
+      textArgs: {
+        url: server.url,
+        interpolation: { escapeValue: false },
+      },
+      buttons: [
+        { type: 'returnToStartPage', triggerOnEnter: true },
+      ],
+    })
   }
 
   handleDialogButton = (button: UserDialogButton): void => {
-    if (button.name === 'returnToStartPage') {
+    if (button.type === 'returnToStartPage') {
       if (this.currView instanceof ServerView) {
         this.serverViews.delete(this.currView.getServer().id)
       }
@@ -205,7 +214,7 @@ export default class ViewManager {
       }
       this.switchServer(undefined)
     }
-    else if (button.name === 'removeServer') {
+    else if (button.type === 'removeServer') {
       if (this.currView instanceof ServerView && this.currView.getServer().id === button.callbackParams.server.id) {
         this.serverViews.delete(this.currView.getServer().id)
         this.switchServer(undefined)
