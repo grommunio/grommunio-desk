@@ -48,7 +48,7 @@ const config: ForgeConfig = {
     }),
     new MakerMSIX({
       manifestVariables: {
-        publisher: '',
+        publisher: envConfig.get('WINDOWS_PUBLISHER'),
         publisherDisplayName: 'grommunio GmbH',
         packageIdentity: APP_IDENTIFIER,
         appExecutable: 'grommunio-desk.exe',
