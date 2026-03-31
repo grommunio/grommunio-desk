@@ -3,7 +3,7 @@
 import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import { Server, ServerOptions } from '../../types/misc'
-import { UserDialog, UserDialogButton } from '../../types/dialog'
+import { UserDialog, UserConfirmDialogButton } from '../../types/dialog'
 import { View } from '../types/misc'
 import { ADD_SERVER, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
@@ -193,6 +193,9 @@ export default class ViewManager {
   private onServerViewDidFailLoad = (server: Server): void => {
     logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
     this.createDialog({
+      type: 'confirm',
+      title: 'loadFailed',
+      exitAllowed: false,
       text: 'loadFailed',
       textArgs: {
         url: server.url,
@@ -204,7 +207,7 @@ export default class ViewManager {
     })
   }
 
-  handleDialogButton = (button: UserDialogButton): void => {
+  handleDialogButton = (button: UserConfirmDialogButton): void => {
     if (button.type === 'returnToStartPage') {
       if (this.currView instanceof ServerView) {
         this.serverViews.delete(this.currView.getServer().id)

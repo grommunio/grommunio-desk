@@ -3,7 +3,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 import { ServerOptions, Server, SystemPlatform } from '../types/misc'
-import { UserDialogButton, UserDialog } from '../types/dialog'
+import { UserConfirmDialogButton, UserDialog } from '../types/dialog'
 
 import {
   ADD_SERVER,
@@ -20,6 +20,7 @@ import {
   OPEN_DIALOG,
   ON_DIALOG_CHANGE,
   GET_SYSTEM_PLATFORM,
+  EXIT_DIALOG,
 } from './constants/communication'
 
 // TODO: check if it is possible to make the ipc functions type proof -> type checking when calling e.g. ipcMain.on(...)
@@ -29,9 +30,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadNewServer: (server: ServerOptions) => ipcRenderer.send(LOAD_NEW_SERVER, server),
   switchServer: (server: Server) => ipcRenderer.send(SWITCH_SERVER, server),
   toggleAppMenu: () => ipcRenderer.send(TOGGLE_APP_MENU),
-  handleDialogButton: (button: UserDialogButton) => ipcRenderer.send(HANDLE_DIALOG_BUTTON, button),
+  handleDialogButton: (button: UserConfirmDialogButton) => ipcRenderer.send(HANDLE_DIALOG_BUTTON, button),
   setTitleBarServerMenuOpen: (isOpen: boolean) => ipcRenderer.send(SET_TITLE_BAR_SERVER_MENU_OPEN, isOpen),
   openDialog: (userDialog: UserDialog) => ipcRenderer.send(OPEN_DIALOG, userDialog),
+  exitDialog: () => ipcRenderer.send(EXIT_DIALOG),
 
   // ipcRenderer.sendSync two-way (synchronous)
   getSystemPlatform: (): SystemPlatform => ipcRenderer.sendSync(GET_SYSTEM_PLATFORM),

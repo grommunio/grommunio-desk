@@ -1,7 +1,7 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import { SystemPlatform, Server, ServerOptions } from './misc'
-import { UserDialogButton, UserDialog } from './dialog'
+import { UserConfirmDialogButton, UserDialog } from './dialog'
 
 declare global {
   interface Window {
@@ -11,9 +11,10 @@ declare global {
       loadNewServer: (server: ServerOptions) => void
       switchServer: (server: Server) => void
       toggleAppMenu: () => void
-      handleDialogButton: (button: UserDialogButton) => void
+      handleDialogButton: (button: UserConfirmDialogButton) => void
       setTitleBarServerMenuOpen: (isOpen: boolean) => void
       openDialog: (userDialog: UserDialog) => void
+      exitDialog: () => void
 
       // ipcRenderer.sendSync two-way (synchronous)
       getSystemPlatform: () => SystemPlatform

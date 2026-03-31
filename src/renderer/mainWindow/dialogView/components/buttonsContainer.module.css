@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.button {
+  border: 1px solid #3a3d4d;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 6px 10px;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 0;
+  }
+
+  &:focus,
+  &:hover:not(:disabled) {
+    background: #2a2f3b;
+  }
+}
+
+.removeServerButton {
+  &:focus,
+  &:hover:not(:disabled) {
+    color: red;
+  }
+}

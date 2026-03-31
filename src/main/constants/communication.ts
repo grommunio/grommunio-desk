@@ -8,6 +8,7 @@ export const TOGGLE_APP_MENU = 'toggle_app_menu'
 export const HANDLE_DIALOG_BUTTON = 'handle_dialog_button'
 export const SET_TITLE_BAR_SERVER_MENU_OPEN = 'set_title_bar_server_menu_open'
 export const OPEN_DIALOG = 'open_dialog'
+export const EXIT_DIALOG = 'exit_dialog'
 
 // ipcRenderer.sendSync two-way (synchronous)
 export const GET_SYSTEM_PLATFORM = 'get_system_platform'

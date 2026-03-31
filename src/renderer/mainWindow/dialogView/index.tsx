@@ -4,12 +4,12 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import './index.css'
-import DialogBox from './dialogBox'
+import Dialog from './dialog'
 import '../../i18n/i18n'
 
 const Root = (): React.ReactElement => {
   return (
-    <DialogBox />
+    <Dialog />
   )
 }
 

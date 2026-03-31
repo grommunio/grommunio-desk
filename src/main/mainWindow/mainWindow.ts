@@ -6,7 +6,7 @@ import store from '../utils/store'
 import { buildAppMenuTemplate } from '../utils/appMenu'
 import TitleBarView from './titleBarView'
 import { TITLE_BAR } from '../../constants/window'
-import { SET_TITLE_BAR_SERVER_MENU_OPEN, TOGGLE_APP_MENU, HANDLE_DIALOG_BUTTON, OPEN_DIALOG } from '../constants/communication'
+import { SET_TITLE_BAR_SERVER_MENU_OPEN, TOGGLE_APP_MENU, HANDLE_DIALOG_BUTTON, OPEN_DIALOG, EXIT_DIALOG } from '../constants/communication'
 import { Server } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../utils/misc'
 import ViewManager from './viewManager'
@@ -14,7 +14,7 @@ import { APP_PRODUCT_NAME } from '../constants/app'
 import { systemPlatform } from '../constants/system'
 import { BACKGROUND_COLOR } from '../constants/view'
 import DialogView from './mainViews/dialogView'
-import { UserDialog, UserDialogButton } from '../../types/dialog'
+import { UserDialog, UserConfirmDialogButton } from '../../types/dialog'
 import Logger from '@utils/logger'
 import { getExtraResourcesPath } from '../utils/paths'
 
@@ -41,6 +41,7 @@ export default class MainWindow {
     ipcMain.on(SET_TITLE_BAR_SERVER_MENU_OPEN, this.onSetTitleBarServerMenuOpen)
     ipcMain.on(HANDLE_DIALOG_BUTTON, this.onHandleDialogButton)
     ipcMain.on(OPEN_DIALOG, this.onOpenDialog)
+    ipcMain.on(EXIT_DIALOG, this.onExitDialog)
 
     this.createWindow()
   }
@@ -231,12 +232,16 @@ export default class MainWindow {
     this.titleBarView?.setServerMenuOpen(isOpen)
   }
 
-  private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton): void => {
+  private onHandleDialogButton = (_event: IpcMainEvent, button: UserConfirmDialogButton): void => {
     this.closeDialog()
     this.viewManager.handleDialogButton(button)
   }
 
   private onOpenDialog = (_event: IpcMainEvent, userDialog: UserDialog): void => {
     this.createDialog(userDialog)
+  }
+
+  private onExitDialog = (_event: IpcMainEvent): void => {
+    this.closeDialog()
   }
 }
