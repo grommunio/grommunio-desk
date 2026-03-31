@@ -13,13 +13,19 @@
       "addServer": "Add server"
     },
     "dialogView": {
-      "loadFailedTitle": "Loading failed",
-      "loadFailedText": "Loading of {{url}} failed.",
-      "removeServerTitle": "Remove server?",
-      "removeServerText": "Do you really want to remove the server \"{{server.name}}\"?",
-      "returnToStartPageButton": "Return",
-      "cancelButton": "Cancel",
-      "removeServerButton": "Remove"
+      "title": {
+        "loadFailed": "Loading failed",
+        "removeServer": "Remove server?"
+      },
+      "text": {
+        "loadFailed": "Loading of {{url}} failed.",
+        "removeServer": "Do you really want to remove the server \"{{server.name}}\"?"
+      },
+      "button": {
+        "returnToStartPage": "Return",
+        "cancel": "Cancel",
+        "removeServer": "Remove"
+      }
     }
   }
 }

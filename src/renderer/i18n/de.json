@@ -13,13 +13,19 @@
       "addServer": "Server hinzufügen"
     },
     "dialogView": {
-      "loadFailedTitle": "Fehlgeschlagenes Laden",
-      "loadFailedText": "Laden von {{url}} schlug fehl.",
-      "removeServerTitle": "Server löschen?",
-      "removeServerText": "Möchten Sie den Server „{{server.name}}“ wirklich löschen?",
-      "returnToStartPageButton": "Zurück",
-      "cancelButton": "Abbrechen",
-      "removeServerButton": "Löschen"
+      "title": {
+        "loadFailed": "Fehlgeschlagenes Laden",
+        "removeServer": "Server löschen?"
+      },
+      "text": {
+        "loadFailed": "Laden von {{url}} schlug fehl.",
+        "removeServer": "Möchten Sie den Server „{{server.name}}“ wirklich löschen?"
+      },
+      "button": {
+        "returnToStartPage": "Zurück",
+        "cancel": "Abbrechen",
+        "removeServer": "Löschen"
+      }
     }
   }
 }

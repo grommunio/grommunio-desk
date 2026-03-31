@@ -20,7 +20,7 @@ const DialogBox = (): React.ReactElement => {
           onKeyDown={event => event.stopPropagation()} // when a button is focused and the Enter key is pressed, any other onKeyDown functionality should not be triggered
           key={`button-${idx}`}
         >
-          {t(`mainWindow.dialogView.${button.type}Button`)}
+          {t(`mainWindow.dialogView.button.${button.type}`)}
         </button>
       ))
     : [],
@@ -81,10 +81,10 @@ const DialogBox = (): React.ReactElement => {
                 onMouseDown={event => event.stopPropagation()}
               >
                 <h3 className={styles.title}>
-                  {t(`mainWindow.dialogView.${userDialog.text}Title`, userDialog.textArgs)}
+                  {t(`mainWindow.dialogView.title.${userDialog.text}`, userDialog.textArgs)}
                 </h3>
                 <p className={styles.text}>
-                  {t(`mainWindow.dialogView.${userDialog.text}Text`, userDialog.textArgs)}
+                  {t(`mainWindow.dialogView.text.${userDialog.text}`, userDialog.textArgs)}
                 </p>
                 <div className={styles.buttonDiv}>
                   {buttons}
