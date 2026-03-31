@@ -5,13 +5,11 @@ import { useTranslation } from 'react-i18next'
 
 import styles from './startPage.module.css'
 import Logger from '@utils/logger'
+import { validateServerNameFormat, validateServerUrlFormat } from '@utils/server'
 import { ServerOptions } from '../../../types/misc'
 
 const logger = new Logger('renderer/mainWindow/startView/startPage')
-const URL_REGEX_PATTERN = /^https:\/\/([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]+)*\/?$/i
 const URL_VALIDATION_BEGIN_TIMEOUT = 400
-const NAME_REGEX_PATTERN = /^[a-z0-9-_ ]*$/i
-const NAME_MAX_LENGTH = 20
 const INPUT_FIELD_VALID_COLOR = 'green'
 const INPUT_FIELD_INVALID_COLOR = 'red'
 const INPUT_FIELD_WARN_COLOR = 'orange'
@@ -55,7 +53,7 @@ const StartPage = (): React.ReactElement => {
       if (!inputVal) {
         setNameValidationStatus('notChecked')
       }
-      else if (!NAME_REGEX_PATTERN.test(inputVal) || inputVal.length > NAME_MAX_LENGTH) {
+      else if (!validateServerNameFormat(inputVal)) {
         setNameValidationStatus('invalidFormat')
       }
       else {
@@ -72,7 +70,7 @@ const StartPage = (): React.ReactElement => {
       if (!inputVal) {
         return
       }
-      if (!URL_REGEX_PATTERN.test(inputVal)) {
+      if (!validateServerUrlFormat(inputVal)) {
         setUrlValidationStatus('invalidFormat')
         return
       }
