@@ -35,56 +35,53 @@ const onOpenAppClick = (): void => {
     createWindow()
 }
 
-app.on('ready', () => {
-  // handle squirrel installing / uninstalling proces
-  if (started) {
-    app.quit()
-    return
-  }
+if (started) { // handle squirrel installing / uninstalling process
+  app.quit()
+}
+else if (!app.requestSingleInstanceLock()) {
+  app.quit()
+}
+else {
+  app.on('ready', () => {
+    session.defaultSession.protocol.handle('static', (request) => {
+      const fileUrl = request.url.replace('static://', '')
+      const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl)
+      return net.fetch(url.pathToFileURL(filePath).toString())
+    })
 
-  if (!app.requestSingleInstanceLock()) {
-    app.quit()
-    return
-  }
+    if (systemPlatform === 'win')
+      app.setAppUserModelId(APP_ID)
 
-  session.defaultSession.protocol.handle('static', (request) => {
-    const fileUrl = request.url.replace('static://', '')
-    const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl)
-    return net.fetch(url.pathToFileURL(filePath).toString())
-  })
+    registerIpcFunctions()
 
-  if (systemPlatform === 'win')
-    app.setAppUserModelId(APP_ID)
+    app.setAboutPanelOptions({
+      applicationName: APP_PRODUCT_NAME,
+      applicationVersion: app.getVersion(),
+      copyright: `Copyright (c) 2020-${new Date().getFullYear()} grommunio GmbH. All Rights Reserved.`,
+      version: app.getVersion(),
+      credits: 'grommunio GmbH',
+      website: 'https://grommunio.com',
+      iconPath: getExtraResourcesPath('icon_512x512.png'),
+    })
 
-  registerIpcFunctions()
-
-  app.setAboutPanelOptions({
-    applicationName: APP_PRODUCT_NAME,
-    applicationVersion: app.getVersion(),
-    copyright: `Copyright (c) 2020-${new Date().getFullYear()} grommunio GmbH. All Rights Reserved.`,
-    version: app.getVersion(),
-    credits: 'grommunio GmbH',
-    website: 'https://grommunio.com',
-    iconPath: getExtraResourcesPath('icon_512x512.png'),
-  })
-
-  createWindow()
-
-  new TrayMenu(onOpenAppClick)
-})
-
-app.on('window-all-closed', () => {
-  // stay active in background
-})
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no
-  // other windows open.
-  if (!mainWindow?.isWindowDefined()) {
     createWindow()
-  }
-})
 
-app.on('second-instance', () => {
-  onOpenAppClick()
-})
+    new TrayMenu(onOpenAppClick)
+  })
+
+  app.on('window-all-closed', () => {
+    // stay active in background
+  })
+
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no
+    // other windows open.
+    if (!mainWindow?.isWindowDefined()) {
+      createWindow()
+    }
+  })
+
+  app.on('second-instance', () => {
+    onOpenAppClick()
+  })
+}
