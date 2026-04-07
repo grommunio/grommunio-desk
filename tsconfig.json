@@ -10,14 +10,11 @@
     "noUnusedParameters": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "baseUrl": ".",
-    "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "paths": {
-      "@utils/*": ["src/main/utils/*", "src/renderer/utils/*"],
-      "*": ["node_modules/*"]
+      "@utils/*": ["./src/main/utils/*", "./src/renderer/utils/*"]
     }
   },
   "include": ["src/**/*"]
