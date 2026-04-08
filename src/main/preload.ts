@@ -1,6 +1,7 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
+import 'electron-log/preload'
 
 import { ServerOptions, Server, SystemPlatform } from '../types/misc'
 import { UserConfirmDialogButton, UserDialog } from '../types/dialog'

@@ -20,8 +20,6 @@ log.transports.file.resolvePathFn = (_variables, msg): string => {
     return getUserDataPath('logs/main.log')
 }
 
-log.initialize()
-
 log.eventLogger.format = ({ args, eventName, eventSource }): string[] => {
   return [`[eventLogger.${eventSource}.${eventName}]`.padStart(LOGGER_PADDING.FUNCTION_NAME + LOGGER_PADDING.LOG_LEVEL) + ` >`, JSON.stringify(args)]
 }
