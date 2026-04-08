@@ -12,7 +12,7 @@ import { ServerSystem, ServerType } from '../types/misc'
 import { firstNonNullPromise } from './utils/misc'
 
 async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): Promise<ServerSystem | null> {
-  const MAX_VERSION_BODY_LENGTH = 4096
+  const MAX_VERSION_BODY_LENGTH = 8192
   const VERSION_ENDPOINTS: {
     path: string
     search?: string
@@ -23,6 +23,12 @@ async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): 
       path: '/web/version',
       regex: /^(\d+\.\d+\.\d+)\.[a-z0-9]+-(?:lp\d+\.|\d+\+)\d+\.\d+$/,
       type: 'web',
+    },
+    {
+      path: '/api/v4/config/client',
+      search: 'format=old',
+      regex: /^{.*"Version":"(\d+\.\d+\.\d+)".*}$/,
+      type: 'chat',
     },
   ]
 

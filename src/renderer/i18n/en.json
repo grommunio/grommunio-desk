@@ -6,7 +6,8 @@
       "urlInvalidServer": "Invalid server URL.",
       "urlValid": {
         "version": "Version {{system.version}}",
-        "web": "Web Server verified"
+        "web": "Web Server verified",
+        "chat": "Chat Server verified"
       },
       "submit": "Submit",
       "nameInvalidFormat": "Please enter a valid server name."
