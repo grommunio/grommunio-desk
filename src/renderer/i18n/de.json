@@ -1,16 +1,31 @@
 {
   "mainWindow": {
     "startView": {
-      "description": "Bitte geben Sie einen Namen und die URL Ihres grommunio Servers ein, um fortzufahren.",
-      "urlInvalidFormat": "Bitte geben Sie eine gültige https:// URL ein.",
-      "urlInvalidServer": "Ungültige Server URL.",
-      "urlValid": {
-        "version": "Version {{system.version}}",
-        "web": "Web Server erfolgreich geprüft",
-        "chat": "Chat Server erfolgreich geprüft"
+      "text": {
+        "description": "Bitte geben Sie einen Namen und die URL Ihres grommunio Servers ein, um fortzufahren."
       },
-      "submit": "Senden",
-      "nameInvalidFormat": "Bitte geben Sie einen gültigen Server Namen ein."
+      "button": {
+        "submit": "Senden"
+      },
+      "input": {
+        "url": {
+          "feedback": {
+            "valid": {
+              "version": "Version {{system.version}}",
+              "web": "Web Server erfolgreich geprüft",
+              "chat": "Chat Server erfolgreich geprüft"
+            },
+            "invalidFormat": "Bitte geben Sie eine gültige https:// URL ein.",
+            "invalidServer": "Ungültige Server URL."
+          }
+        },
+        "name": {
+          "placeholder": "Dein Server Name",
+          "feedback": {
+            "invalidFormat": "Bitte geben Sie einen gültigen Server Namen ein."
+          }
+        }
+      }
     },
     "titleBarView": {
       "servers": "Server",

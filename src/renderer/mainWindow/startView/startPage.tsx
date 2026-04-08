@@ -1,40 +1,50 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import React, { ChangeEvent, useRef, useState, useMemo } from 'react'
+import React, { useRef, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styles from './startPage.module.css'
 import Logger from '@utils/logger'
 import { validateServerNameFormat, validateServerUrlFormat } from '@utils/server'
 import { ServerOptions, ServerSystem } from '../../../types/misc'
+import InputField, { ValidationStatus as InputFieldValidationStatus } from '../../components/inputField'
+
+type UrlValidationStatus = 'unchecked' | 'invalidFormat' | 'checking' | 'invalidServer' | 'valid'
+type NameValidationStatus = 'unchecked' | 'invalidFormat' | 'valid'
 
 const logger = new Logger('renderer/mainWindow/startView/startPage')
 const URL_VALIDATION_BEGIN_TIMEOUT = 400
-const INPUT_FIELD_VALID_COLOR = 'green'
-const INPUT_FIELD_INVALID_COLOR = 'red'
-const INPUT_FIELD_WARN_COLOR = 'orange'
-const FEEDBACK_TEXT_VALID_COLOR = 'rgba(120, 220, 160, 0.95)'
-const FEEDBACK_TEXT_INVALID_COLOR = 'rgba(255, 120, 120, 0.9)'
-const FEEDBACK_TEXT_WARN_COLOR = 'rgb(255, 168, 1.0)'
+const URL_VALIDATION_STATUS_MAP: Record<UrlValidationStatus, InputFieldValidationStatus> = {
+  unchecked: 'unchecked',
+  invalidFormat: 'invalid',
+  checking: 'checking',
+  invalidServer: 'warn',
+  valid: 'valid',
+}
+const NAME_VALIDATION_STATUS_MAP: Record<NameValidationStatus, InputFieldValidationStatus> = {
+  unchecked: 'unchecked',
+  invalidFormat: 'invalid',
+  valid: 'valid',
+}
 
 const StartPage = (): React.ReactElement => {
   const { t } = useTranslation()
   const [urlInput, setUrlInput] = useState('')
   const [nameInput, setNameInput] = useState('')
-  const [urlValidationStatus, setUrlValidationStatus] = useState<'notChecked' | 'invalidFormat' | 'checking' | 'invalidServer' | 'valid'>('notChecked')
-  const [nameValidationStatus, setNameValidationStatus] = useState<'notChecked' | 'invalidFormat' | 'valid'>('notChecked')
+  const [urlValidationStatus, setUrlValidationStatus] = useState<UrlValidationStatus>('unchecked')
+  const [nameValidationStatus, setNameValidationStatus] = useState<NameValidationStatus>('unchecked')
   const [urlServerSystem, setUrlServerSystem] = useState<ServerSystem | null>(null)
   const urlValidationTimeoutRef = useRef<NodeJS.Timeout>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
   const isReadyToSubmit = useMemo(() => ['invalidServer', 'valid'].includes(urlValidationStatus) && nameValidationStatus === 'valid', [urlValidationStatus, nameValidationStatus])
   const urlValidationFeedbackText = useMemo(() =>
     urlValidationStatus === 'valid'
-      ? `${t(`mainWindow.startView.urlValid.${urlServerSystem?.type}`)}: ${t(`mainWindow.startView.urlValid.version`, { system: urlServerSystem })}`
+      ? `${t(`mainWindow.startView.input.url.feedback.valid.${urlServerSystem?.type}`)}: ${t(`mainWindow.startView.input.url.feedback.valid.version`, { system: urlServerSystem })}`
       : urlValidationStatus === 'invalidFormat'
-        ? t('mainWindow.startView.urlInvalidFormat')
+        ? t('mainWindow.startView.input.url.feedback.invalidFormat')
         : urlValidationStatus === 'invalidServer'
-          ? t('mainWindow.startView.urlInvalidServer')
-          : '',
+          ? t('mainWindow.startView.input.url.feedback.invalidServer')
+          : undefined,
   [urlValidationStatus, urlServerSystem])
 
   const onSend = async (): Promise<void> => {
@@ -50,15 +60,13 @@ const StartPage = (): React.ReactElement => {
     window.electronAPI.loadNewServer(server)
   }
 
-  const handleChange = (field: 'name' | 'url') => (e: ChangeEvent<HTMLInputElement>): void => {
-    const inputVal = e.target.value
-
+  const handleChange = (field: 'name' | 'url') => (value: string): void => {
     if (field === 'name') {
-      setNameInput(inputVal)
-      if (!inputVal) {
-        setNameValidationStatus('notChecked')
+      setNameInput(value)
+      if (!value) {
+        setNameValidationStatus('unchecked')
       }
-      else if (!validateServerNameFormat(inputVal)) {
+      else if (!validateServerNameFormat(value)) {
         setNameValidationStatus('invalidFormat')
       }
       else {
@@ -66,24 +74,24 @@ const StartPage = (): React.ReactElement => {
       }
     }
     else {
-      setUrlInput(inputVal)
-      setUrlValidationStatus('notChecked')
+      setUrlInput(value)
+      setUrlValidationStatus('unchecked')
       setUrlServerSystem(null)
       if (urlValidationTimeoutRef.current) {
         clearTimeout(urlValidationTimeoutRef.current)
         urlValidationTimeoutRef.current = null
       }
-      if (!inputVal) {
+      if (!value) {
         return
       }
-      if (!validateServerUrlFormat(inputVal)) {
+      if (!validateServerUrlFormat(value)) {
         setUrlValidationStatus('invalidFormat')
         return
       }
       urlValidationTimeoutRef.current = setTimeout(async () => {
         setUrlValidationStatus('checking')
         // logger.silly('handleChange.timeoutFunc', 'Validating url', inputVal, runId)
-        const serverValidation = await window.electronAPI.validateServerUrl(inputVal)
+        const serverValidation = await window.electronAPI.validateServerUrl(value)
         // logger.silly('handleChange.timeoutFunc', 'Validation completed', inputVal, serverValid, urlValidationTimeoutRef.current, runId)
         if (urlValidationTimeoutRef.current != runId)
           return
@@ -99,14 +107,12 @@ const StartPage = (): React.ReactElement => {
     }
   }
 
-  const handleKeyDown = (field: 'name' | 'url') => (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter') {
-      if (field === 'name') {
-        urlInputRef.current?.focus()
-      }
-      else {
-        onSend()
-      }
+  const handleEnterKeyDown = (field: 'name' | 'url') => (): void => {
+    if (field === 'name') {
+      urlInputRef.current?.focus()
+    }
+    else {
+      onSend()
     }
   }
 
@@ -118,79 +124,31 @@ const StartPage = (): React.ReactElement => {
       <div className={styles.content}>
         <img className={styles.logo} src="static://logo_with_text.png" alt="grommunio" />
         <p className={`${styles.description} ${(urlInput || nameInput) ? styles.descriptionHidden : ''}`}>
-          {t('mainWindow.startView.description')}
+          {t('mainWindow.startView.text.description')}
         </p>
-        <input
-          className={styles.input}
+        <InputField
           value={nameInput}
-          onChange={handleChange('name')}
-          onKeyDown={handleKeyDown('name')}
           type="text"
-          autoCorrect="false"
-          placeholder="Your server name"
-          autoFocus
-          style={{
-            borderColor: nameValidationStatus === 'notChecked'
-              ? 'transparent'
-              : nameValidationStatus === 'valid'
-                ? INPUT_FIELD_VALID_COLOR
-                : INPUT_FIELD_INVALID_COLOR,
-          }}
+          className={styles.inputContainer}
+          placeholder={t('mainWindow.startView.input.name.placeholder')}
+          feedback={nameValidationStatus === 'invalidFormat' ? t('mainWindow.startView.input.name.feedback.invalidFormat') : undefined}
+          validationStatus={NAME_VALIDATION_STATUS_MAP[nameValidationStatus]}
+          onChange={handleChange('name')}
+          onEnterKeyDown={handleEnterKeyDown('name')}
         />
-        <div className={`${styles.validationFeedback}`}>
-          {
-            nameValidationStatus === 'invalidFormat'
-              ? (
-                  <p className={styles.text} style={{ color: FEEDBACK_TEXT_INVALID_COLOR }}>
-                    {t('mainWindow.startView.nameInvalidFormat')}
-                  </p>
-                )
-              : ''
-          }
-        </div>
-        <input
-          className={styles.input}
-          ref={urlInputRef}
+        <InputField
           value={urlInput}
-          onChange={handleChange('url')}
-          onKeyDown={handleKeyDown('url')}
           type="url"
-          autoCorrect="false"
+          className={styles.inputContainer}
           placeholder="https://mail.example.com"
-          style={{
-            borderColor: ['notChecked', 'checking'].includes(urlValidationStatus)
-              ? 'transparent'
-              : urlValidationStatus === 'valid'
-                ? INPUT_FIELD_VALID_COLOR
-                : urlValidationStatus === 'invalidServer'
-                  ? INPUT_FIELD_WARN_COLOR
-                  : INPUT_FIELD_INVALID_COLOR,
-          }}
+          feedback={urlValidationFeedbackText}
+          validationStatus={URL_VALIDATION_STATUS_MAP[urlValidationStatus]}
+          ref={urlInputRef}
+          onChange={handleChange('url')}
+          onEnterKeyDown={handleEnterKeyDown('url')}
         />
-        <div className={`${styles.validationFeedback}`}>
-          {
-            urlValidationFeedbackText
-              ? (
-                  <p
-                    className={styles.text}
-                    style={{
-                      color: urlValidationStatus === 'valid'
-                        ? FEEDBACK_TEXT_VALID_COLOR
-                        : urlValidationStatus === 'invalidServer'
-                          ? FEEDBACK_TEXT_WARN_COLOR
-                          : FEEDBACK_TEXT_INVALID_COLOR,
-                    }}
-                  >
-                    {urlValidationFeedbackText}
-                  </p>
-                )
-              : urlValidationStatus === 'checking'
-                ? <div className={styles.loader} />
-                : ''
-          }
-        </div>
         <button className={styles.button} onClick={onSend} disabled={!isReadyToSubmit}>
-          {t('mainWindow.startView.submit')}
+          {t('mainWindow.startView.button.submit')}
         </button>
       </div>
     </div>

@@ -1,16 +1,31 @@
 {
   "mainWindow": {
     "startView": {
-      "description": "Enter your grommunio server name and URL to continue.",
-      "urlInvalidFormat": "Please enter a valid https:// URL.",
-      "urlInvalidServer": "Invalid server URL.",
-      "urlValid": {
-        "version": "Version {{system.version}}",
-        "web": "Web Server verified",
-        "chat": "Chat Server verified"
+      "text": {
+        "description": "Enter your grommunio server name and URL to continue."
       },
-      "submit": "Submit",
-      "nameInvalidFormat": "Please enter a valid server name."
+      "button": {
+         "submit": "Submit"
+      },
+      "input": {
+        "url": {
+          "feedback": {
+            "valid": {
+              "version": "Version {{system.version}}",
+              "web": "Web Server verified",
+              "chat": "Chat Server verified"
+            },
+            "invalidFormat": "Please enter a valid https:// URL.",
+            "invalidServer": "Invalid server URL."
+          }
+        },
+        "name": {
+          "placeholder": "Your server name",
+          "feedback": {
+            "invalidFormat": "Please enter a valid server name."
+          }
+        }
+      }
     },
     "titleBarView": {
       "servers": "Servers",
