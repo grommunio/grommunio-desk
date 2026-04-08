@@ -4,7 +4,10 @@
       "description": "Enter your grommunio server name and URL to continue.",
       "urlInvalidFormat": "Please enter a valid https:// URL.",
       "urlInvalidServer": "Invalid server URL.",
-      "urlValid": "Server verified.",
+      "urlValid": {
+        "version": "Version {{system.version}}",
+        "web": "Web Server verified"
+      },
       "submit": "Submit",
       "nameInvalidFormat": "Please enter a valid server name."
     },

@@ -13,3 +13,26 @@ export function sendIpc(view: WebContentsView | undefined, channel: string, ...a
   if (view != null && !view.webContents.isWaitingForResponse()) // TODO: throw error if view == null (?)
     view?.webContents.send(channel, ...args)
 }
+
+export function firstNonNullPromise<T>(promises: Promise<T>[]): Promise<T | null> {
+  return new Promise((resolve) => {
+    let pending = promises.length
+
+    promises.forEach((p) => {
+      Promise.resolve(p).then((value) => {
+        if (value != null) {
+          resolve(value)
+        }
+        else {
+          pending--
+          if (pending === 0)
+            resolve(null)
+        }
+      }).catch(() => {
+        pending--
+        if (pending === 0)
+          resolve(null)
+      })
+    })
+  })
+}

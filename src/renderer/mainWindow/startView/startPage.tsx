@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import styles from './startPage.module.css'
 import Logger from '@utils/logger'
 import { validateServerNameFormat, validateServerUrlFormat } from '@utils/server'
-import { ServerOptions } from '../../../types/misc'
+import { ServerOptions, ServerSystem } from '../../../types/misc'
 
 const logger = new Logger('renderer/mainWindow/startView/startPage')
 const URL_VALIDATION_BEGIN_TIMEOUT = 400
@@ -23,24 +23,29 @@ const StartPage = (): React.ReactElement => {
   const [nameInput, setNameInput] = useState('')
   const [urlValidationStatus, setUrlValidationStatus] = useState<'notChecked' | 'invalidFormat' | 'checking' | 'invalidServer' | 'valid'>('notChecked')
   const [nameValidationStatus, setNameValidationStatus] = useState<'notChecked' | 'invalidFormat' | 'valid'>('notChecked')
+  const [urlServerSystem, setUrlServerSystem] = useState<ServerSystem | null>(null)
   const urlValidationTimeoutRef = useRef<NodeJS.Timeout>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
   const isReadyToSubmit = useMemo(() => ['invalidServer', 'valid'].includes(urlValidationStatus) && nameValidationStatus === 'valid', [urlValidationStatus, nameValidationStatus])
   const urlValidationFeedbackText = useMemo(() =>
     urlValidationStatus === 'valid'
-      ? t('mainWindow.startView.urlValid')
+      ? `${t(`mainWindow.startView.urlValid.${urlServerSystem?.type}`)}: ${t(`mainWindow.startView.urlValid.version`, { system: urlServerSystem })}`
       : urlValidationStatus === 'invalidFormat'
         ? t('mainWindow.startView.urlInvalidFormat')
         : urlValidationStatus === 'invalidServer'
           ? t('mainWindow.startView.urlInvalidServer')
           : '',
-  [urlValidationStatus])
+  [urlValidationStatus, urlServerSystem])
 
   const onSend = async (): Promise<void> => {
     if (!isReadyToSubmit)
       return
 
-    const server: ServerOptions = { url: urlInput, name: nameInput }
+    const server: ServerOptions = {
+      url: urlInput,
+      name: nameInput,
+      system: urlServerSystem,
+    }
     logger.debug('onSend', 'New server:', server)
     window.electronAPI.loadNewServer(server)
   }
@@ -63,6 +68,7 @@ const StartPage = (): React.ReactElement => {
     else {
       setUrlInput(inputVal)
       setUrlValidationStatus('notChecked')
+      setUrlServerSystem(null)
       if (urlValidationTimeoutRef.current) {
         clearTimeout(urlValidationTimeoutRef.current)
         urlValidationTimeoutRef.current = null
@@ -77,14 +83,17 @@ const StartPage = (): React.ReactElement => {
       urlValidationTimeoutRef.current = setTimeout(async () => {
         setUrlValidationStatus('checking')
         // logger.silly('handleChange.timeoutFunc', 'Validating url', inputVal, runId)
-        const serverValid = await window.electronAPI.validateServerUrl(inputVal)
+        const serverValidation = await window.electronAPI.validateServerUrl(inputVal)
         // logger.silly('handleChange.timeoutFunc', 'Validation completed', inputVal, serverValid, urlValidationTimeoutRef.current, runId)
         if (urlValidationTimeoutRef.current != runId)
           return
-        if (serverValid)
+        if (serverValidation != null) {
           setUrlValidationStatus('valid')
-        else
+          setUrlServerSystem(serverValidation)
+        }
+        else {
           setUrlValidationStatus('invalidServer')
+        }
       }, URL_VALIDATION_BEGIN_TIMEOUT)
       const runId = urlValidationTimeoutRef.current
     }
