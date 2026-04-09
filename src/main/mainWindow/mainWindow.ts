@@ -14,7 +14,7 @@ import { APP_PRODUCT_NAME } from '../constants/app'
 import { systemPlatform } from '../constants/system'
 import { BACKGROUND_COLOR } from '../constants/view'
 import DialogView from './mainViews/dialogView'
-import { UserDialog, UserConfirmDialogButton } from '../../types/dialog'
+import { UserDialog, UserDialogButton } from '../../types/dialog'
 import Logger from '@utils/logger'
 import { getExtraResourcesPath } from '../utils/paths'
 
@@ -232,7 +232,7 @@ export default class MainWindow {
     this.titleBarView?.setServerMenuOpen(isOpen)
   }
 
-  private onHandleDialogButton = (_event: IpcMainEvent, button: UserConfirmDialogButton): void => {
+  private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton): void => {
     this.closeDialog()
     this.viewManager.handleDialogButton(button)
   }

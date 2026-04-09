@@ -68,11 +68,11 @@ const TitleBar = (): React.ReactElement => {
       type: 'confirm',
       title: 'removeServer',
       exitAllowed: true,
-      text: 'removeServer',
+      text: 'confirm.removeServer',
       textArgs: { server },
       buttons: [
         { type: 'cancel' },
-        { type: 'removeServer', callbackParams: { server }, triggerOnEnter: true },
+        { type: 'confirm.removeServer', callbackParams: { server }, triggerOnEnter: true },
       ],
     })
   }

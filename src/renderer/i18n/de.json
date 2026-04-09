@@ -37,13 +37,17 @@
         "removeServer": "Server löschen?"
       },
       "text": {
-        "loadFailed": "Laden von {{url}} schlug fehl.",
-        "removeServer": "Möchten Sie den Server „{{server.name}}“ wirklich löschen?"
+        "confirm": {
+          "loadFailed": "Laden von {{url}} schlug fehl.",
+          "removeServer": "Möchten Sie den Server „{{server.name}}“ wirklich löschen?"
+        }
       },
       "button": {
-        "returnToStartPage": "Zurück",
         "cancel": "Abbrechen",
-        "removeServer": "Löschen"
+        "confirm": {
+          "returnToStartPage": "Zurück",
+          "removeServer": "Löschen"
+        }
       }
     }
   }

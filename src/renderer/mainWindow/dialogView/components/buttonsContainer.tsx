@@ -4,10 +4,10 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styles from './buttonsContainer.module.css'
-import { UserConfirmDialogButton } from '../../../../types/dialog'
+import { UserDialogButton } from '../../../../types/dialog'
 
 interface Props {
-  buttons: UserConfirmDialogButton[]
+  buttons: UserDialogButton[]
   exitDialog: () => void
 }
 

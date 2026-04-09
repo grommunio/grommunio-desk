@@ -5,41 +5,37 @@ import { InterpolationOptions } from 'i18next'
 import { Server } from './misc'
 
 type UserDialogTitle = 'loadFailed' | 'removeServer'
-export interface UserDialogTemplate {
-  type: string
+interface UserDialogTemplate<Type> {
+  type: Type
   title: UserDialogTitle
   exitAllowed: boolean
 }
-
-interface UserConfirmDialogButtonTemplate {
-  type: string
-  callbackParams?: unknown
+interface UserTextDialogTemplate<Type, DialogTextArgs, DialogText extends keyof DialogTextArgs> extends UserDialogTemplate<Type> {
+  text: DialogText
+  textArgs: DialogTextArgs[DialogText]
+}
+type UserDialogButtonTemplate<Type, CallbackParams = undefined> = {
+  type: Type
   triggerOnEnter?: boolean
+} & (CallbackParams extends undefined
+  ? { callbackParams?: undefined }
+  : { callbackParams: CallbackParams })
+type UserDialogCancelButton = UserDialogButtonTemplate<'cancel'>
+interface UserButtonDialogTemplate<Type, Button> extends UserDialogTemplate<Type> {
+  buttons: Button[]
 }
-interface UserConfirmDialogReturnToStartPageButton extends UserConfirmDialogButtonTemplate {
-  type: 'returnToStartPage'
-  callbackParams?: undefined
-}
-interface UserConfirmDialogCancelButton extends UserConfirmDialogButtonTemplate {
-  type: 'cancel'
-  callbackParams?: undefined
-}
-interface UserConfirmDialogRemoveServerButton extends UserConfirmDialogButtonTemplate {
-  type: 'removeServer'
-  callbackParams: { server: Server }
-}
-export type UserConfirmDialogButton = UserConfirmDialogReturnToStartPageButton | UserConfirmDialogCancelButton | UserConfirmDialogRemoveServerButton
 
+type UserConfirmDialogReturnToStartPageButton = UserDialogButtonTemplate<'confirm.returnToStartPage'>
+type UserConfirmDialogRemoveServerButton = UserDialogButtonTemplate<'confirm.removeServer', { server: Server }>
+type UserConfirmDialogButton = UserDialogCancelButton | UserConfirmDialogReturnToStartPageButton | UserConfirmDialogRemoveServerButton
 interface UserConfirmDialogTextArgs {
-  loadFailed: { url: string, interpolation?: InterpolationOptions }
-  removeServer: { server: Server }
+  'confirm.loadFailed': { url: string, interpolation?: InterpolationOptions }
+  'confirm.removeServer': { server: Server }
 }
-interface UserConfirmDialogGeneric<T extends keyof UserConfirmDialogTextArgs> extends UserDialogTemplate {
-  type: 'confirm'
-  text: T
-  textArgs: UserConfirmDialogTextArgs[T]
-  buttons: UserConfirmDialogButton[]
-}
+type UserConfirmDialogGeneric<Text extends keyof UserConfirmDialogTextArgs>
+  = UserTextDialogTemplate<'confirm', UserConfirmDialogTextArgs, Text>
+    & UserButtonDialogTemplate<'confirm', UserConfirmDialogButton>
 export type UserConfirmDialog = { [K in keyof UserConfirmDialogTextArgs]: UserConfirmDialogGeneric<K> }[keyof UserConfirmDialogTextArgs]
 
 export type UserDialog = UserConfirmDialog
+export type UserDialogButton = UserConfirmDialogButton

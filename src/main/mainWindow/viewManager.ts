@@ -3,7 +3,7 @@
 import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import { Server, ServerOptions } from '../../types/misc'
-import { UserDialog, UserConfirmDialogButton } from '../../types/dialog'
+import { UserDialog, UserDialogButton } from '../../types/dialog'
 import { View } from '../types/misc'
 import { ADD_SERVER, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
@@ -196,19 +196,19 @@ export default class ViewManager {
       type: 'confirm',
       title: 'loadFailed',
       exitAllowed: false,
-      text: 'loadFailed',
+      text: 'confirm.loadFailed',
       textArgs: {
         url: server.url,
         interpolation: { escapeValue: false },
       },
       buttons: [
-        { type: 'returnToStartPage', triggerOnEnter: true },
+        { type: 'confirm.returnToStartPage', triggerOnEnter: true },
       ],
     })
   }
 
-  handleDialogButton = (button: UserConfirmDialogButton): void => {
-    if (button.type === 'returnToStartPage') {
+  handleDialogButton = (button: UserDialogButton): void => {
+    if (button.type === 'confirm.returnToStartPage') {
       if (this.currView instanceof ServerView) {
         this.serverViews.delete(this.currView.getServer().id)
       }
@@ -217,7 +217,7 @@ export default class ViewManager {
       }
       this.switchServer(undefined)
     }
-    else if (button.type === 'removeServer') {
+    else if (button.type === 'confirm.removeServer') {
       if (this.currView instanceof ServerView && this.currView.getServer().id === button.callbackParams.server.id) {
         this.serverViews.delete(this.currView.getServer().id)
         this.switchServer(undefined)

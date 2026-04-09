@@ -1,7 +1,7 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import { SystemPlatform, Server, ServerOptions, ServerSystem } from './misc'
-import { UserConfirmDialogButton, UserDialog } from './dialog'
+import { UserDialogButton, UserDialog } from './dialog'
 
 declare global {
   interface Window {
@@ -11,7 +11,7 @@ declare global {
       loadNewServer: (server: ServerOptions) => void
       switchServer: (server: Server) => void
       toggleAppMenu: () => void
-      handleDialogButton: (button: UserConfirmDialogButton) => void
+      handleDialogButton: (button: UserDialogButton) => void
       setTitleBarServerMenuOpen: (isOpen: boolean) => void
       openDialog: (userDialog: UserDialog) => void
       exitDialog: () => void
