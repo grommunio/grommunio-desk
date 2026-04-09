@@ -1,0 +1,21 @@
+.component {
+  width: 100%;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  font-size: 15px;
+  font-family: inherit;
+  border: 1px solid #2f333a;
+  border-radius: 8px;
+  background: #404145;
+  color: #fff;
+  outline: none;
+
+  &:hover {
+    border-color: #3a3f47;
+  }
+
+  &:focus {
+    border-color: #4b515c;
+    box-shadow: 0 0 0 2px rgba(120, 125, 135, 0.15);
+  }
+}

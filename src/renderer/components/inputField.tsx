@@ -4,6 +4,7 @@ import React from 'react'
 import { InputHTMLAttributes } from 'react'
 
 import styles from './inputField.module.css'
+import componentStyles from './component.module.css'
 
 export type ValidationStatus = 'valid' | 'warn' | 'invalid' | 'checking' | 'unchecked'
 interface Props {
@@ -18,19 +19,19 @@ interface Props {
   onEnterKeyDown?: () => void
 }
 
-const INPUT_FIELD_COLOR: Record<ValidationStatus, string> = {
+const INPUT_FIELD_COLOR: Record<ValidationStatus, string | undefined> = {
   valid: 'green',
   warn: 'orange',
   invalid: 'red',
-  checking: 'transparent',
-  unchecked: 'transparent',
+  checking: undefined,
+  unchecked: undefined,
 }
-const FEEDBACK_TEXT_COLOR: Record<ValidationStatus, string> = {
+const FEEDBACK_TEXT_COLOR: Record<ValidationStatus, string | undefined> = {
   valid: 'rgba(120, 220, 160, 0.95)',
   warn: 'rgba(255, 168, 1, 0.9)',
   invalid: 'rgba(255, 120, 120, 0.9)',
-  checking: 'transparent',
-  unchecked: 'transparent',
+  checking: undefined,
+  unchecked: undefined,
 }
 
 const InputField = (props: Props): React.ReactElement => {
@@ -47,7 +48,7 @@ const InputField = (props: Props): React.ReactElement => {
   return (
     <div className={`${styles.container} ${props.className != null ? props.className : ''}`}>
       <input
-        className={styles.input}
+        className={` ${componentStyles.component} ${styles.input} ${INPUT_FIELD_COLOR[props.validationStatus] != null ? styles.borderFeedback : ''}`}
         ref={props.ref}
         value={props.value}
         onChange={handleValueChange}
