@@ -16,6 +16,5 @@
 
   &:focus {
     border-color: #4b515c;
-    box-shadow: 0 0 0 2px rgba(120, 125, 135, 0.15);
   }
 }
