@@ -4,25 +4,24 @@ import { InterpolationOptions } from 'i18next'
 
 import { Server } from './misc'
 
-type UserDialogTitle = 'loadFailed' | 'removeServer'
-interface UserDialogTemplate<Type> {
+interface UserDialogTemplate<Type extends string, Title extends string> {
   type: Type
-  title: UserDialogTitle
+  title: Title
   exitAllowed: boolean
 }
-interface UserTextDialogTemplate<Type, DialogTextArgs, DialogText extends keyof DialogTextArgs> extends UserDialogTemplate<Type> {
+interface UserTextDialogTemplate<Type extends string, Title extends string, DialogText extends string, DialogTextArgs extends Record<string, unknown> | undefined> extends UserDialogTemplate<Type, Title> {
   text: DialogText
-  textArgs: DialogTextArgs[DialogText]
+  textArgs: DialogTextArgs
 }
-type UserDialogButtonTemplate<Type, CallbackParams = undefined> = {
+type UserDialogButtonTemplate<Type extends string, CallbackParams extends Record<string, unknown> | undefined = undefined> = {
   type: Type
   triggerOnEnter?: boolean
 } & (CallbackParams extends undefined
   ? { callbackParams?: undefined }
   : { callbackParams: CallbackParams })
 type UserDialogCancelButton = UserDialogButtonTemplate<'cancel'>
-interface UserButtonDialogTemplate<Type, Button> extends UserDialogTemplate<Type> {
-  buttons: Button[]
+interface UserButtonDialogTemplate<Type extends string, Title extends string, Buttons extends UserDialogButtonTemplate<string, Record<string, unknown> | undefined>[]> extends UserDialogTemplate<Type, Title> {
+  buttons: Buttons
 }
 
 type UserConfirmDialogReturnToStartPageButton = UserDialogButtonTemplate<'confirm.returnToStartPage'>
@@ -33,8 +32,8 @@ interface UserConfirmDialogTextArgs {
   'confirm.removeServer': { server: Server }
 }
 type UserConfirmDialogGeneric<Text extends keyof UserConfirmDialogTextArgs>
-  = UserTextDialogTemplate<'confirm', UserConfirmDialogTextArgs, Text>
-    & UserButtonDialogTemplate<'confirm', UserConfirmDialogButton>
+  = UserTextDialogTemplate<'confirm', Text, Text, UserConfirmDialogTextArgs[Text]>
+    & UserButtonDialogTemplate<'confirm', Text, UserConfirmDialogButton[]>
 export type UserConfirmDialog = { [K in keyof UserConfirmDialogTextArgs]: UserConfirmDialogGeneric<K> }[keyof UserConfirmDialogTextArgs]
 
 export type UserDialog = UserConfirmDialog

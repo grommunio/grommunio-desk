@@ -194,7 +194,7 @@ export default class ViewManager {
     logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
     this.createDialog({
       type: 'confirm',
-      title: 'loadFailed',
+      title: 'confirm.loadFailed',
       exitAllowed: false,
       text: 'confirm.loadFailed',
       textArgs: {

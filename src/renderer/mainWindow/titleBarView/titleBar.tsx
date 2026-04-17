@@ -66,7 +66,7 @@ const TitleBar = (): React.ReactElement => {
   const onRemoveServerClick = (server: Server): void => {
     window.electronAPI.openDialog({
       type: 'confirm',
-      title: 'removeServer',
+      title: 'confirm.removeServer',
       exitAllowed: true,
       text: 'confirm.removeServer',
       textArgs: { server },

@@ -33,8 +33,10 @@
     },
     "dialogView": {
       "title": {
-        "loadFailed": "Fehlgeschlagenes Laden",
-        "removeServer": "Server löschen?"
+        "confirm": {
+          "loadFailed": "Fehlgeschlagenes Laden",
+          "removeServer": "Server löschen?"
+        }
       },
       "text": {
         "confirm": {
