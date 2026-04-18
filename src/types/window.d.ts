@@ -11,7 +11,7 @@ declare global {
       loadNewServer: (server: ServerOptions) => void
       switchServer: (server: Server) => void
       toggleAppMenu: () => void
-      handleDialogButton: (button: UserDialogButton) => void
+      handleDialogButton: (button: UserDialogButton<false>) => void
       setTitleBarServerMenuOpen: (isOpen: boolean) => void
       openDialog: (userDialog: UserDialog) => void
       exitDialog: () => void

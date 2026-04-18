@@ -36,12 +36,18 @@
         "confirm": {
           "loadFailed": "Loading failed",
           "removeServer": "Remove server?"
+        },
+        "select": {
+          "mailto": "Choose a server"
         }
       },
       "text": {
         "confirm": {
           "loadFailed": "Loading of {{url}} failed.",
           "removeServer": "Do you really want to remove the server \"{{server.name}}\"?"
+        },
+        "select": {
+          "mailto": "Select the server from which to send the email to {{mailtoEmail}}."
         }
       },
       "button": {
@@ -49,6 +55,9 @@
         "confirm": {
           "returnToStartPage": "Return",
           "removeServer": "Remove"
+        },
+        "select": {
+          "selectMailtoServer": "Continue"
         }
       }
     }

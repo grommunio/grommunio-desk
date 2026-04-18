@@ -232,7 +232,7 @@ export default class MainWindow {
     this.titleBarView?.setServerMenuOpen(isOpen)
   }
 
-  private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton): void => {
+  private onHandleDialogButton = (_event: IpcMainEvent, button: UserDialogButton<false>): void => {
     this.closeDialog()
     this.viewManager.handleDialogButton(button)
   }

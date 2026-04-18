@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next'
 import styles from './buttonsContainer.module.css'
 import { UserDialogButton } from '../../../../types/dialog'
 
-interface Props<Button extends UserDialogButton> {
+interface Props<Button extends UserDialogButton<true>> {
   buttons: Button[]
   onButtonClick: (button: Button) => void
   onEnterKeyDown: (button: Button) => void
   exitDialog: () => void
 }
 
-const ButtonsContainer = <Button extends UserDialogButton>(props: Props<Button>): React.ReactElement => {
+const ButtonsContainer = <Button extends UserDialogButton<true>>(props: Props<Button>): React.ReactElement => {
   const { t } = useTranslation()
   const buttons = useMemo(() => props.buttons.map((button, idx) => (
     <button

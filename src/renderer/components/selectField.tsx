@@ -4,15 +4,12 @@ import React, { useState, useEffect } from 'react'
 
 import styles from './selectField.module.css'
 import componentStyles from './component.module.css'
+import { SelectFieldOption } from '../../types/selectField'
 
-interface Option<T> {
-  label: string
-  value: T
-}
 interface Props<T> {
-  options: Option<T>[]
+  options: SelectFieldOption<T>[]
   placeholder?: string
-  placeholderOption?: Option<T>
+  placeholderOption?: SelectFieldOption<T>
   onChange?: (value: T) => void
 }
 
@@ -21,7 +18,7 @@ interface Props<T> {
 // TODO: auto scroll to the last selected value
 function SelectField<T>(props: Props<T>): React.ReactElement {
   const [isOpen, setOpen] = useState(false)
-  const [selectedOption, setSelectedOption] = useState<Option<T> | null>(null)
+  const [selectedOption, setSelectedOption] = useState<SelectFieldOption<T> | null>(null)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
 
   useEffect(() => {
@@ -31,7 +28,7 @@ function SelectField<T>(props: Props<T>): React.ReactElement {
     }
   }, [props.placeholderOption, props.options])
 
-  const handleOptionClick = (option: Option<T>): void => {
+  const handleOptionClick = (option: SelectFieldOption<T>): void => {
     setSelectedOption(option)
     setOpen(false)
     props.onChange?.(option.value)

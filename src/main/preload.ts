@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadNewServer: (server: ServerOptions) => ipcRenderer.send(LOAD_NEW_SERVER, server),
   switchServer: (server: Server) => ipcRenderer.send(SWITCH_SERVER, server),
   toggleAppMenu: () => ipcRenderer.send(TOGGLE_APP_MENU),
-  handleDialogButton: (button: UserDialogButton) => ipcRenderer.send(HANDLE_DIALOG_BUTTON, button),
+  handleDialogButton: (button: UserDialogButton<false>) => ipcRenderer.send(HANDLE_DIALOG_BUTTON, button),
   setTitleBarServerMenuOpen: (isOpen: boolean) => ipcRenderer.send(SET_TITLE_BAR_SERVER_MENU_OPEN, isOpen),
   openDialog: (userDialog: UserDialog) => ipcRenderer.send(OPEN_DIALOG, userDialog),
   exitDialog: () => ipcRenderer.send(EXIT_DIALOG),

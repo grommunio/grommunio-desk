@@ -207,7 +207,7 @@ export default class ViewManager {
     })
   }
 
-  handleDialogButton = (button: UserDialogButton): void => {
+  handleDialogButton = (button: UserDialogButton<false>): void => {
     if (button.type === 'confirm.returnToStartPage') {
       if (this.currView instanceof ServerView) {
         this.serverViews.delete(this.currView.getServer().id)
