@@ -3,6 +3,7 @@
 import { UserConfirmDialog, UserConfirmDialogButton } from './confirmDialog'
 
 export type UserDialog = UserConfirmDialog
-export type UserDialogButton = UserConfirmDialogButton
-
 export { UserConfirmDialog } from './confirmDialog'
+
+export type UserDialogButton = UserConfirmDialogButton
+export { UserConfirmDialogButton } from './confirmDialog'

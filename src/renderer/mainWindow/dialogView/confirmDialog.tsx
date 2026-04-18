@@ -4,7 +4,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styles from './confirmDialog.module.css'
-import { UserConfirmDialog } from '../../../types/dialog'
+import { UserConfirmDialog, UserConfirmDialogButton } from '../../../types/dialog'
 import ButtonsContainer from './components/buttonsContainer'
 
 interface Props {
@@ -15,12 +15,21 @@ interface Props {
 const ConfirmDialog = (props: Props): React.ReactElement => {
   const { t } = useTranslation()
 
+  const sendDialogButton = (button: UserConfirmDialogButton): void => {
+    window.electronAPI.handleDialogButton(button)
+  }
+
   return (
     <>
       <p className={styles.text}>
         {t(`mainWindow.dialogView.text.${props.userDialog.text}`, props.userDialog.textArgs)}
       </p>
-      <ButtonsContainer buttons={props.userDialog.buttons} exitDialog={props.exitDialog} />
+      <ButtonsContainer<UserConfirmDialogButton>
+        buttons={props.userDialog.buttons}
+        onButtonClick={sendDialogButton}
+        onEnterKeyDown={sendDialogButton}
+        exitDialog={props.exitDialog}
+      />
     </>
   )
 }
