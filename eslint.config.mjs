@@ -6,6 +6,7 @@ import tseslint from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
 import licenseHeader from 'eslint-plugin-license-header'
 
+// TODO: use no-restricted-imports to forbid some imports (e.g. src/types/dialog/... except index.ts)
 export default defineConfig(
   eslint.configs.recommended,
   globalIgnores([
