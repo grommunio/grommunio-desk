@@ -11,6 +11,7 @@ import { throwIfPropertyUndefined } from '../utils/misc'
 import store from '../utils/store'
 import ServerView from './mainViews/serverView'
 import StartView from './mainViews/startView'
+import { createDialogObject } from '../../utils/dialog'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
@@ -192,19 +193,7 @@ export default class ViewManager {
 
   private onServerViewDidFailLoad = (server: Server): void => {
     logger.info('onServerViewDidFailLoad', 'Loading of server failed', server)
-    this.createDialog({
-      type: 'confirm',
-      title: 'confirm.loadFailed',
-      exitAllowed: false,
-      text: 'confirm.loadFailed',
-      textArgs: {
-        url: server.url,
-        interpolation: { escapeValue: false },
-      },
-      buttons: [
-        { type: 'confirm.returnToStartPage', triggerOnEnter: true },
-      ],
-    })
+    this.createDialog(createDialogObject({ type: 'confirm.loadFailed', args: { url: server.url } }))
   }
 
   handleDialogButton = (button: UserDialogButton<false>): void => {

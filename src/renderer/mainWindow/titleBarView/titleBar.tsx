@@ -8,6 +8,7 @@ import { TITLE_BAR } from '../../../constants/window'
 import { Server } from '../../../types/misc'
 import ServerIcon from './serverIcon'
 import RemoveIcon from './removeIcon'
+import { createDialogObject } from '../../../utils/dialog'
 
 const formatServerLabel = (server?: Server): string => {
   if (!server)
@@ -64,17 +65,7 @@ const TitleBar = (): React.ReactElement => {
   }
 
   const onRemoveServerClick = (server: Server): void => {
-    window.electronAPI.openDialog({
-      type: 'confirm',
-      title: 'confirm.removeServer',
-      exitAllowed: true,
-      text: 'confirm.removeServer',
-      textArgs: { server },
-      buttons: [
-        { type: 'cancel' },
-        { type: 'confirm.removeServer', callbackParams: { server }, triggerOnEnter: true },
-      ],
-    })
+    window.electronAPI.openDialog(createDialogObject({ type: 'confirm.removeServer', args: { server } }))
   }
 
   // IPC functions
