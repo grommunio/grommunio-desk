@@ -22,6 +22,12 @@
   &:hover:not(:disabled) {
     background: #2a2f3b;
   }
+
+  &:disabled {
+    background: #1c1c1c;
+    color: #bbbbbb; 
+    cursor: not-allowed;
+  }
 }
 
 .removeServerButton {

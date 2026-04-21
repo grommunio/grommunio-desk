@@ -13,6 +13,7 @@ export interface UserTextDialogTemplate<Type extends string, Title extends strin
 export type UserDialogButtonTemplate<Type extends string, CallbackParams extends Record<string, unknown> | undefined = undefined> = {
   type: Type
   triggerOnEnter?: boolean
+  disabled?: boolean
 } & (CallbackParams extends undefined
   ? { callbackParams?: undefined }
   : { callbackParams: CallbackParams })

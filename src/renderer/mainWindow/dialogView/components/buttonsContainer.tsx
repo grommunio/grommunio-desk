@@ -21,6 +21,7 @@ const ButtonsContainer = <Button extends UserDialogButton<true>>(props: Props<Bu
       onClick={() => props.onButtonClick(button)}
       onKeyDown={event => event.stopPropagation()} // when a button is focused and the Enter key is pressed, any other onKeyDown functionality should not be triggered
       key={`button-${idx}`}
+      disabled={button.disabled}
     >
       {t(`mainWindow.dialogView.button.${button.type}`)}
     </button>
