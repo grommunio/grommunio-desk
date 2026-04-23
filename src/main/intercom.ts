@@ -8,24 +8,26 @@ import {
   VALIDATE_SERVER_URL,
 } from './constants/communication'
 import { systemPlatform } from './constants/system'
-import { ServerSystem, ServerType } from '../types/misc'
+import { ServerUrl, ServerSystem, ServerType } from '../types/misc'
 import { firstNonNullPromise } from './utils/misc'
 
-async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): Promise<ServerSystem | null> {
+async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): Promise<{ system: ServerSystem, url: ServerUrl } | null> {
   const MAX_VERSION_BODY_LENGTH = 8192
   const VERSION_ENDPOINTS: {
-    path: string
+    serverPath?: string
+    versionPath: string
     search?: string
     regex: RegExp
     type: ServerType
   }[] = [
     {
-      path: '/web/version',
+      serverPath: '/web', // Paths must always begin with a slash, but never end with one.
+      versionPath: '/version',
       regex: /^(\d+\.\d+\.\d+)\.[a-z0-9]+-(?:lp\d+\.|\d+\+)\d+\.\d+$/,
       type: 'web',
     },
     {
-      path: '/api/v4/config/client',
+      versionPath: '/api/v4/config/client',
       search: 'format=old',
       regex: /^{.*"Version":"(\d+\.\d+\.\d+)".*}$/,
       type: 'chat',
@@ -39,13 +41,17 @@ async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): 
   catch {
     return Promise.resolve(null)
   }
+  parsedUrl.pathname = parsedUrl.pathname.replace(/\/+$/, '')
 
-  return firstNonNullPromise(VERSION_ENDPOINTS.map(endpoint => new Promise<ServerSystem | null>((resolve) => {
+  return firstNonNullPromise(VERSION_ENDPOINTS.map(endpoint => new Promise<{ system: ServerSystem, url: ServerUrl } | null>((resolve) => {
     const url = new URL(parsedUrl)
-    url.pathname = (url.pathname + endpoint.path).replace(/\/\/+/, '/')
-    url.search = endpoint.search || ''
+    if (endpoint.serverPath && !url.pathname.endsWith(endpoint.serverPath))
+      url.pathname = (url.pathname + endpoint.serverPath).replace(/\/\/+/, '/')
+    const versionUrl = new URL(url)
+    versionUrl.pathname = (versionUrl.pathname + endpoint.versionPath).replace(/\/\/+/, '/')
+    versionUrl.search = endpoint.search || ''
 
-    const req = https.get(url, (res) => {
+    const req = https.get(versionUrl, (res) => {
       if (res.statusCode !== 200) {
         res.resume()
         return resolve(null)
@@ -65,8 +71,11 @@ async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): 
         const match = trimmedBody.match(endpoint.regex)
         if (trimmedBody != null && match != null && match.length > 1)
           resolve({
-            type: endpoint.type,
-            version: match[1],
+            system: {
+              type: endpoint.type,
+              version: match[1],
+            },
+            url: url.toString(),
           })
         else
           resolve(null)

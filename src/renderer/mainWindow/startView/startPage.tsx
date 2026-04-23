@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import styles from './startPage.module.css'
 import Logger from '@utils/logger'
 import { validateServerNameFormat, validateServerUrlFormat } from '@utils/server'
-import { ServerOptions, ServerSystem } from '../../../types/misc'
+import { ServerOptions, ServerSystem, ServerUrl } from '../../../types/misc'
 import InputField, { ValidationStatus as InputFieldValidationStatus } from '../../components/inputField'
 
 type UrlValidationStatus = 'unchecked' | 'invalidFormat' | 'checking' | 'invalidServer' | 'valid'
@@ -33,28 +33,28 @@ const StartPage = (): React.ReactElement => {
   const [nameInput, setNameInput] = useState('')
   const [urlValidationStatus, setUrlValidationStatus] = useState<UrlValidationStatus>('unchecked')
   const [nameValidationStatus, setNameValidationStatus] = useState<NameValidationStatus>('unchecked')
-  const [urlServerSystem, setUrlServerSystem] = useState<ServerSystem | null>(null)
+  const [urlServerValidation, setUrlServerValidation] = useState<{ system: ServerSystem, url: ServerUrl } | null>(null) // TODO: show user in InputField, which server url (urlServer[1]) the system will adopt (difference between user input and 'real' url), if he confirms
   const urlValidationTimeoutRef = useRef<NodeJS.Timeout>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
   const isReadyToSubmit = useMemo(() => ['invalidServer', 'valid'].includes(urlValidationStatus) && nameValidationStatus === 'valid', [urlValidationStatus, nameValidationStatus])
   const urlValidationFeedbackText = useMemo(() =>
     urlValidationStatus === 'valid'
-      ? `${t(`mainWindow.startView.input.url.feedback.valid.${urlServerSystem?.type}`)}: ${t(`mainWindow.startView.input.url.feedback.valid.version`, { system: urlServerSystem })}`
+      ? `${t(`mainWindow.startView.input.url.feedback.valid.${urlServerValidation?.system.type}`)}: ${t(`mainWindow.startView.input.url.feedback.valid.version`, { system: urlServerValidation?.system })}`
       : urlValidationStatus === 'invalidFormat'
         ? t('mainWindow.startView.input.url.feedback.invalidFormat')
         : urlValidationStatus === 'invalidServer'
           ? t('mainWindow.startView.input.url.feedback.invalidServer')
           : undefined,
-  [urlValidationStatus, urlServerSystem])
+  [urlValidationStatus, urlServerValidation])
 
   const onSend = async (): Promise<void> => {
     if (!isReadyToSubmit)
       return
 
     const server: ServerOptions = {
-      url: urlInput,
+      url: urlServerValidation?.url || urlInput,
       name: nameInput,
-      system: urlServerSystem,
+      system: urlServerValidation?.system || null,
     }
     logger.debug('onSend', 'New server:', server)
     window.electronAPI.loadNewServer(server)
@@ -76,7 +76,7 @@ const StartPage = (): React.ReactElement => {
     else {
       setUrlInput(value)
       setUrlValidationStatus('unchecked')
-      setUrlServerSystem(null)
+      setUrlServerValidation(null)
       if (urlValidationTimeoutRef.current) {
         clearTimeout(urlValidationTimeoutRef.current)
         urlValidationTimeoutRef.current = null
@@ -97,7 +97,7 @@ const StartPage = (): React.ReactElement => {
           return
         if (serverValidation != null) {
           setUrlValidationStatus('valid')
-          setUrlServerSystem(serverValidation)
+          setUrlServerValidation(serverValidation)
         }
         else {
           setUrlValidationStatus('invalidServer')

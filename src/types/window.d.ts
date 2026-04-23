@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { SystemPlatform, Server, ServerOptions, ServerSystem } from './misc'
+import { ServerUrl, SystemPlatform, Server, ServerOptions, ServerSystem } from './misc'
 import { UserDialogButton, UserDialog } from './dialog'
 
 declare global {
@@ -20,7 +20,7 @@ declare global {
       getSystemPlatform: () => SystemPlatform
 
       // ipcRenderer.invoke two-way (asynchronous)
-      validateServerUrl: (server: string) => Promise<ServerSystem | null>
+      validateServerUrl: (server: string) => Promise<{ system: ServerSystem, url: ServerUrl } | null>
 
       // ipcRenderer.on one-way
       onAppMenuClose: (listener: () => void) => void

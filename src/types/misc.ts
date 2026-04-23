@@ -1,5 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
+export type ServerUrl = string // TODO: use URL type instead of string -> handle possible errors thrown by URL constructor in StartPage (?)
 export type ServerType = 'web' | 'chat'
 export type ServerVersion = string
 export interface ServerSystem {
@@ -7,7 +8,7 @@ export interface ServerSystem {
   version: ServerVersion
 }
 export interface ServerOptions {
-  url: string // TODO: use URL type instead of string -> handle possible errors thrown by URL constructor in StartPage (?)
+  url: ServerUrl
   name: string
   system: ServerSystem | null
 }
