@@ -17,6 +17,9 @@ type UserSelectDialogButtonTemplate<
 type UserSelectDialogOpenEmailButton<Optional extends boolean> = UserSelectDialogButtonTemplate<'select.selectMailtoServer', Optional, Server, { mailtoUrl: string }>
 type UserSelectDialogButtonExcl<Optional extends boolean> = UserSelectDialogOpenEmailButton<Optional>
 export type UserSelectDialogButton<Optional extends boolean> = UserDialogCancelButton | UserSelectDialogButtonExcl<Optional>
+
+export type UserSelectDialogSelection = UserSelectDialogButtonExcl<false>['selection']
+
 interface UserSelectDialogArgsEntryGeneric<Button extends UserSelectDialogButtonExcl<true>> {
   optionValues: SelectFieldOption<Exclude<Button['selection'], undefined>>[]
   textArgs: Record<string, unknown> | undefined

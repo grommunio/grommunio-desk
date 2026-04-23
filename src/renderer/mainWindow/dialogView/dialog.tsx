@@ -7,6 +7,7 @@ import styles from './dialog.module.css'
 import { UserDialog } from '../../../types/dialog'
 import Logger from '../../utils/logger'
 import ConfirmDialog from './confirmDialog'
+import SelectDialog from './selectDialog'
 
 const logger = new Logger('renderer/mainWindow/dialogView/dialog')
 
@@ -46,6 +47,10 @@ const Dialog = (): React.ReactElement => {
             {
               userDialog?.type === 'confirm'
               && <ConfirmDialog userDialog={userDialog} exitDialog={exitDialog} />
+            }
+            {
+              userDialog?.type === 'select'
+              && <SelectDialog userDialog={userDialog} exitDialog={exitDialog} />
             }
           </div>
         )

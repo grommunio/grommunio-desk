@@ -1,0 +1,23 @@
+.text {
+  margin: 0 0 12px;
+  font-size: 13px;
+  opacity: 0.92;
+  word-wrap: break-word;
+}
+
+.selectField {
+  margin-bottom: 12px;
+  align-self: center;
+
+  div {
+    height: 33px;
+    background: transparent;
+  }
+
+  ul {
+    li {
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+  }
+}
