@@ -15,18 +15,31 @@ export default class ServerView implements View {
   private onDidFinishLoadSuccly?: (server: Server) => void
   private onDidFailLoad?: (server: Server) => void
 
-  constructor(contentSize: number[], server: Server, onDidFinishLoadSuccly?: (server: Server) => void, onDidFailLoad?: (server: Server) => void) {
+  constructor( // TODO: use object for parameters
+    contentSize: number[],
+    server: Server,
+    onDidFinishLoadSuccly?: (server: Server) => void,
+    onDidFailLoad?: (server: Server) => void,
+    serverUrlParams?: { addPath?: string, search?: string },
+  ) {
     this.server = server
     this.onDidFinishLoadSuccly = onDidFinishLoadSuccly
     this.onDidFailLoad = onDidFailLoad
 
-    this.create(contentSize)
+    this.create(contentSize, serverUrlParams)
   }
 
-  private load = (): void => {
+  private getUrl = (params?: { addPath?: string, search?: string }): string => {
+    const url = new URL(this.server.url)
+    url.pathname = (url.pathname + (params?.addPath || '')).replace(/\/\/+/, '/')
+    url.search = params?.search || ''
+    return url.toString()
+  }
+
+  private load = (serverUrlParams?: { addPath?: string, search?: string }): void => {
     throwIfPropertyUndefined('view', this.view)
 
-    this.view.webContents.loadURL(this.server.url)
+    this.view.webContents.loadURL(this.getUrl(serverUrlParams))
   }
 
   private registerListeners = (): void => {
@@ -65,14 +78,14 @@ export default class ServerView implements View {
     this.view.setBounds({ x: 0, y: TITLE_BAR.HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR.HEIGHT })
   }
 
-  private create = (contentSize: number[]): void => {
+  private create = (contentSize: number[], serverUrlParams?: { addPath?: string, search?: string }): void => {
     // TODO: set (cookies) session partition
     this.view = new WebContentsView()
     this.view.setBackgroundColor(BACKGROUND_COLOR)
 
     this.registerListeners()
     this.adjustBounds(contentSize)
-    this.load()
+    this.load(serverUrlParams)
   }
 
   close = (): void => {
@@ -102,4 +115,6 @@ export default class ServerView implements View {
   hasFailedLoading = (): boolean => {
     return this.failedLoading
   }
+
+  reload = this.load
 }

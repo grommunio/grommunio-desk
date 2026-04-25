@@ -13,12 +13,24 @@ import MainWindow from './mainWindow'
 import registerIpcFunctions from './intercom'
 import { IS_PRODUCTION } from '../constants/misc'
 import TrayMenu from './trayMenu'
+import { throwIfPropertyUndefined } from './utils/misc'
 
 const logger = new Logger('main/index')
 
 logger.verbose('isProduction', `Production: ${IS_PRODUCTION}`)
 
 let mainWindow: MainWindow | undefined
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('mailto', process.execPath, [
+      path.resolve(process.argv[1]),
+    ])
+  }
+}
+else {
+  app.setAsDefaultProtocolClient('mailto')
+}
 
 const createWindow = (): void => {
   if (mainWindow == null)
@@ -35,6 +47,23 @@ const onOpenAppClick = (): void => {
     createWindow()
 }
 
+const handleUrl = (url: string): void => {
+  url = url.toLowerCase()
+  const URL_REGEX = /^[a-z]+:.*$/
+  if (!URL_REGEX.test(url))
+    return
+  throwIfPropertyUndefined('mainWindow', mainWindow)
+  mainWindow.handleUrl(url)
+}
+
+const handleArgv = (argv: string[]): void => {
+  if (argv.length < 2)
+    return
+  const arg = argv.pop()
+  if (arg != null)
+    handleUrl(arg)
+}
+
 if (started) { // handle squirrel installing / uninstalling process
   app.quit()
 }
@@ -43,6 +72,7 @@ else if (!app.requestSingleInstanceLock()) {
 }
 else {
   app.on('ready', () => {
+    logger.silly('app.ready', 'Starting app with argv', process.argv)
     session.defaultSession.protocol.handle('static', (request) => {
       const fileUrl = request.url.replace('static://', '')
       const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl)
@@ -67,6 +97,7 @@ else {
     createWindow()
 
     new TrayMenu(onOpenAppClick)
+    handleArgv(process.argv)
   })
 
   app.on('window-all-closed', () => {
@@ -74,14 +105,19 @@ else {
   })
 
   app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no
-    // other windows open.
-    if (!mainWindow?.isWindowDefined()) {
-      createWindow()
-    }
+    logger.silly('app.activate', 'activate was triggered')
+    onOpenAppClick()
   })
 
-  app.on('second-instance', () => {
+  app.on('second-instance', (_event, argv) => {
+    logger.silly('app.second-instance', 'second-instance was triggered with argv', argv)
     onOpenAppClick()
+    handleArgv(argv)
+  })
+
+  // for MacOS
+  app.on('open-url', (_event, url) => {
+    logger.silly('app.open-url', 'open-url was triggered with url', url)
+    handleUrl(url)
   })
 }

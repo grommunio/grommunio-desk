@@ -24,6 +24,10 @@ type UserConfirmDialogArgs = ValidateDialogArgs<UserConfirmDialogArgsEntry, {
     textArgs: { server: Server }
     buttons: [{ type: 'cancel', text: 'cancel' }, { type: 'confirm.removeServer', callbackParams: { server: Server }, text: 'confirm.removeServer', triggerOnEnter: true }]
   }
+  'confirm.noMailtoServerFound': {
+    textArgs: { mailtoEmail: string }
+    buttons: [{ type: 'cancel', text: 'ok', triggerOnEnter: true }]
+  }
 }>
 
 type UserConfirmDialogGeneric<ConfirmDialogType extends Extract<keyof UserConfirmDialogArgs, string>>

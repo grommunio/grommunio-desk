@@ -37,6 +37,12 @@ const config: ForgeConfig = {
       appleIdPassword: envConfig.get('APPLE_PASSWORD'), // despite the name, it is not the password of the Apple ID account
       teamId: envConfig.get('APPLE_TEAM_ID'),
     },
+    protocols: [
+      {
+        name: 'Mailto',
+        schemes: ['mailto'],
+      },
+    ],
   },
   rebuildConfig: {},
   makers: [
@@ -62,6 +68,7 @@ const config: ForgeConfig = {
     new MakerDeb({
       options: {
         icon: getIconPath('png'),
+        mimeType: ['x-scheme-handler/mailto'],
       },
     }),
     new MakerDMG(arch => ({

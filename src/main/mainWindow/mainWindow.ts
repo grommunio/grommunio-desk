@@ -219,6 +219,11 @@ export default class MainWindow {
     return this.dialogView != null
   }
 
+  handleUrl = (url: string): void => {
+    if (url.startsWith('mailto:'))
+      this.viewManager.handleMailtoUrl(url)
+  }
+
   // IPC functions
   private onToggleAppMenu = (_event: IpcMainEvent): void => {
     this.appMenu?.popup({

@@ -79,7 +79,7 @@ export default class ViewManager {
     }
   }
 
-  private createServerView(server: Server | undefined): [View, boolean] { // boolean return value indicates, if the server was loaded from scratch (so it was not cached, except StartView)
+  private createServerView(server: Server | undefined, serverUrlParams?: { addPath?: string, search?: string }): [View, boolean] { // boolean return value indicates, if the server was loaded from scratch (so it was not cached, except StartView)
     throwIfPropertyUndefined('windowContentSize', this.windowContentSize)
     if (server == null) {
       return [new StartView(this.windowContentSize), false]
@@ -89,21 +89,32 @@ export default class ViewManager {
       if (serverView) {
         logger.debug('createServerView', `Loading ServerView for server ${server.id} from cache`)
         serverView.adjustBounds(this.windowContentSize)
+        if (serverUrlParams != null)
+          serverView.reload(serverUrlParams)
         return [serverView, false]
       }
       else {
-        serverView = new ServerView(this.windowContentSize, server, this.onServerViewDidFinishLoadSuccly, this.onServerViewDidFailLoad)
+        serverView = new ServerView(this.windowContentSize, server, this.onServerViewDidFinishLoadSuccly, this.onServerViewDidFailLoad, serverUrlParams)
         this.serverViews.set(server.id, serverView)
         return [serverView, true]
       }
     }
   }
 
-  switchServer = (server: Server | undefined, skipServerStoreCheck = false): void => {
-    logger.verbose('switchServer', 'Server:', server)
+  switchServer = (server: Server | undefined, skipServerStoreCheck = false, serverUrlParams?: { addPath?: string, search?: string }): void => {
+    if (serverUrlParams == null)
+      logger.verbose('switchServer', 'Server:', server)
+    else
+      logger.verbose('switchServer', 'Server with params:', server, serverUrlParams)
     if ((this.currView instanceof StartView && (server == null))
       || (this.currView instanceof ServerView && server?.id === this.currView.getServer().id)) {
-      logger.debug('switchServer', 'Canceling switchServer-operation, because server is already loaded')
+      if (serverUrlParams != null && this.currView instanceof ServerView) {
+        this.currView.reload(serverUrlParams)
+        logger.debug('switchServer', 'Reloading server with params, because server is already loaded')
+      }
+      else {
+        logger.debug('switchServer', 'Canceling switchServer-operation, because server is already loaded')
+      }
       return
     }
     if (this.isDialogActive()) {
@@ -114,7 +125,7 @@ export default class ViewManager {
       logger.error('switchServer', `Could not find server ${server.url} with id ${server.id}`)
       return
     }
-    const [view, loadedFromScratch] = this.createServerView(server)
+    const [view, loadedFromScratch] = this.createServerView(server, serverUrlParams)
     this.switchCurrView(view)
     if (!loadedFromScratch) // for new (loaded from scratch) servers, do not set lastUsedServer until the server has loaded successfully (see onServerViewDidFinishLoadSuccly)
       store.set('lastUsedServer', server)
@@ -196,6 +207,10 @@ export default class ViewManager {
     this.createDialog(createDialogObject({ type: 'confirm.loadFailed', args: { url: server.url } }))
   }
 
+  private openMailtoUrl = (server: Server, url: string): void => {
+    this.switchServer(server, undefined, { search: `action=mailto&to=${url}` })
+  }
+
   handleDialogButton = (button: UserDialogButton<false>): void => {
     if (button.type === 'confirm.returnToStartPage') {
       if (this.currView instanceof ServerView) {
@@ -214,6 +229,19 @@ export default class ViewManager {
       if (!this.removeServerFromStore(button.callbackParams.server))
         logger.warn('handleDialogButton', 'Server could not be removed from store because it does not exist there')
     }
+    else if (button.type === 'select.selectMailtoServer') {
+      this.openMailtoUrl(button.selection, button.callbackParams.mailtoUrl)
+    }
+  }
+
+  handleMailtoUrl = (url: string): void => {
+    const servers = this.servers.filter(srv => srv.system?.type === 'web')
+    if (servers.length === 0)
+      this.createDialog(createDialogObject({ type: 'confirm.noMailtoServerFound', args: { mailtoUrl: url } }))
+    else if (servers.length === 1)
+      this.openMailtoUrl(servers[0], url)
+    else
+      this.createDialog(createDialogObject({ type: 'select.mailto', args: { mailtoUrl: url, servers: servers.map(srv => ({ label: srv.name, value: srv })) } }))
   }
 
   // IPC functions

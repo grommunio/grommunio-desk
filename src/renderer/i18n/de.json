@@ -35,7 +35,8 @@
       "title": {
         "confirm": {
           "loadFailed": "Fehlgeschlagenes Laden",
-          "removeServer": "Server löschen?"
+          "removeServer": "Server löschen?",
+          "noMailtoServerFound": "Kein Email Server gefunden"
         },
         "select": {
           "mailto": "Wählen Sie einen Server"
@@ -44,14 +45,16 @@
       "text": {
         "confirm": {
           "loadFailed": "Laden von {{url}} schlug fehl.",
-          "removeServer": "Möchten Sie den Server „{{server.name}}“ wirklich löschen?"
+          "removeServer": "Möchten Sie den Server „{{server.name}}“ wirklich löschen?",
+          "noMailtoServerFound": "Es konnte kein geeigneter Server gefunden werden, um die Email an {{mailtoEmail}} zu senden."
         },
         "select": {
-          "mailto": "Wählen Sie einen Server aus, um die Email an {{mailtoEmail}} zu senden"
+          "mailto": "Wählen Sie einen Server aus, um die Email an {{mailtoEmail}} zu senden."
         }
       },
       "button": {
         "cancel": "Abbrechen",
+        "ok": "OK",
         "confirm": {
           "returnToStartPage": "Zurück",
           "removeServer": "Löschen"

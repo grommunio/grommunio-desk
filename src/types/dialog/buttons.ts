@@ -2,4 +2,4 @@
 
 import { UserDialogButtonTemplate } from './templates'
 
-export type UserDialogCancelButton = UserDialogButtonTemplate<'cancel'>
+export type UserDialogCancelButton = UserDialogButtonTemplate<'cancel', undefined, 'cancel' | 'ok'>

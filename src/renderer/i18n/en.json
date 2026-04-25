@@ -35,7 +35,8 @@
       "title": {
         "confirm": {
           "loadFailed": "Loading failed",
-          "removeServer": "Remove server?"
+          "removeServer": "Remove server?",
+          "noMailtoServerFound": "No email server found"
         },
         "select": {
           "mailto": "Choose a server"
@@ -44,7 +45,8 @@
       "text": {
         "confirm": {
           "loadFailed": "Loading of {{url}} failed.",
-          "removeServer": "Do you really want to remove the server \"{{server.name}}\"?"
+          "removeServer": "Do you really want to remove the server \"{{server.name}}\"?",
+          "noMailtoServerFound": "No appropriate server was found to send the email to {{mailtoEmail}}."
         },
         "select": {
           "mailto": "Select the server from which to send the email to {{mailtoEmail}}."
@@ -52,6 +54,7 @@
       },
       "button": {
         "cancel": "Cancel",
+        "ok": "OK",
         "confirm": {
           "returnToStartPage": "Return",
           "removeServer": "Remove"

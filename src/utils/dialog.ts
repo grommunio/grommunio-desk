@@ -11,6 +11,9 @@ type DialogArgs = {
   type: 'confirm.loadFailed'
   args: { url: string }
 } | {
+  type: 'confirm.noMailtoServerFound'
+  args: { mailtoUrl: string }
+} | {
   type: 'select.mailto'
   args: { mailtoUrl: string, servers: SelectFieldOption<Server>[] }
 }
@@ -43,13 +46,24 @@ export function createDialogObject(dialogArgs: DialogArgs): UserDialog {
           { type: 'confirm.returnToStartPage', text: 'confirm.returnToStartPage', triggerOnEnter: true },
         ],
       }
+    case 'confirm.noMailtoServerFound':
+      return {
+        type: 'confirm',
+        title: 'confirm.noMailtoServerFound',
+        exitAllowed: true,
+        text: 'confirm.noMailtoServerFound',
+        textArgs: { mailtoEmail: dialogArgs.args.mailtoUrl.split('mailto:').pop() || '' },
+        buttons: [
+          { type: 'cancel', text: 'ok', triggerOnEnter: true },
+        ],
+      }
     case 'select.mailto':
       return {
         type: 'select',
         title: 'select.mailto',
         exitAllowed: true,
         text: 'select.mailto',
-        textArgs: { mailtoEmail: dialogArgs.args.mailtoUrl.split('://').pop() || '' },
+        textArgs: { mailtoEmail: dialogArgs.args.mailtoUrl.split('mailto:').pop() || '' },
         buttons: [
           { type: 'cancel', text: 'cancel' },
           { type: 'select.selectMailtoServer', callbackParams: { mailtoUrl: dialogArgs.args.mailtoUrl }, text: 'select.selectMailtoServer', triggerOnEnter: true },
