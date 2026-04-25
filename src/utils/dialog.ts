@@ -25,8 +25,8 @@ export function createDialogObject(dialogArgs: DialogArgs): UserDialog {
         text: 'confirm.removeServer',
         textArgs: dialogArgs.args,
         buttons: [
-          { type: 'cancel' },
-          { type: 'confirm.removeServer', callbackParams: dialogArgs.args, triggerOnEnter: true },
+          { type: 'cancel', text: 'cancel' },
+          { type: 'confirm.removeServer', callbackParams: dialogArgs.args, text: 'confirm.removeServer', triggerOnEnter: true },
         ],
       }
     case 'confirm.loadFailed':
@@ -40,7 +40,7 @@ export function createDialogObject(dialogArgs: DialogArgs): UserDialog {
           interpolation: { escapeValue: false },
         },
         buttons: [
-          { type: 'confirm.returnToStartPage', triggerOnEnter: true },
+          { type: 'confirm.returnToStartPage', text: 'confirm.returnToStartPage', triggerOnEnter: true },
         ],
       }
     case 'select.mailto':
@@ -51,8 +51,8 @@ export function createDialogObject(dialogArgs: DialogArgs): UserDialog {
         text: 'select.mailto',
         textArgs: { mailtoEmail: dialogArgs.args.mailtoUrl.split('://').pop() || '' },
         buttons: [
-          { type: 'cancel' },
-          { type: 'select.selectMailtoServer', triggerOnEnter: true, callbackParams: { mailtoUrl: dialogArgs.args.mailtoUrl } },
+          { type: 'cancel', text: 'cancel' },
+          { type: 'select.selectMailtoServer', callbackParams: { mailtoUrl: dialogArgs.args.mailtoUrl }, text: 'select.selectMailtoServer', triggerOnEnter: true },
         ],
         optionValues: dialogArgs.args.servers,
       }

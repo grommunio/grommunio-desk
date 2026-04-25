@@ -23,7 +23,7 @@ const ButtonsContainer = <Button extends UserDialogButton<true>>(props: Props<Bu
       key={`button-${idx}`}
       disabled={button.disabled}
     >
-      {t(`mainWindow.dialogView.button.${button.type}`)}
+      {t(`mainWindow.dialogView.button.${button.text}`)}
     </button>
   )),
   [props.buttons])

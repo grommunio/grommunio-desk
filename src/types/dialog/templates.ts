@@ -10,8 +10,9 @@ export interface UserTextDialogTemplate<Type extends string, Title extends strin
   textArgs: DialogTextArgs
 }
 
-export type UserDialogButtonTemplate<Type extends string, CallbackParams extends Record<string, unknown> | undefined = undefined> = {
+export type UserDialogButtonTemplate<Type extends string, CallbackParams extends Record<string, unknown> | undefined = undefined, Text extends string = Type> = {
   type: Type
+  text: Text
   triggerOnEnter?: boolean
   disabled?: boolean
 } & (CallbackParams extends undefined

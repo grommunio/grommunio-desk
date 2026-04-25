@@ -30,7 +30,7 @@ type UserSelectDialogArgs = ValidateDialogArgs<UserSelectDialogArgsEntry, {
   'select.mailto': {
     optionValues: SelectFieldOption<Server>[]
     textArgs: { mailtoEmail: string }
-    buttons: [{ type: 'cancel' }, { type: 'select.selectMailtoServer', triggerOnEnter: true, callbackParams: { mailtoUrl: string } }]
+    buttons: [{ type: 'cancel', text: 'cancel' }, { type: 'select.selectMailtoServer', callbackParams: { mailtoUrl: string }, text: 'select.selectMailtoServer', triggerOnEnter: true }]
   }
 }>
 
