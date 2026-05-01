@@ -16,9 +16,9 @@ import envConfig from './envConfig'
 import { STATIC_RESOURCES } from './constants'
 import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
+import { name, productName, author } from './package.json'
 
 const APP_IDENTIFIER = 'com.grommunio.grommunio-desk'
-const APP_PRODUCT_NAME = 'grommunio Desk'
 
 const getIconPath = (ext?: 'png' | 'icns' | 'icon' | 'ico'): string => path.resolve(`./assets/os_icons/app_icon${ext == null ? '' : `.${ext}`}`)
 
@@ -26,7 +26,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     extraResource: STATIC_RESOURCES,
-    executableName: 'grommunio-desk',
+    executableName: name,
     icon: getIconPath(),
     appBundleId: APP_IDENTIFIER,
     osxSign: {
@@ -47,7 +47,7 @@ const config: ForgeConfig = {
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({
-      name: 'grommunio-desk',
+      name,
       setupIcon: getIconPath('ico'),
       iconUrl: 'https://download.grommunio.com/desk/windows/app_icon.ico',
       windowsSign: undefined,
@@ -55,11 +55,11 @@ const config: ForgeConfig = {
     new MakerMSIX({
       manifestVariables: {
         publisher: envConfig.get('WINDOWS_PUBLISHER'),
-        publisherDisplayName: 'grommunio GmbH',
+        publisherDisplayName: author.name,
         packageIdentity: APP_IDENTIFIER,
-        appExecutable: 'grommunio-desk.exe',
-        packageDisplayName: APP_PRODUCT_NAME,
-        appDisplayName: APP_PRODUCT_NAME,
+        appExecutable: `${name}.exe`,
+        packageDisplayName: productName,
+        appDisplayName: productName,
       },
       packageAssets: path.resolve('./assets/windows/msix_assets'),
       sign: false,
@@ -75,7 +75,7 @@ const config: ForgeConfig = {
       icon: getIconPath('icns'),
       background: './assets/mac/dmg_background.png',
       contents: [
-        { x: 192, y: 249, type: 'file', path: `out/${APP_PRODUCT_NAME}-darwin-${arch}/${APP_PRODUCT_NAME}.app` },
+        { x: 192, y: 249, type: 'file', path: `out/${productName}-darwin-${arch}/${productName}.app` },
         { x: 448, y: 249, type: 'link', path: '/Applications' },
       ],
       additionalDMGOptions: {

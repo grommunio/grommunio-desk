@@ -13,7 +13,7 @@ const EnvConfigDataKeys = {
 
 class EnvConfig {
   constructor() {
-    const result = dotenv.config()
+    const result = dotenv.config({ quiet: true })
     if (result.error)
       throw result.error
   }
