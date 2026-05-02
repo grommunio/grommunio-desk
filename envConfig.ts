@@ -9,6 +9,7 @@ const EnvConfigDataKeys = {
   APPLE_TEAM_ID: ['mac'] as SystemPlatform[],
   APPLE_SIGNING_IDENTITY: ['mac'] as SystemPlatform[],
   WINDOWS_PUBLISHER: ['win'] as SystemPlatform[],
+  WINDOWS_KIT_VERSION: ['win'] as SystemPlatform[],
 } satisfies Record<string, SystemPlatform[]>
 
 class EnvConfig {
@@ -18,10 +19,10 @@ class EnvConfig {
       throw result.error
   }
 
-  get = (key: keyof typeof EnvConfigDataKeys): string => {
+  get = (key: keyof typeof EnvConfigDataKeys, force = false): string => {
     const val = process.env[key]
     if (val == null) {
-      if (EnvConfigDataKeys[key].includes(systemPlatform))
+      if (force || EnvConfigDataKeys[key].includes(systemPlatform))
         throw new Error(`process.env.${String(key)} is undefined`)
       return ''
     }

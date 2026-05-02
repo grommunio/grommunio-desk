@@ -11,3 +11,5 @@ export const STATIC_RESOURCES = [
   './assets/general/favicons/favicon_16x16.png', // mac trayicon
   './assets/os_icons/app_icon.png', // linux icon
 ]
+
+export const APP_IDENTIFIER = 'com.grommunio.grommunio-desk'

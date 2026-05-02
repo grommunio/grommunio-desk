@@ -15,7 +15,8 @@
     "prepare": "husky",
     "lint": "eslint .",
     "tsc": "tsc --noEmit",
-    "test": "run-p lint tsc"
+    "test": "run-p lint tsc",
+    "generate-msix-manifest": "tsx ./scripts/generateMsixManifest.ts"
   },
   "keywords": [
     "Office",
@@ -62,6 +63,7 @@
     "react-i18next": "^16.6.6",
     "style-loader": "^3.3.4",
     "ts-loader": "^9.5.7",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.58.0",
     "webpack-merge": "^6.0.1"
