@@ -1,9 +1,10 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import { app, session, net } from 'electron'
-import started from 'electron-squirrel-startup'
+import squirrelStartup from 'electron-squirrel-startup'
 import path from 'node:path'
 import url from 'node:url'
+import { execFileSync } from 'node:child_process'
 
 import Logger from '@utils/logger'
 import { APP_ID, APP_PRODUCT_NAME } from './constants/app'
@@ -14,6 +15,7 @@ import registerIpcFunctions from './intercom'
 import { IS_PRODUCTION } from '../constants/misc'
 import TrayMenu from './trayMenu'
 import { throwIfPropertyUndefined } from './utils/misc'
+import { addMailtoRegistryEntry, removeMailtoRegistryEntry } from './scripts/squirrelRegistryEntry'
 
 const logger = new Logger('main/index')
 
@@ -64,8 +66,44 @@ const handleArgv = (argv: string[]): void => {
     handleUrl(arg)
 }
 
-if (started) { // handle squirrel installing / uninstalling process
+const handleSquirrelEvent = (): void => {
+  if (process.argv.length === 1)
+    return
+
+  const squirrelEvent = process.argv[1]
+  const exeName = path.basename(process.execPath)
+  const updateDotExePath = path.resolve(process.execPath, '../../Update.exe')
+
+  const execUpdate = (...args: string[]): void => {
+    try {
+      execFileSync(updateDotExePath, args)
+    }
+    catch (e) {
+      logger.error('handleSquirrelEvent', 'Error while executing Update.exe with args', updateDotExePath, args, e)
+    }
+  }
+
+  switch (squirrelEvent) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+      addMailtoRegistryEntry()
+      execUpdate('--createShortcut', exeName)
+      setTimeout(app.quit, 1000)
+      return
+    case '--squirrel-uninstall':
+      removeMailtoRegistryEntry()
+      execUpdate('--removeShortcut', exeName)
+      setTimeout(app.quit, 1000)
+      return
+    case '--squirrel-obsolete':
+      return
+  }
+  return
+}
+
+if (squirrelStartup) { // squirrel events
   app.quit()
+  handleSquirrelEvent()
 }
 else if (!app.requestSingleInstanceLock()) {
   app.quit()
