@@ -13,12 +13,14 @@ interface AppMenuTemplateOptions {
 }
 
 export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
+  ...(options.isMac ? [{ role: 'appMenu' }] as const : []),
   {
     label: 'File',
     submenu: [
-      options.isMac ? { role: 'close' } : { role: 'quit' },
+      ...(options.isMac ? [{ role: 'close' }] as const : [{ role: 'quit' }] as const),
     ],
   },
+  ...(options.isMac ? [{ role: 'editMenu' }] as const : []),
   {
     label: 'Server',
     submenu: [
@@ -48,6 +50,13 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
         click: options.toggleDialogViewDevTools,
         label: 'Toggle dialogView developer tools',
       },
+    ],
+  },
+  {
+    role: 'window',
+    submenu: [
+      { role: 'minimize' },
+      { role: 'close' },
     ],
   },
   {
