@@ -8,6 +8,7 @@ import { View } from '../../types/misc'
 import { sendIpc, throwIfPropertyUndefined } from '../../utils/misc'
 import { UserDialog } from '../../../types/dialog'
 import { ON_DIALOG_OPEN } from '../../constants/communication'
+import { attachContextMenu } from '../../utils/contextMenu'
 
 declare const MAIN_DIALOG_WEBPACK_ENTRY: string
 declare const MAIN_DIALOG_PRELOAD_WEBPACK_ENTRY: string
@@ -41,6 +42,8 @@ export default class DialogView implements View {
     this.view.webContents.on('did-finish-load', () => {
       sendIpc(this.view, ON_DIALOG_OPEN, this.userDialog)
     })
+
+    attachContextMenu(this.view.webContents)
   }
 
   adjustBounds = (contentSize: number[]): void => {

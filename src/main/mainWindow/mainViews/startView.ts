@@ -6,6 +6,7 @@ import { TITLE_BAR } from '../../../constants/window'
 import { BACKGROUND_COLOR, DEV_TOOLS_OPTIONS } from '../../constants/view'
 import { View } from '../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
+import { attachContextMenu } from '../../utils/contextMenu'
 
 declare const MAIN_START_WEBPACK_ENTRY: string
 declare const MAIN_START_PRELOAD_WEBPACK_ENTRY: string
@@ -33,6 +34,8 @@ export default class StartView implements View {
     this.view.webContents.setWindowOpenHandler((): WindowOpenHandlerResponse => {
       return { action: 'deny' }
     })
+
+    attachContextMenu(this.view.webContents)
   }
 
   adjustBounds = (contentSize: number[]): void => {

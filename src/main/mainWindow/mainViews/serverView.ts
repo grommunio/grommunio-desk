@@ -7,6 +7,7 @@ import { BACKGROUND_COLOR, DEV_TOOLS_OPTIONS } from '../../constants/view'
 import { View } from '../../types/misc'
 import { Server } from '../../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
+import { attachContextMenu } from '../../utils/contextMenu'
 
 export default class ServerView implements View {
   private view?: WebContentsView
@@ -69,7 +70,7 @@ export default class ServerView implements View {
       this.onDidFailLoad?.(this.server)
     })
 
-    // TODO: prevent redirects to external pages
+    attachContextMenu(this.view.webContents)
   }
 
   adjustBounds = (contentSize: number[]): void => {
