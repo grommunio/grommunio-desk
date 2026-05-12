@@ -12,6 +12,7 @@ import store from '../utils/store'
 import ServerView from './mainViews/serverView'
 import StartView from './mainViews/startView'
 import { createDialogObject } from '../../utils/dialog'
+import { getServerSessionPartition } from '@utils/server'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
@@ -192,6 +193,8 @@ export default class ViewManager {
     const status = this.servers.length !== newServers.length
     this.servers = newServers
     store.set('servers', this.servers)
+    if (status)
+      getServerSessionPartition(server).clearData()
     this.serverSaveListener?.(this.servers)
     return status
   }

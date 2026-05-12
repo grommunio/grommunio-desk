@@ -8,6 +8,7 @@ import { View } from '../../types/misc'
 import { Server } from '../../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 import { attachContextMenu } from '../../utils/contextMenu'
+import { getServerSessionPartition } from '../../utils/server'
 
 export default class ServerView implements View {
   private view?: WebContentsView
@@ -80,8 +81,11 @@ export default class ServerView implements View {
   }
 
   private create = (contentSize: number[], serverUrlParams?: { addPath?: string, search?: string }): void => {
-    // TODO: set (cookies) session partition
-    this.view = new WebContentsView()
+    this.view = new WebContentsView({
+      webPreferences: {
+        session: getServerSessionPartition(this.server),
+      },
+    })
     this.view.setBackgroundColor(BACKGROUND_COLOR)
 
     this.registerListeners()
