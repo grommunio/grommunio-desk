@@ -12,10 +12,7 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@utils/*": ["./src/main/utils/*", "./src/renderer/utils/*"]
-    }
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*"]
 }

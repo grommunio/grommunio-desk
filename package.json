@@ -14,7 +14,9 @@
     "publish": "electron-forge publish",
     "prepare": "husky",
     "lint": "eslint .",
-    "tsc": "tsc --noEmit",
+    "tsc": "run-p tsc.*",
+    "tsc.renderer": "tsc --noEmit -p ./src/renderer/tsconfig.json",
+    "tsc.main": "tsc --noEmit -p ./src/main/tsconfig.json",
     "test": "run-p lint tsc",
     "generate-msix-manifest": "tsx ./scripts/generateMsixManifest.ts"
   },
