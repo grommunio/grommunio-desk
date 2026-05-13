@@ -3,6 +3,7 @@
 import type { Configuration } from 'webpack'
 import merge from 'webpack-merge'
 import CopyPlugin from 'copy-webpack-plugin'
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 
 import { baseConfig } from './webpack.base.config'
 
@@ -32,6 +33,12 @@ export const rendererConfig: Configuration = merge(baseConfig, {
     },
   },
   plugins: [
+    new ForkTsCheckerWebpackPlugin({
+      logger: undefined, // necesarry, otherwise logs are not routed from webpack-dev-server to terminal
+      typescript: {
+        configFile: './src/renderer/tsconfig.json',
+      },
+    }),
     new CopyPlugin({
       patterns: [
         { from: 'assets/general/dark_background.jpg', to: 'dark_background.jpg' },

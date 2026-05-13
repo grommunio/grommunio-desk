@@ -1,7 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import type { Configuration } from 'webpack'
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 
 export const baseConfig: Configuration = {
   module: {
@@ -26,15 +25,12 @@ export const baseConfig: Configuration = {
         use: {
           loader: 'ts-loader',
           options: {
+            // disable type checking when building and use fork-ts-checker-webpack-plugin instead, because
+            // ts-loader can not recheck types when hot-reloading
             transpileOnly: true,
           },
         },
       },
     ],
   },
-  plugins: [
-    new ForkTsCheckerWebpackPlugin({
-      logger: 'webpack-infrastructure',
-    }),
-  ],
 }
