@@ -13,7 +13,7 @@ import { getServerSessionPartition } from '../../utils/server'
 export default class ServerView implements View {
   private view?: WebContentsView
   private server: Server
-  private failedLoading = false
+  private loadingStatus: 'loading' | 'failed' | 'success' = 'loading'
   private onDidFinishLoadSuccly?: (server: Server) => void
   private onDidFailLoad?: (server: Server) => void
 
@@ -62,13 +62,17 @@ export default class ServerView implements View {
     })
 
     this.view.webContents.on('did-finish-load', () => {
-      if (!this.failedLoading)
+      if (this.loadingStatus == 'loading') {
+        this.loadingStatus = 'success'
         this.onDidFinishLoadSuccly?.(this.server)
+      }
     })
 
     this.view.webContents.on('did-fail-load', () => {
-      this.failedLoading = true
-      this.onDidFailLoad?.(this.server)
+      if (this.loadingStatus == 'loading') {
+        this.loadingStatus = 'failed'
+        this.onDidFailLoad?.(this.server)
+      }
     })
 
     attachContextMenu(this.view.webContents)
@@ -118,7 +122,7 @@ export default class ServerView implements View {
   }
 
   hasFailedLoading = (): boolean => {
-    return this.failedLoading
+    return this.loadingStatus == 'failed'
   }
 
   reload = this.load

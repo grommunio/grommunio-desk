@@ -217,7 +217,7 @@ export default class ViewManager {
   handleDialogButton = (button: UserDialogButton<false>): void => {
     if (button.type === 'confirm.returnToStartPage') {
       if (this.currView instanceof ServerView) {
-        this.serverViews.delete(this.currView.getServer().id)
+        this.serverViews.delete(this.currView.getServer().id) // thereafter currView is closed in switchServer
       }
       else {
         logger.warn('handleDialogButton', 'currView is not a ServerView')
@@ -226,7 +226,7 @@ export default class ViewManager {
     }
     else if (button.type === 'confirm.removeServer') {
       if (this.currView instanceof ServerView && this.currView.getServer().id === button.callbackParams.server.id) {
-        this.serverViews.delete(this.currView.getServer().id)
+        this.serverViews.delete(this.currView.getServer().id) // thereafter currView is closed in switchServer
         this.switchServer(undefined)
       }
       if (!this.removeServerFromStore(button.callbackParams.server))
