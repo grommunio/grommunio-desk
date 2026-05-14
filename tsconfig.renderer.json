@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@utils/*": ["./src/renderer/utils/*"]
+    }
+  },
+  "exclude": ["./src/main", "./src/preload"]
+}

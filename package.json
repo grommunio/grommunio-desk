@@ -15,9 +15,9 @@
     "prepare": "husky",
     "lint": "eslint .",
     "tsc": "run-p tsc.*",
-    "tsc.main": "tsc --noEmit -p ./src/main/tsconfig.json",
-    "tsc.renderer": "tsc --noEmit -p ./src/renderer/tsconfig.json",
-    "tsc.preload": "tsc --noEmit -p ./src/preload/tsconfig.json",
+    "tsc.main": "tsc --noEmit -p tsconfig.main.json",
+    "tsc.preload": "tsc --noEmit -p tsconfig.preload.json",
+    "tsc.renderer": "tsc --noEmit -p tsconfig.renderer.json",
     "test": "run-p lint tsc",
     "generate-msix-manifest": "tsx ./scripts/generateMsixManifest.ts"
   },

@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+  },
+  "exclude": ["./src/main", "./src/renderer"]
+}

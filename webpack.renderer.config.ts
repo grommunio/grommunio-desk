@@ -4,12 +4,26 @@ import type { Configuration } from 'webpack'
 import merge from 'webpack-merge'
 import CopyPlugin from 'copy-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
+import path from 'node:path'
 
 import { baseConfig } from './webpack.base.config'
 
 export const rendererConfig: Configuration = merge(baseConfig, {
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /(node_modules|\.webpack)/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            // disable type checking when building and use fork-ts-checker-webpack-plugin instead, because
+            // ts-loader can not recheck types when hot-reloading
+            transpileOnly: true,
+            configFile: path.resolve(__dirname, './tsconfig.renderer.json'),
+          },
+        },
+      },
       {
         test: /\.css$/,
         use: [
@@ -36,7 +50,7 @@ export const rendererConfig: Configuration = merge(baseConfig, {
     new ForkTsCheckerWebpackPlugin({
       logger: undefined, // necesarry, otherwise logs are not routed from webpack-dev-server to terminal
       typescript: {
-        configFile: './src/renderer/tsconfig.json',
+        configFile: path.resolve(__dirname, './tsconfig.renderer.json'),
       },
     }),
     new CopyPlugin({

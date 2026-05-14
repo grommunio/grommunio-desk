@@ -1,18 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "ES6",
-    "allowJs": true,
-    "module": "commonjs",
-    "strict": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "jsx": "react-jsx"
-  },
-  "include": ["src/**/*"]
+  "include": [],
+  "references": [
+    { "path": "./tsconfig.main.json" },
+    { "path": "./tsconfig.preload.json" },
+    { "path": "./tsconfig.renderer.json" }
+  ]
 }

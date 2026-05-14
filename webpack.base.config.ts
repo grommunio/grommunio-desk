@@ -19,18 +19,6 @@ export const baseConfig: Configuration = {
           },
         },
       },
-      {
-        test: /\.tsx?$/,
-        exclude: /(node_modules|\.webpack)/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            // disable type checking when building and use fork-ts-checker-webpack-plugin instead, because
-            // ts-loader can not recheck types when hot-reloading
-            transpileOnly: true,
-          },
-        },
-      },
     ],
   },
 }
