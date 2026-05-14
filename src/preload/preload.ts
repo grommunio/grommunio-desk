@@ -22,7 +22,7 @@ import {
   ON_DIALOG_CHANGE,
   GET_SYSTEM_PLATFORM,
   EXIT_DIALOG,
-} from './constants/communication'
+} from '../main/constants/communication'
 
 // TODO: check if it is possible to make the ipc functions type proof -> type checking when calling e.g. ipcMain.on(...)
 contextBridge.exposeInMainWorld('electronAPI', {

@@ -16,6 +16,7 @@ import envConfig from './envConfig'
 import { STATIC_RESOURCES, APP_IDENTIFIER } from './constants'
 import { mainConfig } from './webpack.main.config'
 import { rendererConfig } from './webpack.renderer.config'
+import { preloadConfig } from './webpack.preload'
 import pkg from './package.json'
 
 const getIconPath = (ext?: 'png' | 'icns' | 'icon' | 'ico'): string => path.resolve(`./assets/os_icons/app_icon${ext == null ? '' : `.${ext}`}`)
@@ -90,7 +91,8 @@ const config: ForgeConfig = {
             html: './src/renderer/index.html',
             js: './src/renderer/mainWindow/startView/index.tsx',
             preload: {
-              js: './src/main/preload.ts',
+              js: './src/preload/preload.ts', // TODO: use multiple preload scripts instead of one (?)
+              config: preloadConfig,
             },
           },
           {
@@ -98,7 +100,8 @@ const config: ForgeConfig = {
             html: './src/renderer/index.html',
             js: './src/renderer/mainWindow/titleBarView/index.tsx',
             preload: {
-              js: './src/main/preload.ts',
+              js: './src/preload/preload.ts',
+              config: preloadConfig,
             },
           },
           {
@@ -106,7 +109,8 @@ const config: ForgeConfig = {
             html: './src/renderer/index.html',
             js: './src/renderer/mainWindow/dialogView/index.tsx',
             preload: {
-              js: './src/main/preload.ts',
+              js: './src/preload/preload.ts',
+              config: preloadConfig,
             },
           },
         ],

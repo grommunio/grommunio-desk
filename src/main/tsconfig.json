@@ -5,5 +5,5 @@
       "@utils/*": ["./utils/*"]
     }
   },
-  "exclude": ["../renderer"]
+  "exclude": ["../renderer", "../preload"]
 }
