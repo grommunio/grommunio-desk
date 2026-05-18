@@ -7,6 +7,13 @@ import stylistic from '@stylistic/eslint-plugin'
 import licenseHeader from 'eslint-plugin-license-header'
 
 // TODO: use no-restricted-imports to forbid some imports (e.g. src/types/dialog/... except index.ts)
+const sharedRules = {
+  'license-header/header': ['error', './resources/license-header.js'],
+  'stylistic/jsx-self-closing-comp': ['error', { component: true, html: true }],
+  'stylistic/jsx-props-no-multi-spaces': 'error',
+  'stylistic/jsx-curly-spacing': ['error', { when: 'never', children: true }],
+}
+
 export default defineConfig(
   eslint.configs.recommended,
   globalIgnores([
@@ -28,7 +35,7 @@ export default defineConfig(
       'stylistic/recommended',
     ],
     rules: {
-      'license-header/header': ['error', './resources/license-header.js'],
+      ...sharedRules,
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -48,7 +55,7 @@ export default defineConfig(
       'stylistic/recommended',
     ],
     rules: {
-      'license-header/header': ['error', './resources/license-header.js'],
+      ...sharedRules,
     },
   },
 )

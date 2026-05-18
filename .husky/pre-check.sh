@@ -7,7 +7,7 @@ set -e
 
 echo "=== Running pre-commit check ==="
 
-diffFiles=$(git diff --cached --name-only --diff-filter=ACM | grep -E '.*(\.js|\.ts)x?$') || true
+diffFiles=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(.*(\.js|\.ts)x?|eslint\.config\.mjs|tsconfig\..*\.json)$') || true
 if [ ! -z "$diffFiles" ]; then
   npm test
 fi
