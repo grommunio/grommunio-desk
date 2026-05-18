@@ -67,7 +67,7 @@ Development
 
 For prerequisites, local setup, build, development workflow and packaging, see:
 
-* `docs/development.md <./docs/development.md>`__
+* `docs/development.rst <./docs/development.rst>`__
 
 Support
 -------
