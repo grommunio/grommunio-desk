@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next'
 import styles from './titleBar.module.css'
 import { TITLE_BAR } from '../../../constants/window'
 import { Server } from '../../../types/misc'
-import ServerIcon from './serverIcon'
-import RemoveIcon from './removeIcon'
+import ServerIcon from './icons/serverIcon'
+import RemoveIcon from './icons/removeIcon'
 import { createDialogObject } from '../../../utils/dialog'
+import ServerTypeIcon from './serverTypeIcon'
 
 const formatServerLabel = (server?: Server): string => {
   if (!server)
@@ -119,7 +120,7 @@ const TitleBar = (): React.ReactElement => {
           disabled={isDisabled}
         >
           <div className={styles.serverIcon}>
-            <ServerIcon />
+            {currentServer !== undefined ? <ServerTypeIcon system={currentServer.system} /> : <ServerIcon />}
           </div>
           <span className={styles.serverName}>{currentServerName}</span>
           <span className={styles.serverCaret} />
@@ -143,8 +144,12 @@ const TitleBar = (): React.ReactElement => {
                     className={styles.serverMenuItemButton}
                     onClick={() => onServerClick(server)}
                   >
-                    <span className={styles.serverMenuCheck}>{currentServer?.id === server.id ? '✓' : ''}</span>
-                    <span className={styles.serverMenuLabel}>{server.formattedLabel}</span>
+                    <span className={styles.serverMenuCheck}>
+                      {currentServer?.id === server.id ? '✓' : <ServerTypeIcon system={server.system} />}
+                    </span>
+                    <span className={styles.serverMenuLabel}>
+                      {server.formattedLabel}
+                    </span>
                   </button>
                   <button
                     className={styles.serverMenuRemoveButton}
