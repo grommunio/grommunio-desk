@@ -5,11 +5,14 @@ import { Server } from '../../types/misc'
 interface AppMenuTemplateOptions {
   isMac: boolean
   servers: Server[]
+  reloadServerViewEnabled: boolean
   addServer: () => void
   switchServer: (server: Server) => void
   toggleMainViewDevTools: () => void
   toggleTitleBarViewTools: () => void
   toggleDialogViewDevTools: () => void
+  reloadServerView: () => void
+  hardReloadServerView: () => void
 }
 
 export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
@@ -38,6 +41,19 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
   {
     label: 'View',
     submenu: [
+      {
+        click: options.reloadServerView,
+        label: 'Reload server',
+        accelerator: 'CmdOrCtrl+R',
+        enabled: options.reloadServerViewEnabled,
+      },
+      {
+        click: options.hardReloadServerView,
+        label: 'Reload server (ignoring cache)',
+        accelerator: 'CmdOrCtrl+Shift+R',
+        enabled: options.reloadServerViewEnabled,
+      },
+      { type: 'separator' },
       {
         click: options.toggleMainViewDevTools,
         label: 'Toggle mainView developer tools',

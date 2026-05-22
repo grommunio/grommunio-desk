@@ -247,6 +247,19 @@ export default class ViewManager {
       this.createDialog(createDialogObject({ type: 'select.mailto', args: { mailtoUrl: url, servers: servers.map(srv => ({ label: srv.name, value: srv })) } }))
   }
 
+  reloadCurrServerView = (hardReload: boolean): void => {
+    if (!(this.currView instanceof ServerView))
+      return
+    if (hardReload) {
+      logger.silly('reloadCurrServerView', 'Hard-Reloading', this.currView.getServer())
+      this.currView.hardReload()
+    }
+    else {
+      logger.silly('reloadCurrServerView', 'Reloading', this.currView.getServer())
+      this.currView.reload()
+    }
+  }
+
   // IPC functions
   private onAddServer = (_event: IpcMainEvent): void => {
     this.switchServer(undefined)

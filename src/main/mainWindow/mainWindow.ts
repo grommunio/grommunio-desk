@@ -76,7 +76,7 @@ export default class MainWindow {
       show: false,
     })
 
-    this.createAppMenu(this.viewManager.getServers())
+    this.createAppMenu(this.viewManager.getServers(), this.viewManager.getCurrServer())
 
     this.registerWinListeners()
     this.registerMenuListeners()
@@ -129,18 +129,21 @@ export default class MainWindow {
     })
   }
 
-  private createAppMenu = (servers: Server[]): void => {
+  private createAppMenu = (servers: Server[], currServer: Server | undefined): void => {
     throwIfPropertyUndefined('win', this.win)
 
     const isMac = systemPlatform === 'mac'
     this.appMenu = Menu.buildFromTemplate(buildAppMenuTemplate({
       isMac,
       servers,
+      reloadServerViewEnabled: currServer != null,
       addServer: () => this.viewManager.switchServer(undefined),
       switchServer: this.viewManager.switchServer,
       toggleMainViewDevTools: this.viewManager.toggleMainViewDevTools,
       toggleTitleBarViewTools: this.toggleTitleBarViewDevTools,
       toggleDialogViewDevTools: () => this.dialogView?.toggleDevTools(),
+      reloadServerView: () => this.viewManager.reloadCurrServerView(false),
+      hardReloadServerView: () => this.viewManager.reloadCurrServerView(true),
     }))
     this.win.setMenu(this.appMenu)
     Menu.setApplicationMenu(this.appMenu)
@@ -156,11 +159,12 @@ export default class MainWindow {
   }
 
   private onServerSwitch = (server: Server | undefined): void => {
+    this.createAppMenu(this.viewManager.getServers(), server)
     this.titleBarView?.sendServerSwitch(server)
   }
 
   private onServerSave = (servers: Server[]): void => {
-    this.createAppMenu(servers)
+    this.createAppMenu(servers, this.viewManager.getCurrServer())
     this.titleBarView?.sendServerSave(servers)
   }
 

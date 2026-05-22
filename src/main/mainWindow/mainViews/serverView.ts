@@ -40,7 +40,6 @@ export default class ServerView implements View {
 
   private load = (serverUrlParams?: { addPath?: string, search?: string }): void => {
     throwIfPropertyUndefined('view', this.view)
-
     this.view.webContents.loadURL(this.getUrl(serverUrlParams))
   }
 
@@ -126,4 +125,9 @@ export default class ServerView implements View {
   }
 
   reload = this.load
+
+  hardReload = (): void => {
+    throwIfPropertyUndefined('view', this.view)
+    this.view.webContents.loadURL(this.getUrl(), { extraHeaders: 'pragma: no-cache\n' })
+  }
 }
