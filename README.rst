@@ -14,6 +14,7 @@ At A Glance
 * Built-in server URL validation
 * OS-native notifications
 * Background process with tray icon
+* ``mailto:`` protocol handler - grommunio Desk can be registered as the system default mail client, so clicking ``mailto:`` links opens a new mail in grommunio Desk
 
 Compatibility
 -------------
@@ -22,7 +23,7 @@ Compatibility
 * npm 10+
 * Supported desktop platforms:
 
-  * Linux
+  * Debian-based Linux distributions
   * macOS
   * Windows
 
