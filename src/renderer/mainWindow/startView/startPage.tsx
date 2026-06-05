@@ -7,42 +7,40 @@ import styles from './startPage.module.css'
 import Logger from '@utils/logger'
 import { validateServerNameFormat, validateServerUrlFormat } from '@utils/server'
 import { ServerOptions, ServerSystem, ServerUrl } from '../../../types/misc'
-import InputField, { ValidationStatus as InputFieldValidationStatus } from '../../components/inputField'
+import InputField from '../../components/inputField'
 
-type UrlValidationStatus = 'unchecked' | 'invalidFormat' | 'checking' | 'invalidServer' | 'valid'
-type NameValidationStatus = 'unchecked' | 'invalidFormat' | 'valid'
+enum UrlValidationStatus {
+  Unchecked = 'unchecked',
+  InvalidFormat = 'invalid',
+  Checking = 'checking',
+  InvalidServer = 'warn',
+  Valid = 'valid',
+}
+enum NameValidationStatus {
+  Unchecked = 'unchecked',
+  InvalidFormat = 'invalid',
+  Valid = 'valid',
+}
 
 const logger = new Logger('renderer/mainWindow/startView/startPage')
 const URL_VALIDATION_BEGIN_TIMEOUT = 400
-const URL_VALIDATION_STATUS_MAP: Record<UrlValidationStatus, InputFieldValidationStatus> = {
-  unchecked: 'unchecked',
-  invalidFormat: 'invalid',
-  checking: 'checking',
-  invalidServer: 'warn',
-  valid: 'valid',
-}
-const NAME_VALIDATION_STATUS_MAP: Record<NameValidationStatus, InputFieldValidationStatus> = {
-  unchecked: 'unchecked',
-  invalidFormat: 'invalid',
-  valid: 'valid',
-}
 
 const StartPage = (): React.ReactElement => {
   const { t } = useTranslation()
   const [urlInput, setUrlInput] = useState('')
   const [nameInput, setNameInput] = useState('')
-  const [urlValidationStatus, setUrlValidationStatus] = useState<UrlValidationStatus>('unchecked')
-  const [nameValidationStatus, setNameValidationStatus] = useState<NameValidationStatus>('unchecked')
+  const [urlValidationStatus, setUrlValidationStatus] = useState<UrlValidationStatus>(UrlValidationStatus.Unchecked)
+  const [nameValidationStatus, setNameValidationStatus] = useState<NameValidationStatus>(NameValidationStatus.Unchecked)
   const [urlServerValidation, setUrlServerValidation] = useState<{ system: ServerSystem, url: ServerUrl } | null>(null) // TODO: show user in InputField, which server url (urlServer[1]) the system will adopt (difference between user input and 'real' url), if he confirms
   const urlValidationTimeoutRef = useRef<NodeJS.Timeout>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const isReadyToSubmit = useMemo(() => ['invalidServer', 'valid'].includes(urlValidationStatus) && nameValidationStatus === 'valid', [urlValidationStatus, nameValidationStatus])
+  const isReadyToSubmit = useMemo(() => [UrlValidationStatus.InvalidServer, UrlValidationStatus.Valid].includes(urlValidationStatus) && nameValidationStatus === NameValidationStatus.Valid, [urlValidationStatus, nameValidationStatus])
   const urlValidationFeedbackText = useMemo(() =>
-    urlValidationStatus === 'valid'
+    urlValidationStatus === UrlValidationStatus.Valid
       ? `${t(`mainWindow.startView.input.url.feedback.valid.${urlServerValidation?.system.type}`)}: ${t(`mainWindow.startView.input.url.feedback.valid.version`, { system: urlServerValidation?.system })}`
-      : urlValidationStatus === 'invalidFormat'
+      : urlValidationStatus === UrlValidationStatus.InvalidFormat
         ? t('mainWindow.startView.input.url.feedback.invalidFormat')
-        : urlValidationStatus === 'invalidServer'
+        : urlValidationStatus === UrlValidationStatus.InvalidServer
           ? t('mainWindow.startView.input.url.feedback.invalidServer')
           : undefined,
   [urlValidationStatus, urlServerValidation])
@@ -64,18 +62,18 @@ const StartPage = (): React.ReactElement => {
     if (field === 'name') {
       setNameInput(value)
       if (!value) {
-        setNameValidationStatus('unchecked')
+        setNameValidationStatus(NameValidationStatus.Unchecked)
       }
       else if (!validateServerNameFormat(value)) {
-        setNameValidationStatus('invalidFormat')
+        setNameValidationStatus(NameValidationStatus.InvalidFormat)
       }
       else {
-        setNameValidationStatus('valid')
+        setNameValidationStatus(NameValidationStatus.Valid)
       }
     }
     else {
       setUrlInput(value)
-      setUrlValidationStatus('unchecked')
+      setUrlValidationStatus(UrlValidationStatus.Unchecked)
       setUrlServerValidation(null)
       if (urlValidationTimeoutRef.current) {
         clearTimeout(urlValidationTimeoutRef.current)
@@ -85,22 +83,22 @@ const StartPage = (): React.ReactElement => {
         return
       }
       if (!validateServerUrlFormat(value)) {
-        setUrlValidationStatus('invalidFormat')
+        setUrlValidationStatus(UrlValidationStatus.InvalidFormat)
         return
       }
       urlValidationTimeoutRef.current = setTimeout(async () => {
-        setUrlValidationStatus('checking')
+        setUrlValidationStatus(UrlValidationStatus.Checking)
         // logger.silly('handleChange.timeoutFunc', 'Validating url', inputVal, runId)
         const serverValidation = await window.electronAPI.validateServerUrl(value)
         // logger.silly('handleChange.timeoutFunc', 'Validation completed', inputVal, serverValid, urlValidationTimeoutRef.current, runId)
         if (urlValidationTimeoutRef.current != runId)
           return
         if (serverValidation != null) {
-          setUrlValidationStatus('valid')
+          setUrlValidationStatus(UrlValidationStatus.Valid)
           setUrlServerValidation(serverValidation)
         }
         else {
-          setUrlValidationStatus('invalidServer')
+          setUrlValidationStatus(UrlValidationStatus.InvalidServer)
         }
       }, URL_VALIDATION_BEGIN_TIMEOUT)
       const runId = urlValidationTimeoutRef.current
@@ -131,8 +129,8 @@ const StartPage = (): React.ReactElement => {
           type="text"
           className={styles.inputContainer}
           placeholder={t('mainWindow.startView.input.name.placeholder')}
-          feedback={nameValidationStatus === 'invalidFormat' ? t('mainWindow.startView.input.name.feedback.invalidFormat') : undefined}
-          validationStatus={NAME_VALIDATION_STATUS_MAP[nameValidationStatus]}
+          feedback={nameValidationStatus === NameValidationStatus.InvalidFormat ? t('mainWindow.startView.input.name.feedback.invalidFormat') : undefined}
+          validationStatus={nameValidationStatus}
           onChange={handleChange('name')}
           onEnterKeyDown={handleEnterKeyDown('name')}
         />
@@ -142,7 +140,7 @@ const StartPage = (): React.ReactElement => {
           className={styles.inputContainer}
           placeholder="https://mail.example.com"
           feedback={urlValidationFeedbackText}
-          validationStatus={URL_VALIDATION_STATUS_MAP[urlValidationStatus]}
+          validationStatus={urlValidationStatus}
           ref={urlInputRef}
           onChange={handleChange('url')}
           onEnterKeyDown={handleEnterKeyDown('url')}
