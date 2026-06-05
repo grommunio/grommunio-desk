@@ -31,10 +31,13 @@ const StartPage = (): React.ReactElement => {
   const [nameInput, setNameInput] = useState('')
   const [urlValidationStatus, setUrlValidationStatus] = useState<UrlValidationStatus>(UrlValidationStatus.Unchecked)
   const [nameValidationStatus, setNameValidationStatus] = useState<NameValidationStatus>(NameValidationStatus.Unchecked)
-  const [urlServerValidation, setUrlServerValidation] = useState<{ system: ServerSystem, url: ServerUrl } | null>(null) // TODO: show user in InputField, which server url (urlServer[1]) the system will adopt (difference between user input and 'real' url), if he confirms
+  // TODO: show user in InputField, which server url (urlServer[1]) the system will adopt (difference between user input and 'real' url), if he confirms
+  const [urlServerValidation, setUrlServerValidation] = useState<{ system: ServerSystem, url: ServerUrl } | null>(null)
   const urlValidationTimeoutRef = useRef<NodeJS.Timeout>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const isReadyToSubmit = useMemo(() => [UrlValidationStatus.InvalidServer, UrlValidationStatus.Valid].includes(urlValidationStatus) && nameValidationStatus === NameValidationStatus.Valid, [urlValidationStatus, nameValidationStatus])
+  const isReadyToSubmit = useMemo(() =>
+    [UrlValidationStatus.InvalidServer, UrlValidationStatus.Valid].includes(urlValidationStatus) && nameValidationStatus === NameValidationStatus.Valid,
+  [urlValidationStatus, nameValidationStatus])
   const urlValidationFeedbackText = useMemo(() =>
     urlValidationStatus === UrlValidationStatus.Valid
       ? `${t(`mainWindow.startView.input.url.feedback.valid.${urlServerValidation?.system.type}`)}: ${t(`mainWindow.startView.input.url.feedback.valid.version`, { system: urlServerValidation?.system })}`

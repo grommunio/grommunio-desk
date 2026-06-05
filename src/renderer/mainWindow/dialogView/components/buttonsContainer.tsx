@@ -33,7 +33,7 @@ const ButtonsContainer = <Button extends UserDialogButton<true>>(props: Props<Bu
     const button = props.buttons.find(button => button.triggerOnEnter === true && !button.disabled)
     if (button != null)
       props.onEnterKeyDown(button)
-  }, [props.buttons])
+  }, [props.buttons, props.onEnterKeyDown])
 
   const onKeyDown = useCallback((event: globalThis.KeyboardEvent): void => {
     if (event.key === 'Escape')
