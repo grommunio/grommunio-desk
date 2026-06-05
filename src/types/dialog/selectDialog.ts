@@ -6,6 +6,7 @@ import { ValidateDialogArgs } from './misc'
 import { Server } from '../misc'
 import { SelectFieldOption } from '../selectField'
 
+// Optional field specifies whether the selection field is required
 type UserSelectDialogButtonTemplate<
   Type extends string,
   Optional extends boolean,
@@ -25,12 +26,18 @@ interface UserSelectDialogArgsEntryGeneric<Button extends UserSelectDialogButton
   textArgs: Record<string, unknown> | undefined
   buttons: [UserDialogCancelButton, Button]
 }
-type UserSelectDialogArgsEntry<ButtonUnion extends UserSelectDialogButtonExcl<true> = UserSelectDialogButtonExcl<true>> = ButtonUnion extends infer U extends UserSelectDialogButtonExcl<true> ? UserSelectDialogArgsEntryGeneric<U> : never
+type UserSelectDialogArgsEntry<ButtonUnion extends UserSelectDialogButtonExcl<true> = UserSelectDialogButtonExcl<true>>
+  = ButtonUnion extends infer U extends UserSelectDialogButtonExcl<true>
+    ? UserSelectDialogArgsEntryGeneric<U>
+    : never
 type UserSelectDialogArgs = ValidateDialogArgs<UserSelectDialogArgsEntry, {
   'select.mailto': {
     optionValues: SelectFieldOption<Server>[]
     textArgs: { mailtoEmail: string }
-    buttons: [{ type: 'cancel', text: 'cancel' }, { type: 'select.selectMailtoServer', callbackParams: { mailtoUrl: string }, text: 'select.selectMailtoServer', triggerOnEnter: true }]
+    buttons: [
+      { type: 'cancel', text: 'cancel' },
+      { type: 'select.selectMailtoServer', callbackParams: { mailtoUrl: string }, text: 'select.selectMailtoServer', triggerOnEnter: true },
+    ]
   }
 }>
 
