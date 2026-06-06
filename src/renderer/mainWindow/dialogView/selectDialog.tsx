@@ -17,10 +17,11 @@ interface Props {
 const SelectDialog = (props: Props): React.ReactElement => {
   const { t } = useTranslation()
   const [selectedValue, setSelectedValue] = useState<UserSelectDialogSelection | undefined>(undefined)
-  const buttons = useMemo(
-    () => [props.userDialog.buttons[0], { ...props.userDialog.buttons[1], disabled: selectedValue == null }],
-    [props.userDialog, selectedValue],
-  )
+  const buttons = useMemo(() => props.userDialog.buttons.map(button =>
+    button.type === 'select.selectMailtoServer'
+      ? { ...button, disabled: selectedValue == null }
+      : button),
+  [props.userDialog.buttons, selectedValue])
 
   const sendDialogButton = (button: UserSelectDialogButton<true>): void => {
     if (button.type === 'cancel')
