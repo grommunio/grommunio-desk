@@ -8,6 +8,7 @@ import { UserDialog } from '../../../types/dialog'
 import Logger from '../../utils/logger'
 import ConfirmDialog from './confirmDialog'
 import SelectDialog from './selectDialog'
+import InputDialog from './inputDialog'
 
 const logger = new Logger('renderer/mainWindow/dialogView/dialog')
 
@@ -51,6 +52,10 @@ const Dialog = (): React.ReactElement => {
             {
               userDialog?.type === 'select'
               && <SelectDialog userDialog={userDialog} exitDialog={exitDialog} />
+            }
+            {
+              userDialog?.type === 'input'
+              && <InputDialog userDialog={userDialog} exitDialog={exitDialog} />
             }
           </div>
         )

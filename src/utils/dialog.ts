@@ -16,6 +16,9 @@ type DialogArgs = {
 } | {
   type: 'select.mailto'
   args: { mailtoUrl: string, servers: SelectFieldOption<Server>[] }
+} | {
+  type: 'input.serverName'
+  args: { server: Server }
 }
 
 export function createDialogObject(dialogArgs: DialogArgs): UserDialog {
@@ -69,6 +72,17 @@ export function createDialogObject(dialogArgs: DialogArgs): UserDialog {
           { type: 'select.selectMailtoServer', callbackParams: { mailtoUrl: dialogArgs.args.mailtoUrl }, text: 'select.selectMailtoServer', triggerOnEnter: true },
         ],
         optionValues: dialogArgs.args.servers,
+      }
+    case 'input.serverName':
+      return {
+        type: 'input',
+        title: 'input.serverName',
+        exitAllowed: true,
+        inputParams: { server: dialogArgs.args.server },
+        buttons: [
+          { type: 'cancel', text: 'cancel' },
+          { type: 'input.editServerName', callbackParams: { server: dialogArgs.args.server }, text: 'input.editServerName', triggerOnEnter: true },
+        ],
       }
   }
 }

@@ -18,15 +18,22 @@ interface UserConfirmDialogArgsEntry {
 type UserConfirmDialogArgs = ValidateDialogArgs<UserConfirmDialogArgsEntry, {
   'confirm.loadFailed': {
     textArgs: { url: string, interpolation?: InterpolationOptions }
-    buttons: [{ type: 'confirm.returnToStartPage', text: 'confirm.returnToStartPage', triggerOnEnter: true }]
+    buttons: [
+      { type: 'confirm.returnToStartPage', text: 'confirm.returnToStartPage', triggerOnEnter: true },
+    ]
   }
   'confirm.removeServer': {
     textArgs: { server: Server }
-    buttons: [{ type: 'cancel', text: 'cancel' }, { type: 'confirm.removeServer', callbackParams: { server: Server }, text: 'confirm.removeServer', triggerOnEnter: true }]
+    buttons: [
+      { type: 'cancel', text: 'cancel' },
+      { type: 'confirm.removeServer', callbackParams: { server: Server }, text: 'confirm.removeServer', triggerOnEnter: true },
+    ]
   }
   'confirm.noMailtoServerFound': {
     textArgs: { mailtoEmail: string }
-    buttons: [{ type: 'cancel', text: 'ok', triggerOnEnter: true }]
+    buttons: [
+      { type: 'cancel', text: 'ok', triggerOnEnter: true },
+    ]
   }
 }>
 

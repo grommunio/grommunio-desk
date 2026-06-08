@@ -209,21 +209,33 @@
   font-size: 13px;
 }
 
-.serverMenuRemoveButton {
+.serverMenuButton {
   border-radius: 6px;
   background-color: transparent;
   border: 1px solid transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
-  margin-right: 2px;
   color: white;
   cursor: pointer;
   background-color: transparent;
 
-  &:hover {
-    color: red;
+  &.editButton {
+    margin-left: auto;
+    margin-right: -2px;
+
+    &:hover {
+      color: lightskyblue;
+    }
+  }
+
+  &.removeButton {
+    margin-left: auto;
+    margin-right: 2px;
+
+    &:hover {
+      color: red;
+    }
   }
 }
 

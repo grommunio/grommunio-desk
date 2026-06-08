@@ -8,6 +8,7 @@ import { TITLE_BAR } from '../../../constants/window'
 import { Server } from '../../../types/misc'
 import ServerIcon from './icons/serverIcon'
 import RemoveIcon from './icons/removeIcon'
+import EditIcon from './icons/editIcon'
 import { createDialogObject } from '../../../utils/dialog'
 import ServerTypeIcon from './serverTypeIcon'
 
@@ -63,6 +64,10 @@ const TitleBar = (): React.ReactElement => {
   const onServerClick = (server: Server): void => {
     closeServerMenu()
     window.electronAPI.switchServer(server)
+  }
+
+  const onEditServerClick = (server: Server): void => {
+    window.electronAPI.openDialog(createDialogObject({ type: 'input.serverName', args: { server } }))
   }
 
   const onRemoveServerClick = (server: Server): void => {
@@ -152,7 +157,13 @@ const TitleBar = (): React.ReactElement => {
                     </span>
                   </button>
                   <button
-                    className={styles.serverMenuRemoveButton}
+                    className={`${styles.serverMenuButton} ${styles.editButton}`}
+                    onClick={() => onEditServerClick(server)}
+                  >
+                    <EditIcon />
+                  </button>
+                  <button
+                    className={`${styles.serverMenuButton} ${styles.removeButton}`}
                     onClick={() => onRemoveServerClick(server)}
                   >
                     <RemoveIcon />

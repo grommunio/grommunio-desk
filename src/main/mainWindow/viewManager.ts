@@ -122,6 +122,7 @@ export default class ViewManager {
       logger.debug('switchServer', 'Canceling switchServer-operation due to active dialog') // TODO: use log.scope (?)
       return
     }
+    // TODO: add consistency check that server object has same properties as stored server with same id
     if (!skipServerStoreCheck && server != null && this.servers.find((srv: Server) => srv.id === server.id) == null) {
       logger.error('switchServer', `Could not find server ${server.url} with id ${server.id}`)
       return
@@ -199,6 +200,23 @@ export default class ViewManager {
     return status
   }
 
+  private updateServerInStore = (server: Server, updateParams: Partial<ServerOptions>): void => {
+    const storedServer = this.servers.find((srv: Server) => srv.id === server.id)
+    if (storedServer == null) {
+      logger.error('updateServerInStore', 'Server could not be updated in store because it does not exist there')
+      return
+    }
+    logger.debug('updateServerInStore', 'Update server', storedServer, updateParams)
+    Object.assign(storedServer, updateParams)
+    store.set('servers', this.servers)
+    this.serverSaveListener?.(this.servers)
+
+    if (this.currView instanceof ServerView && this.currView.getServer().id === server.id) {
+      store.set('lastUsedServer', storedServer)
+      this.serverSwitchListener?.(storedServer)
+    }
+  }
+
   private onServerViewDidFinishLoadSuccly = (server: Server): void => {
     logger.debug('onServerViewDidFinishLoadSuccly', 'Finished loading of server successfully', server)
     this.addServerToStore(server)
@@ -234,6 +252,9 @@ export default class ViewManager {
     }
     else if (button.type === 'select.selectMailtoServer') {
       this.openMailtoUrl(button.selection, button.callbackParams.mailtoUrl)
+    }
+    else if (button.type === 'input.editServerName') {
+      this.updateServerInStore(button.callbackParams.server, button.input)
     }
   }
 

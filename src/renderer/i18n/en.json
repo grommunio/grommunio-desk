@@ -40,6 +40,9 @@
         },
         "select": {
           "mailto": "Choose a server"
+        },
+        "input": {
+          "serverName": "Edit server name"
         }
       },
       "text": {
@@ -61,6 +64,19 @@
         },
         "select": {
           "selectMailtoServer": "Continue"
+        },
+        "input": {
+          "editServerName": "Save"
+        }
+      },
+      "input": {
+        "input": {
+          "serverName": {
+            "placeholder": "Your server name",
+            "feedback": {
+              "invalidFormat": "Please enter a valid server name."
+            }
+          }
         }
       }
     }
