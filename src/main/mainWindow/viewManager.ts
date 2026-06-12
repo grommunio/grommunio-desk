@@ -17,7 +17,7 @@ import { getServerSessionPartition } from '@utils/server'
 const logger = new Logger('main/mainWindow/viewManager')
 
 // TODO: bug: in production mode view.constructor.name does not work (empty string / undefined)
-const formatViewToString = (view: View): string => view.constructor.name + (view instanceof ServerView ? `[ ${view.getServer().name} ]` : '')
+const formatViewToString = (view: View): string => view.constructor.name + (view instanceof ServerView ? `[ ${view.getServerId()} ]` : '')
 
 export default class ViewManager {
   private currView?: View
@@ -73,7 +73,7 @@ export default class ViewManager {
     this.addWindowView(this.currView)
     if (oldView != null) {
       this.removeWindowView(oldView)
-      if (!(oldView instanceof ServerView) || !this.serverViews.has(oldView.getServer().id)) {
+      if (!(oldView instanceof ServerView) || !this.serverViews.has(oldView.getServerId())) {
         logger.silly('switchCurrView', 'Close', formatViewToString(oldView))
         oldView.close()
       }
@@ -108,7 +108,7 @@ export default class ViewManager {
     else
       logger.verbose('switchServer', 'Server with params:', server, serverUrlParams)
     if ((this.currView instanceof StartView && (server == null))
-      || (this.currView instanceof ServerView && server?.id === this.currView.getServer().id)) {
+      || (this.currView instanceof ServerView && server?.id === this.currView.getServerId())) {
       if (serverUrlParams != null && this.currView instanceof ServerView) {
         this.currView.reload(serverUrlParams)
         logger.debug('switchServer', 'Reloading server with params, because server is already loaded')
@@ -158,7 +158,7 @@ export default class ViewManager {
     // when currView failed to load, it is / should be already included in serverViews
     else if (this.currView != null && Array.from(this.serverViews.values()).find(view => view === this.currView)?.hasFailedLoading()) {
       logger.debug('closeCurrView', `Close ${formatViewToString(this.currView)} because it failed to load`)
-      this.serverViews.delete(this.currView.getServer().id)
+      this.serverViews.delete(this.currView.getServerId())
       this.currView.close()
     }
     this.currView = undefined // necessary because switchCurrView needs to re-add the currView to the window when the window is reopened
@@ -175,7 +175,13 @@ export default class ViewManager {
   }
 
   getCurrServer = (): Server | undefined => {
-    return this.currView instanceof ServerView ? this.currView.getServer() : undefined
+    if (!(this.currView instanceof ServerView))
+      return undefined
+    const currServerId = this.currView.getServerId()
+    const currServer = this.servers.find(srv => srv.id === currServerId)
+    if (currServer == null)
+      logger.error('getCurrServer', `Could not find server with id ${currServerId}`)
+    return currServer
   }
 
   getServers = (): Server[] => {
@@ -214,7 +220,7 @@ export default class ViewManager {
     store.set('servers', this.servers)
     this.serverSaveListener?.(this.servers)
 
-    if (this.currView instanceof ServerView && this.currView.getServer().id === server.id) {
+    if (this.currView instanceof ServerView && this.currView.getServerId() === server.id) {
       store.set('lastUsedServerId', storedServer.id)
       this.serverSwitchListener?.(storedServer)
     }
@@ -238,7 +244,7 @@ export default class ViewManager {
   handleDialogButton = (button: UserDialogButton<false>): void => {
     if (button.type === 'confirm.returnToStartPage') {
       if (this.currView instanceof ServerView) {
-        this.serverViews.delete(this.currView.getServer().id) // thereafter currView is closed in switchServer
+        this.serverViews.delete(this.currView.getServerId()) // thereafter currView is closed in switchServer
       }
       else {
         logger.warn('handleDialogButton', 'currView is not a ServerView')
@@ -246,8 +252,8 @@ export default class ViewManager {
       this.switchServer(undefined)
     }
     else if (button.type === 'confirm.removeServer') {
-      if (this.currView instanceof ServerView && this.currView.getServer().id === button.callbackParams.server.id) {
-        this.serverViews.delete(this.currView.getServer().id) // thereafter currView is closed in switchServer
+      if (this.currView instanceof ServerView && this.currView.getServerId() === button.callbackParams.server.id) {
+        this.serverViews.delete(this.currView.getServerId()) // thereafter currView is closed in switchServer
         this.switchServer(undefined)
       }
       if (!this.removeServerFromStore(button.callbackParams.server))
@@ -275,11 +281,11 @@ export default class ViewManager {
     if (!(this.currView instanceof ServerView))
       return
     if (hardReload) {
-      logger.silly('reloadCurrServerView', 'Hard-Reloading', this.currView.getServer())
+      logger.silly('reloadCurrServerView', `Hard-Reloading server ${this.currView.getServerId()}`)
       this.currView.hardReload()
     }
     else {
-      logger.silly('reloadCurrServerView', 'Reloading', this.currView.getServer())
+      logger.silly('reloadCurrServerView', `Reloading server ${this.currView.getServerId()}`)
       this.currView.reload()
     }
   }

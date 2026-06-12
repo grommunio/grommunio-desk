@@ -112,8 +112,10 @@ export default class ServerView implements View {
       this.view.webContents.closeDevTools()
   }
 
-  getServer(): Server {
-    return this.server
+  // Do not implement direct getter method for server to avoid inconsistency issues (e.g. when server name is updated,
+  // this.server will contain the outdated name).
+  getServerId(): number {
+    return this.server.id
   }
 
   getWebView(): WebContentsView | undefined {
