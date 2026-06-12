@@ -156,6 +156,7 @@ else {
   // for MacOS
   app.on('open-url', (_event, url) => {
     logger.silly('app.open-url', 'open-url was triggered with url', url)
+    onOpenAppClick()
     handleUrl(url)
   })
 }
