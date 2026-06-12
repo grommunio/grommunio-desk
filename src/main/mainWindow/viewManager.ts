@@ -130,7 +130,7 @@ export default class ViewManager {
     const [view, loadedFromScratch] = this.createServerView(server, serverUrlParams)
     this.switchCurrView(view)
     if (!loadedFromScratch) // for new (loaded from scratch) servers, do not set lastUsedServer until the server has loaded successfully (see onServerViewDidFinishLoadSuccly)
-      store.set('lastUsedServer', server)
+      store.set('lastUsedServerId', server?.id)
     this.serverSwitchListener?.(server)
   }
 
@@ -139,8 +139,11 @@ export default class ViewManager {
     if (this.currView != null) // TODO: throw error (?)
       return
     this.windowContentSize = windowContentSize
-    const server = store.get('lastUsedServer')
+    const serverId = store.get('lastUsedServerId')
+    const server = serverId == null ? undefined : this.servers.find(srv => srv.id === serverId)
     logger.verbose('createViews', 'Last used server:', server)
+    if (serverId != null && server == null)
+      logger.error('createViews', `Could not find server with id ${serverId}`)
     this.switchServer(server)
   }
 
@@ -212,7 +215,7 @@ export default class ViewManager {
     this.serverSaveListener?.(this.servers)
 
     if (this.currView instanceof ServerView && this.currView.getServer().id === server.id) {
-      store.set('lastUsedServer', storedServer)
+      store.set('lastUsedServerId', storedServer.id)
       this.serverSwitchListener?.(storedServer)
     }
   }
@@ -220,7 +223,7 @@ export default class ViewManager {
   private onServerViewDidFinishLoadSuccly = (server: Server): void => {
     logger.debug('onServerViewDidFinishLoadSuccly', 'Finished loading of server successfully', server)
     this.addServerToStore(server)
-    store.set('lastUsedServer', server)
+    store.set('lastUsedServerId', server.id)
   }
 
   private onServerViewDidFailLoad = (server: Server): void => {

@@ -7,7 +7,7 @@ import { Server } from '../../types/misc'
 import { getUserDataPath } from './paths'
 
 interface ConfigData {
-  lastUsedServer?: Server
+  lastUsedServerId?: Server['id']
   servers: Server[]
   serverIdCount: number
   windowSize: number[]
