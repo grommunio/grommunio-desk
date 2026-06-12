@@ -26,7 +26,7 @@ const ButtonsContainer = <Button extends UserDialogButton<true>>(props: Props<Bu
       {t(`mainWindow.dialogView.button.${button.text}`)}
     </button>
   )),
-  [props.buttons])
+  [props.buttons, props.onButtonClick])
 
   // only the first button with triggerOnEnter === true will be triggered
   const onEnterKeyDown = useCallback(() => {
