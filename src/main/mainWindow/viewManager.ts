@@ -209,14 +209,16 @@ export default class ViewManager {
     return status
   }
 
-  private updateServerInStore = (server: Server, updateParams: Partial<ServerOptions>): Server | undefined => {
-    const storedServer = this.servers.find((srv: Server) => srv.id === server.id)
+  private updateServerInStore = (server: Server | Server['id'], updateParams: Partial<Omit<Server, 'id'>>, triggerServerSaveListener = true): Server | undefined => {
+    const serverId = typeof server === 'number' ? server : server.id
+    const storedServer = this.servers.find((srv: Server) => srv.id === serverId)
     if (storedServer == null)
       return undefined
     logger.debug('updateServerInStore', 'Update server', storedServer, updateParams)
     Object.assign(storedServer, updateParams)
     store.set('servers', this.servers)
-    this.serverSaveListener?.(this.servers)
+    if (triggerServerSaveListener)
+      this.serverSaveListener?.(this.servers)
     return storedServer
   }
 
