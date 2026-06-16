@@ -209,21 +209,15 @@ export default class ViewManager {
     return status
   }
 
-  private updateServerInStore = (server: Server, updateParams: Partial<ServerOptions>): void => {
+  private updateServerInStore = (server: Server, updateParams: Partial<ServerOptions>): Server | undefined => {
     const storedServer = this.servers.find((srv: Server) => srv.id === server.id)
-    if (storedServer == null) {
-      logger.error('updateServerInStore', 'Server could not be updated in store because it does not exist there')
-      return
-    }
+    if (storedServer == null)
+      return undefined
     logger.debug('updateServerInStore', 'Update server', storedServer, updateParams)
     Object.assign(storedServer, updateParams)
     store.set('servers', this.servers)
     this.serverSaveListener?.(this.servers)
-
-    if (this.currView instanceof ServerView && this.currView.getServerId() === server.id) {
-      store.set('lastUsedServerId', storedServer.id)
-      this.serverSwitchListener?.(storedServer)
-    }
+    return storedServer
   }
 
   private onServerViewDidFinishLoadSuccly = (server: Server): void => {
@@ -239,6 +233,17 @@ export default class ViewManager {
 
   private openMailtoUrl = (server: Server, url: string): void => {
     this.switchServer(server, undefined, { search: `action=mailto&to=${url}` })
+  }
+
+  private updateServer = (server: Server, updateParams: Partial<ServerOptions>): void => {
+    const updatedServer = this.updateServerInStore(server, updateParams)
+    if (updatedServer == null) {
+      logger.error('updateServer', 'Server could not be updated because it does not exist in store')
+      return
+    }
+    if (this.currView instanceof ServerView && this.currView.getServerId() === updatedServer.id) {
+      this.serverSwitchListener?.(updatedServer)
+    }
   }
 
   handleDialogButton = (button: UserDialogButton<false>): void => {
@@ -263,7 +268,7 @@ export default class ViewManager {
       this.openMailtoUrl(button.selection, button.callbackParams.mailtoUrl)
     }
     else if (button.type === 'input.editServerName') {
-      this.updateServerInStore(button.callbackParams.server, button.input)
+      this.updateServer(button.callbackParams.server, button.input)
     }
   }
 
