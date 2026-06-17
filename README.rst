@@ -35,7 +35,7 @@ Installation
 
 Download and install the latest release from:
 
-* `www.grommunio.com/download <https://www.grommunio.com/download/>`__
+* `grommunio.com/download-desktop-apps <https://grommunio.com/download-desktop-apps/>`__
 
 Configuration Files
 ~~~~~~~~~~~~~~~~~~~
@@ -75,7 +75,7 @@ Support
 
 Support is available through grommunio GmbH and its partners:
 
-* `www.grommunio.com <https://www.grommunio.com/>`__
+* `grommunio.com <https://grommunio.com/>`__
 
 Community forum:
 
