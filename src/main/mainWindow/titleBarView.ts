@@ -3,8 +3,7 @@
 import { WebContentsView, WindowOpenHandlerResponse } from 'electron'
 
 import { TITLE_BAR } from '../../constants/window'
-import { DEV_TOOLS_OPTIONS } from '../constants/view'
-import { View } from '../types/misc'
+import View from './view'
 import { ON_APP_MENU_CLOSE, ON_SERVER_SWITCH, ON_SERVER_SAVE, ON_DIALOG_CHANGE } from '../constants/communication'
 import { sendIpc, throwIfPropertyUndefined } from '../utils/misc'
 import { Server } from '../../types/misc'
@@ -12,13 +11,13 @@ import { Server } from '../../types/misc'
 declare const MAIN_TITLEBAR_WEBPACK_ENTRY: string
 declare const MAIN_TITLEBAR_PRELOAD_WEBPACK_ENTRY: string
 
-export default class TitleBarView implements View {
-  private view?: WebContentsView
+export default class TitleBarView extends View {
   private onDidFinishLoad?: () => void
   private isServerMenuOpen = false
   private winContentSize?: number[]
 
   constructor(contentSize: number[], onDidFinishLoad?: () => void) {
+    super()
     this.onDidFinishLoad = onDidFinishLoad
 
     this.create(contentSize)
@@ -69,26 +68,6 @@ export default class TitleBarView implements View {
     this.registerListeners()
     this.adjustBounds(contentSize)
     this.load()
-  }
-
-  close = (): void => {
-    throwIfPropertyUndefined('view', this.view)
-
-    this.view.webContents.close()
-    this.view = undefined
-  }
-
-  toggleDevTools = (): void => {
-    throwIfPropertyUndefined('view', this.view)
-
-    if (!this.view.webContents.isDevToolsOpened())
-      this.view.webContents.openDevTools(DEV_TOOLS_OPTIONS)
-    else
-      this.view.webContents.closeDevTools()
-  }
-
-  getWebView(): WebContentsView | undefined {
-    return this.view
   }
 
   setServerMenuOpen = (isOpen: boolean): void => {

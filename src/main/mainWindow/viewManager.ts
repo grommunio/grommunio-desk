@@ -4,7 +4,7 @@ import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
 
 import { Server, ServerOptions } from '../../types/misc'
 import { UserDialog, UserDialogButton } from '../../types/dialog'
-import { View } from '../types/misc'
+import View from './view'
 import { ADD_SERVER, LOAD_NEW_SERVER, SWITCH_SERVER } from '../constants/communication'
 import Logger from '@utils/logger'
 import { throwIfPropertyUndefined } from '../utils/misc'
@@ -56,14 +56,12 @@ export default class ViewManager {
   private addWindowView = (view: View): void => {
     logger.silly('addWindowView', 'Add', formatViewToString(view))
     const webView = view.getWebView()
-    throwIfPropertyUndefined('view', webView)
     this.addViewToMainWindow(webView)
   }
 
   private removeWindowView = (view: View): void => {
     logger.silly('removeWindowView', 'Remove', formatViewToString(view))
     const webView = view.getWebView()
-    throwIfPropertyUndefined('view', webView)
     this.removeViewFromMainWindow(webView)
   }
 

@@ -2,16 +2,14 @@
 
 import { WebContentsView, shell, HandlerDetails, WindowOpenHandlerResponse } from 'electron'
 
-import { TITLE_BAR } from '../../../constants/window'
-import { BACKGROUND_COLOR, DEV_TOOLS_OPTIONS } from '../../constants/view'
-import { View } from '../../types/misc'
+import { BACKGROUND_COLOR } from '../../constants/view'
+import View from '../view'
 import { Server } from '../../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 import { attachContextMenu } from '../../utils/contextMenu'
 import { getServerSessionPartition } from '../../utils/server'
 
-export default class ServerView implements View {
-  private view?: WebContentsView
+export default class ServerView extends View {
   private server: Server
   private loadingStatus: 'loading' | 'failed' | 'success' = 'loading'
   private onDidFinishLoadSuccly?: (server: Server) => void
@@ -24,6 +22,7 @@ export default class ServerView implements View {
     onDidFailLoad?: (server: Server) => void,
     serverUrlParams?: { addPath?: string, search?: string },
   ) {
+    super()
     this.server = server
     this.onDidFinishLoadSuccly = onDidFinishLoadSuccly
     this.onDidFailLoad = onDidFailLoad
@@ -77,12 +76,6 @@ export default class ServerView implements View {
     attachContextMenu(this.view.webContents)
   }
 
-  adjustBounds = (contentSize: number[]): void => {
-    throwIfPropertyUndefined('view', this.view)
-
-    this.view.setBounds({ x: 0, y: TITLE_BAR.HEIGHT, width: contentSize[0], height: contentSize[1] - TITLE_BAR.HEIGHT })
-  }
-
   private create = (contentSize: number[], serverUrlParams?: { addPath?: string, search?: string }): void => {
     this.view = new WebContentsView({
       webPreferences: {
@@ -96,30 +89,10 @@ export default class ServerView implements View {
     this.load(serverUrlParams)
   }
 
-  close = (): void => {
-    throwIfPropertyUndefined('view', this.view)
-
-    this.view.webContents.close()
-    this.view = undefined
-  }
-
-  toggleDevTools = (): void => {
-    throwIfPropertyUndefined('view', this.view)
-
-    if (!this.view.webContents.isDevToolsOpened())
-      this.view.webContents.openDevTools(DEV_TOOLS_OPTIONS)
-    else
-      this.view.webContents.closeDevTools()
-  }
-
   // Do not implement direct getter method for server to avoid inconsistency issues (e.g. when server name is updated,
   // this.server will contain the outdated name).
   getServerId(): number {
     return this.server.id
-  }
-
-  getWebView(): WebContentsView | undefined {
-    return this.view
   }
 
   hasFailedLoading = (): boolean => {

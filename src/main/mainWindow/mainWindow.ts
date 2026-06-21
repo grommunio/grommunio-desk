@@ -85,7 +85,6 @@ export default class MainWindow {
 
     this.titleBarView = new TitleBarView(winSize, this.onTitleBarDidFinishLoad)
     const titleBarWebView = this.titleBarView.getWebView()
-    throwIfPropertyUndefined('titleBarWebView', titleBarWebView)
     this.addWindowView(titleBarWebView)
 
     this.viewManager.createViews(winSize) // TODO: check if that's the correct size
@@ -171,9 +170,8 @@ export default class MainWindow {
   private addWindowView = (newView: ElectronView): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.addChildView(newView)
-    const titleBarWebView = this.titleBarView?.getWebView()
-    if (titleBarWebView != null)
-      this.win.contentView.addChildView(titleBarWebView)
+    if (this.titleBarView != null)
+      this.win.contentView.addChildView(this.titleBarView.getWebView())
     if (this.dialogView != null)
       this.win.contentView.addChildView(this.dialogView.getWebView())
   }
