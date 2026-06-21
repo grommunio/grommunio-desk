@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
+import { ipcMain, IpcMainEvent, WebContentsView } from 'electron'
 
 import { Server, ServerOptions } from '../../types/misc'
 import { UserDialog, UserDialogButton } from '../../types/dialog'
@@ -24,16 +24,16 @@ export default class ViewManager {
   private serverViews: Map<Server['id'], ServerView>
   private servers: Server[]
   private windowContentSize?: number[]
-  private addViewToMainWindow: (newView: ElectronView) => void
-  private removeViewFromMainWindow: (view: ElectronView) => void
+  private addViewToMainWindow: (newView: WebContentsView) => void
+  private removeViewFromMainWindow: (view: WebContentsView) => void
   private createDialog: (userDialog: UserDialog) => void
   private isDialogActive: () => boolean
   private serverSwitchListener?: (server: Server | undefined) => void
   private serverSaveListener?: (servers: Server[]) => void
 
   constructor(
-    addViewToMainWindow: (newView: ElectronView) => void,
-    removeViewFromMainWindow: (view: ElectronView) => void,
+    addViewToMainWindow: (newView: WebContentsView) => void,
+    removeViewFromMainWindow: (view: WebContentsView) => void,
     createDialog: (userDialog: UserDialog) => void,
     isDialogActive: () => boolean,
     serverSwitchListener?: (server: Server | undefined) => void,

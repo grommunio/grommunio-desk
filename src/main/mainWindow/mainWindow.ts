@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { BaseWindow, Menu, ipcMain, IpcMainEvent, View as ElectronView } from 'electron'
+import { BaseWindow, Menu, ipcMain, IpcMainEvent, WebContentsView } from 'electron'
 
 import store from '../utils/store'
 import { buildAppMenuTemplate } from '../utils/appMenu'
@@ -167,16 +167,22 @@ export default class MainWindow {
     this.titleBarView?.sendServerSave(servers)
   }
 
-  private addWindowView = (newView: ElectronView): void => {
+  private addWindowView = (newView: WebContentsView): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.addChildView(newView)
     if (this.titleBarView != null)
       this.win.contentView.addChildView(this.titleBarView.getWebView())
-    if (this.dialogView != null)
+    if (this.dialogView != null) {
       this.win.contentView.addChildView(this.dialogView.getWebView())
+      this.dialogView.getWebView().webContents.focus()
+    }
+    else {
+      newView.webContents.focus()
+    }
+    // TODO: add safety feature to make sure that there are no duplicate views in win.contentView.children at any time
   }
 
-  private removeWindowView = (view: ElectronView): void => {
+  private removeWindowView = (view: WebContentsView): void => {
     throwIfPropertyUndefined('win', this.win)
     this.win.contentView.removeChildView(view)
   }

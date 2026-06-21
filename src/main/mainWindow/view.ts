@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
-import { WebContentsView, View as ElectronView } from 'electron'
+import { WebContentsView } from 'electron'
 
 import { throwIfPropertyUndefined } from '../utils/misc'
 import { DEV_TOOLS_OPTIONS } from '../constants/view'
@@ -28,7 +28,7 @@ export default abstract class View {
       this.view.webContents.closeDevTools()
   }
 
-  getWebView = (): ElectronView => {
+  getWebView = (): WebContentsView => {
     throwIfPropertyUndefined('view', this.view)
     return this.view
   }
