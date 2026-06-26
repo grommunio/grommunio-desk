@@ -7,6 +7,7 @@ import { ConfigData } from './types'
 import { Server } from '../../types/misc'
 import { getUserDataPath } from '../utils/paths'
 import { parseConfig } from './schema'
+import { CONFIG_VERSION } from './constants'
 
 class Store {
   private path: string
@@ -47,7 +48,7 @@ class Store {
 
   private writeConfigFile = (): void => {
     try {
-      fs.writeFileSync(this.path, JSON.stringify(this.data))
+      fs.writeFileSync(this.path, JSON.stringify({ ...this.data, version: CONFIG_VERSION }))
     }
     catch (error) {
       console.error('Error saving config', error)
