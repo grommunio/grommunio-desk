@@ -4,17 +4,18 @@ import * as z from 'zod'
 
 import { ConfigData } from './types'
 
+const serverSchema = z.object({
+  id: z.int(),
+  url: z.string(),
+  name: z.string(),
+  system: z.nullable(z.object({
+    type: z.enum(['web', 'chat']),
+    version: z.string(),
+  })),
+})
 const rawConfigSchema = z.object({
   lastUsedServerId: z.nullable(z.int()),
-  servers: z.array(z.object({
-    id: z.int(),
-    url: z.string(),
-    name: z.string(),
-    system: z.nullable(z.object({
-      type: z.enum(['web', 'chat']),
-      version: z.string(),
-    })),
-  })),
+  servers: z.array(serverSchema),
   serverIdCount: z.int(),
   windowSize: z.tuple([z.int(), z.int()]),
   fileLogLevel: z.enum(['error', 'warn', 'info', 'verbose', 'debug', 'silly', 'false']),
