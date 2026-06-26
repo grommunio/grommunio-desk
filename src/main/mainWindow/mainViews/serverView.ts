@@ -8,22 +8,27 @@ import { Server } from '../../../types/misc'
 import { throwIfPropertyUndefined } from '../../utils/misc'
 import { attachContextMenu } from '../../utils/contextMenu'
 import { getServerSessionPartition } from '../../utils/server'
+import { ZOOM_DEFAULT } from '../../constants/zoom'
 
 export default class ServerView extends View {
   private server: Server
   private loadingStatus: 'loading' | 'failed' | 'success' = 'loading'
+  private zoomLevel: number = ZOOM_DEFAULT
+  private onZoomRequest: (direction: 'in' | 'out' | 'reset') => void
   private onDidFinishLoadSuccly?: (server: Server) => void
   private onDidFailLoad?: (server: Server) => void
 
   constructor( // TODO: use object for parameters
     contentSize: number[],
     server: Server,
+    onZoomRequest: (direction: 'in' | 'out' | 'reset') => void,
     onDidFinishLoadSuccly?: (server: Server) => void,
     onDidFailLoad?: (server: Server) => void,
     serverUrlParams?: { addPath?: string, search?: string },
   ) {
     super()
     this.server = server
+    this.onZoomRequest = onZoomRequest
     this.onDidFinishLoadSuccly = onDidFinishLoadSuccly
     this.onDidFailLoad = onDidFailLoad
 
@@ -73,7 +78,24 @@ export default class ServerView extends View {
       }
     })
 
+    this.view.webContents.on('before-input-event', (_event, input) => {
+      if (input.type !== 'keyDown' || !input.control) return
+      if (input.key === '+') this.onZoomRequest('in')
+      else if (input.key === '-') this.onZoomRequest('out')
+      else if (input.key === '0') this.onZoomRequest('reset')
+    })
+
     attachContextMenu(this.view.webContents)
+  }
+
+  getZoomLevel = (): number => {
+    return this.zoomLevel
+  }
+
+  setZoomLevel = (level: number): void => {
+    throwIfPropertyUndefined('view', this.view)
+    this.zoomLevel = level
+    this.view.webContents.setZoomLevel(level)
   }
 
   private create = (contentSize: number[], serverUrlParams?: { addPath?: string, search?: string }): void => {
@@ -87,6 +109,7 @@ export default class ServerView extends View {
     this.registerListeners()
     this.adjustBounds(contentSize)
     this.load(serverUrlParams)
+    this.setZoomLevel(this.server.zoomLevel ?? ZOOM_DEFAULT)
   }
 
   // Do not implement direct getter method for server to avoid inconsistency issues (e.g. when server name is updated,

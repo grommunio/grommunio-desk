@@ -143,6 +143,9 @@ export default class MainWindow {
       toggleDialogViewDevTools: () => this.dialogView?.toggleDevTools(),
       reloadServerView: () => this.viewManager.reloadCurrServerView(false),
       hardReloadServerView: () => this.viewManager.reloadCurrServerView(true),
+      zoomIn: this.viewManager.zoomIn,
+      zoomOut: this.viewManager.zoomOut,
+      zoomReset: this.viewManager.zoomReset,
     }))
     this.win.setMenu(this.appMenu)
     Menu.setApplicationMenu(this.appMenu)

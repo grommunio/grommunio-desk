@@ -13,6 +13,7 @@ const serverSchema = z.strictObject({
     type: z.enum(['web', 'chat']),
     version: z.string(),
   })),
+  zoomLevel: z.number(),
 })
 const rawConfigSchema = z.strictObject({
   version: z.literal(CONFIG_VERSION),

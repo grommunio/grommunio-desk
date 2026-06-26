@@ -13,6 +13,7 @@ import ServerView from './mainViews/serverView'
 import StartView from './mainViews/startView'
 import { createDialogObject } from '../../utils/dialog'
 import { getServerSessionPartition } from '@utils/server'
+import { ZOOM_DEFAULT, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from '../constants/zoom'
 
 const logger = new Logger('main/mainWindow/viewManager')
 
@@ -93,7 +94,14 @@ export default class ViewManager {
         return [serverView, false]
       }
       else {
-        serverView = new ServerView(this.windowContentSize, server, this.onServerViewDidFinishLoadSuccly, this.onServerViewDidFailLoad, serverUrlParams)
+        serverView = new ServerView(
+          this.windowContentSize,
+          server,
+          this.onViewZoomRequest,
+          this.onServerViewDidFinishLoadSuccly,
+          this.onServerViewDidFailLoad,
+          serverUrlParams,
+        )
         this.serverViews.set(server.id, serverView)
         return [serverView, true]
       }
@@ -295,6 +303,35 @@ export default class ViewManager {
     }
   }
 
+  private onViewZoomRequest = (direction: 'in' | 'out' | 'reset'): void => {
+    if (direction === 'in') this.zoomIn()
+    else if (direction === 'out') this.zoomOut()
+    else this.zoomReset()
+  }
+
+  zoomIn = (): void => {
+    this.applyZoomToCurrServer(level => Math.min(ZOOM_MAX, level + ZOOM_STEP))
+  }
+
+  zoomOut = (): void => {
+    this.applyZoomToCurrServer(level => Math.max(ZOOM_MIN, level - ZOOM_STEP))
+  }
+
+  zoomReset = (): void => {
+    this.applyZoomToCurrServer(() => ZOOM_DEFAULT)
+  }
+
+  private applyZoomToCurrServer = (computeLevel: (level: number) => number): void => {
+    if (!(this.currView instanceof ServerView))
+      return
+    const newLevel = computeLevel(this.currView.getZoomLevel())
+    if (this.currView.getZoomLevel() === newLevel)
+      return
+    this.currView.setZoomLevel(newLevel)
+    if (!this.updateServerInStore(this.currView.getServerId(), { zoomLevel: newLevel }, false))
+      logger.error('applyZoomToCurrServer', 'Server could not be updated in store because it does not exist there')
+  }
+
   // IPC functions
   private onAddServer = (_event: IpcMainEvent): void => {
     this.switchServer(undefined)
@@ -308,6 +345,7 @@ export default class ViewManager {
     const newServer: Server = {
       ...server,
       id,
+      zoomLevel: ZOOM_DEFAULT,
     }
     this.switchServer(newServer, true)
   }

@@ -13,6 +13,9 @@ interface AppMenuTemplateOptions {
   toggleDialogViewDevTools: () => void
   reloadServerView: () => void
   hardReloadServerView: () => void
+  zoomIn: () => void
+  zoomOut: () => void
+  zoomReset: () => void
 }
 
 export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] => [
@@ -52,6 +55,25 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
         click: options.hardReloadServerView,
         accelerator: 'CmdOrCtrl+Shift+R',
         enabled: options.reloadServerViewEnabled,
+      },
+      { type: 'separator' },
+      {
+        label: 'Actual Size', // TODO: disable buttons when active View is not a ServerView
+        click: options.zoomReset,
+        accelerator: 'CmdOrCtrl+0',
+        registerAccelerator: false,
+      },
+      {
+        label: 'Zoom In',
+        click: options.zoomIn,
+        accelerator: 'CmdOrCtrl+Plus',
+        registerAccelerator: false,
+      },
+      {
+        label: 'Zoom Out',
+        click: options.zoomOut,
+        accelerator: 'CmdOrCtrl+-',
+        registerAccelerator: false,
       },
       { type: 'separator' },
       {

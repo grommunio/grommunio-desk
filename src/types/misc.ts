@@ -14,6 +14,7 @@ export interface ServerOptions {
 }
 export interface Server extends ServerOptions {
   id: number
+  zoomLevel: number
 }
 
 export type SystemPlatform = 'linux' | 'mac' | 'win'
