@@ -58,8 +58,9 @@ class Store {
 export default new Store(
   'config',
   {
-    serverIdCount: 0,
+    lastUsedServerId: null,
     servers: Array<Server>(),
+    serverIdCount: 0,
     windowSize: [1000, 800],
     fileLogLevel: 'info',
   },

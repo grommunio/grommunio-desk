@@ -5,7 +5,7 @@ import * as z from 'zod'
 import { ConfigData } from './types'
 
 const rawConfigSchema = z.object({
-  lastUsedServerId: z.optional(z.int()),
+  lastUsedServerId: z.nullable(z.int()),
   servers: z.array(z.object({
     id: z.int(),
     url: z.string(),

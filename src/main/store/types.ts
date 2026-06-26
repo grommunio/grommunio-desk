@@ -5,7 +5,7 @@ import { LevelOption } from 'electron-log'
 import { Server } from '../../types/misc'
 
 export interface ConfigData {
-  lastUsedServerId?: Server['id']
+  lastUsedServerId: Server['id'] | null
   servers: Server[]
   serverIdCount: number
   windowSize: [number, number]

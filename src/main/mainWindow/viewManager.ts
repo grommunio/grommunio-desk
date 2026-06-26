@@ -128,7 +128,7 @@ export default class ViewManager {
     const [view, loadedFromScratch] = this.createServerView(server, serverUrlParams)
     this.switchCurrView(view)
     if (!loadedFromScratch) // for new (loaded from scratch) servers, do not set lastUsedServer until the server has loaded successfully (see onServerViewDidFinishLoadSuccly)
-      store.set('lastUsedServerId', server?.id)
+      store.set('lastUsedServerId', server?.id ?? null)
     this.serverSwitchListener?.(server)
   }
 
