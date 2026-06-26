@@ -4,16 +4,16 @@ import * as z from 'zod'
 
 import { ConfigData } from './types'
 
-const serverSchema = z.object({
+const serverSchema = z.strictObject({
   id: z.int(),
   url: z.string(),
   name: z.string(),
-  system: z.nullable(z.object({
+  system: z.nullable(z.strictObject({
     type: z.enum(['web', 'chat']),
     version: z.string(),
   })),
 })
-const rawConfigSchema = z.object({
+const rawConfigSchema = z.strictObject({
   lastUsedServerId: z.nullable(z.int()),
   servers: z.array(serverSchema),
   serverIdCount: z.int(),
