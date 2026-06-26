@@ -33,8 +33,8 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
       })),
       { type: 'separator' },
       {
-        click: options.addServer,
         label: 'Add server',
+        click: options.addServer,
       },
     ],
   },
@@ -42,29 +42,29 @@ export const buildAppMenuTemplate = (options: AppMenuTemplateOptions): (Electron
     label: 'View',
     submenu: [
       {
-        click: options.reloadServerView,
         label: 'Reload server',
-        accelerator: 'CmdOrCtrl+R',
+        click: options.reloadServerView,
+        accelerator: 'CmdOrCtrl+R', // TODO: disable accelerator registration and use own key listener
         enabled: options.reloadServerViewEnabled,
       },
       {
-        click: options.hardReloadServerView,
         label: 'Reload server (ignoring cache)',
+        click: options.hardReloadServerView,
         accelerator: 'CmdOrCtrl+Shift+R',
         enabled: options.reloadServerViewEnabled,
       },
       { type: 'separator' },
       {
-        click: options.toggleMainViewDevTools,
         label: 'Toggle mainView developer tools',
+        click: options.toggleMainViewDevTools,
       },
       {
-        click: options.toggleTitleBarViewTools,
         label: 'Toggle titleBarView developer tools',
+        click: options.toggleTitleBarViewTools,
       },
       {
-        click: options.toggleDialogViewDevTools,
         label: 'Toggle dialogView developer tools',
+        click: options.toggleDialogViewDevTools,
       },
     ],
   },
