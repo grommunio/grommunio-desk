@@ -6,7 +6,7 @@ import { LOG_FORMAT, LOG_LEVEL_CONSOLE } from '../../constants/logging'
 import { createLogClass, LOGGER_PADDING } from '../../utils/logger'
 import { IS_PRODUCTION } from '../../constants/misc'
 import { getUserDataPath } from './paths'
-import store from './store'
+import store from '../store'
 
 log.transports.console.format = LOG_FORMAT
 log.transports.console.level = LOG_LEVEL_CONSOLE

@@ -2,7 +2,7 @@
 
 import { BaseWindow, Menu, ipcMain, IpcMainEvent, WebContentsView } from 'electron'
 
-import store from '../utils/store'
+import store from '../store'
 import { buildAppMenuTemplate } from '../utils/appMenu'
 import TitleBarView from './titleBarView'
 import { TITLE_BAR } from '../../constants/window'
@@ -199,9 +199,9 @@ export default class MainWindow {
     return this.win != null
   }
 
-  private getWinContentSize = (): number[] => {
+  private getWinContentSize = (): [number, number] => {
     throwIfPropertyUndefined('win', this.win)
-    return this.win.getSize()
+    return this.win.getSize() as [number, number]
   }
 
   private createDialog = (userDialog: UserDialog): void => {
