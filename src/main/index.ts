@@ -16,6 +16,7 @@ import { IS_PRODUCTION } from '../constants/misc'
 import TrayMenu from './trayMenu'
 import { throwIfPropertyUndefined } from './utils/misc'
 import { addMailtoRegistryEntry, removeMailtoRegistryEntry } from './scripts/squirrelRegistryEntry'
+import { setupSpellChecker } from './utils/spellChecker'
 
 const logger = new Logger('main/index')
 
@@ -111,11 +112,14 @@ else if (!app.requestSingleInstanceLock()) {
 else {
   app.on('ready', () => {
     logger.silly('app.ready', 'Starting app with argv', process.argv)
+
     session.defaultSession.protocol.handle('static', (request) => {
       const fileUrl = request.url.replace('static://', '')
       const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl)
       return net.fetch(url.pathToFileURL(filePath).toString())
     })
+
+    setupSpellChecker(session.defaultSession)
 
     if (systemPlatform === 'win')
       app.setAppUserModelId(APP_ID)

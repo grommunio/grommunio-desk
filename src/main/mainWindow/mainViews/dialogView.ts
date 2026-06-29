@@ -49,6 +49,7 @@ export default class DialogView extends View {
       webPreferences: {
         preload: MAIN_DIALOG_PRELOAD_WEBPACK_ENTRY,
         transparent: true,
+        spellcheck: true,
       },
     })
 

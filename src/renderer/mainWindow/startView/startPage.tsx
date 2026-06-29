@@ -145,6 +145,7 @@ const StartPage = (): React.ReactElement => {
           feedback={urlValidationFeedbackText}
           validationStatus={urlValidationStatus}
           ref={urlInputRef}
+          disableSpellCheck={true}
           onChange={handleChange('url')}
           onEnterKeyDown={handleEnterKeyDown('url')}
         />

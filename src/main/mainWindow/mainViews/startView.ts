@@ -40,6 +40,7 @@ export default class StartView extends View {
     this.view = new WebContentsView({
       webPreferences: {
         preload: MAIN_START_PRELOAD_WEBPACK_ENTRY,
+        spellcheck: true,
       },
     })
     this.view.setBackgroundColor(BACKGROUND_COLOR)

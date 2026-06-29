@@ -15,6 +15,7 @@ interface Props {
   feedback?: string
   validationStatus: ValidationStatus
   ref?: React.Ref<HTMLInputElement>
+  disableSpellCheck?: boolean
   onChange: (value: string) => void
   onEnterKeyDown?: () => void
 }
@@ -56,6 +57,7 @@ const InputField = (props: Props): React.ReactElement => {
         type={props.type}
         autoCorrect="false"
         placeholder={props.placeholder}
+        spellCheck={!props.disableSpellCheck}
         style={{
           borderColor: INPUT_FIELD_COLOR[props.validationStatus],
         }}

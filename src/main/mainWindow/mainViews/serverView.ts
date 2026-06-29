@@ -9,6 +9,7 @@ import { throwIfPropertyUndefined } from '../../utils/misc'
 import { attachContextMenu } from '../../utils/contextMenu'
 import { getServerSessionPartition } from '../../utils/server'
 import { ZOOM_DEFAULT } from '../../constants/zoom'
+import { setupSpellChecker } from '../../utils/spellChecker'
 
 export default class ServerView extends View {
   private server: Server
@@ -99,9 +100,12 @@ export default class ServerView extends View {
   }
 
   private create = (contentSize: number[], serverUrlParams?: { addPath?: string, search?: string }): void => {
+    const session = getServerSessionPartition(this.server)
+    setupSpellChecker(session)
     this.view = new WebContentsView({
       webPreferences: {
-        session: getServerSessionPartition(this.server),
+        session: session,
+        spellcheck: true,
       },
     })
     this.view.setBackgroundColor(BACKGROUND_COLOR)
