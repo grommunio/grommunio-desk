@@ -1,23 +1,10 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 import * as z from 'zod'
-import fs from 'node:fs'
 
 import { ZOOM_DEFAULT } from '../constants/zoom'
 import { transformConfig } from './schema'
 import { ConfigData } from './types'
-
-const enum ConfigError {
-  UNKNOWN = 'unknown',
-  VERSION_MISMATCH = 'version_mismatch',
-}
-function analyzeConfigError(error: unknown): ConfigError {
-  if (error instanceof z.ZodError
-    && error.issues.some(issue => issue.code === 'invalid_value' && issue.path.length === 1 && issue.path[0] === 'version')) {
-    return ConfigError.VERSION_MISMATCH
-  }
-  return ConfigError.UNKNOWN
-}
 
 const ConfigVersions = ['1.1.0-1'] as const
 function includesValue<T extends U, U>(arr: readonly T[], val: U): val is T {
@@ -108,8 +95,7 @@ function config1_2_0_parseSchema(config: unknown): config1_2_0_schemaType | null
   try {
     return config1_2_0_schema.parse(config)
   }
-  catch (error) {
-    console.log(error)
+  catch {
     return null
   }
 }
@@ -124,64 +110,35 @@ function config1_2_0_migrateFromPreviousVersion(config: config1_1_0_schemaType):
   }
 }
 
-export function migrateConfig(configPath: string, error: unknown): ConfigData | null {
+export function migrateConfig(jsonData: object): ConfigData | null {
   console.log('Trying to migrate config')
-  const configError = analyzeConfigError(error)
-  if (configError == ConfigError.UNKNOWN) {
-    console.error('Unknown error occurred while loading config', error)
-    return null
-  }
-
-  let stringData: string
-  try {
-    stringData = fs.readFileSync(configPath).toString()
-  }
-  catch (error) {
-    console.error('Error loading config', error)
-    return null
-  }
-  let jsonData: unknown
-  try {
-    jsonData = JSON.parse(stringData)
-    if (!(jsonData instanceof Object)) {
-      console.error('JSON config is not an object', stringData, jsonData)
-      return null
+  const configVersion = getConfigVersion(jsonData)
+  console.log(`Config version mismatch (${configVersion})`)
+  if (configVersion == null) {
+    const config1_0_0 = config1_0_0_parseSchema(jsonData)
+    let config1_1_0: config1_1_0_schemaType
+    if (config1_0_0 != null) {
+      console.log('Config version match with legacy version 1.0.0')
+      config1_1_0 = config1_1_0_migrateFromPreviousVersion(config1_0_0)
     }
-  }
-  catch (error) {
-    console.error('Error parsing JSON config', stringData, error)
-    return null
-  }
-
-  if (configError === ConfigError.VERSION_MISMATCH) {
-    const configVersion = getConfigVersion(jsonData)
-    console.log(`Config version mismatch (${configVersion})`)
-    if (configVersion == null) {
-      const config1_0_0 = config1_0_0_parseSchema(jsonData)
-      let config1_1_0: config1_1_0_schemaType
-      if (config1_0_0 != null) {
-        console.log('Config version match with legacy version 1.0.0')
-        config1_1_0 = config1_1_0_migrateFromPreviousVersion(config1_0_0)
+    else {
+      const tmp = config1_1_0_parseSchema(jsonData)
+      if (tmp != null) {
+        console.log('Config version match with legacy version 1.1.0')
+        config1_1_0 = tmp
       }
       else {
-        const tmp = config1_1_0_parseSchema(jsonData)
-        if (tmp != null) {
-          console.log('Config version match with legacy version 1.1.0')
-          config1_1_0 = tmp
-        }
-        else {
-          console.error('Config version does not match any of the legacy versions')
-          return null
-        }
-      }
-      const config1_2_0 = config1_2_0_migrateFromPreviousVersion(config1_1_0)
-      const parsedConfig = config1_2_0_parseSchema(config1_2_0) // additional runtime check (does not change type)
-      if (parsedConfig == null) {
-        console.error('Parsing of migrated config failed')
+        console.error('Config version does not match any of the legacy versions')
         return null
       }
-      return transformConfig(parsedConfig)
     }
+    const config1_2_0 = config1_2_0_migrateFromPreviousVersion(config1_1_0)
+    const parsedConfig = config1_2_0_parseSchema(config1_2_0) // additional runtime check (does not change type)
+    if (parsedConfig == null) {
+      console.error('Parsing of migrated config failed')
+      return null
+    }
+    return transformConfig(parsedConfig)
   }
   return null
 }

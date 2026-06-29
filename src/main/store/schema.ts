@@ -30,7 +30,7 @@ export function transformConfig(rawConfig: z.infer<typeof configSchema>): Config
     fileLogLevel: rawConfig.fileLogLevel === 'false' ? false : rawConfig.fileLogLevel,
   }
 }
-export function parseConfig(config: string): ConfigData {
+export function parseConfig(config: object): ConfigData {
   const parsedConfig = configSchema.parse(config)
   return transformConfig(parsedConfig)
 }

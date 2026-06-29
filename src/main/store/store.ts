@@ -8,6 +8,7 @@ import { getUserDataPath } from '../utils/paths'
 import { parseConfig } from './schema'
 import { CONFIG_VERSION } from './constants'
 import { migrateConfig } from './migration'
+import { isSystemError } from './utils'
 
 class Store {
   private path: string
@@ -28,21 +29,46 @@ class Store {
   }
 
   private readConfigFile = (defaults: ConfigData): ConfigData => {
+    let stringData: string
     try {
-      const stringData = fs.readFileSync(this.path).toString()
-      const jsonData = JSON.parse(stringData)
-      return parseConfig(jsonData)
+      stringData = fs.readFileSync(this.path).toString()
     }
     catch (error) {
-      console.warn('Error loading config')
-      const migratedConfig = migrateConfig(this.path, error)
+      if (isSystemError(error) && error.code === 'ENOENT') {
+        console.warn('Config file was not found. Continuing with config defaults')
+      }
+      else {
+        console.error('Unknown error occurred while loading config', error)
+      }
+      return defaults
+    }
+
+    let jsonData: unknown
+    try {
+      jsonData = JSON.parse(stringData)
+      if (!(jsonData instanceof Object)) {
+        console.error('JSON config is not an object')
+        return defaults
+      }
+    }
+    catch (error) {
+      console.error('Error parsing JSON config', error)
+      return defaults
+    }
+
+    try {
+      return parseConfig(jsonData)
+    }
+    catch {
+      console.warn('Error parsing config schema')
+      const migratedConfig = migrateConfig(jsonData)
       if (migratedConfig != null) {
         console.log('Successfully migrated config')
         this.writeConfigFile(migratedConfig)
         return migratedConfig
       }
       else {
-        console.warn('Config migration failed. Continuing with config defaults')
+        console.error('Config migration failed. Continuing with config defaults')
         this.writeConfigFile(defaults)
         return defaults
       }
