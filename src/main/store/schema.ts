@@ -15,7 +15,7 @@ const serverSchema = z.strictObject({
   })),
   zoomLevel: z.number(),
 })
-const rawConfigSchema = z.strictObject({
+const configSchema = z.strictObject({
   version: z.literal(CONFIG_VERSION),
   lastUsedServerId: z.nullable(z.int()),
   servers: z.array(serverSchema),
@@ -24,13 +24,13 @@ const rawConfigSchema = z.strictObject({
   fileLogLevel: z.enum(['error', 'warn', 'info', 'verbose', 'debug', 'silly', 'false']),
 })
 
-function transformRawConfig(rawConfig: z.infer<typeof rawConfigSchema>): ConfigData {
+export function transformConfig(rawConfig: z.infer<typeof configSchema>): ConfigData {
   return {
     ...rawConfig,
     fileLogLevel: rawConfig.fileLogLevel === 'false' ? false : rawConfig.fileLogLevel,
   }
 }
 export function parseConfig(config: string): ConfigData {
-  const parsedConfig = rawConfigSchema.parse(config)
-  return transformRawConfig(parsedConfig)
+  const parsedConfig = configSchema.parse(config)
+  return transformConfig(parsedConfig)
 }
