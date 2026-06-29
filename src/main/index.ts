@@ -1,5 +1,6 @@
 // Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
+import './utils/init'
 import { app, session, net } from 'electron'
 import squirrelStartup from 'electron-squirrel-startup'
 import path from 'node:path'
