@@ -6,7 +6,7 @@ import { ZOOM_DEFAULT } from '../constants/zoom'
 import { transformConfig } from './schema'
 import { ConfigData } from './types'
 
-const ConfigVersions = ['1.1.0-1'] as const
+const ConfigVersions = ['1.2.0'] as const
 function includesValue<T extends U, U>(arr: readonly T[], val: U): val is T {
   return arr.includes(val as T)
 }
@@ -83,7 +83,7 @@ const config1_2_0_serverSchema = z.strictObject({
   zoomLevel: z.number(),
 })
 const config1_2_0_schema = z.strictObject({
-  version: z.literal('1.1.0-1'),
+  version: z.literal('1.2.0'),
   lastUsedServerId: z.nullable(z.int()),
   servers: z.array(config1_2_0_serverSchema),
   serverIdCount: z.int(),
@@ -104,7 +104,7 @@ function config1_2_0_migrateFromPreviousVersion(config: config1_1_0_schemaType):
   delete tmpConfig.lastUsedServer
   return {
     ...tmpConfig,
-    version: '1.1.0-1',
+    version: '1.2.0',
     lastUsedServerId: config.lastUsedServer?.id ?? null,
     servers: config.servers.map(srv => ({ ...srv, zoomLevel: ZOOM_DEFAULT })),
   }
