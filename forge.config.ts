@@ -48,7 +48,7 @@ const config: ForgeConfig = {
     new MakerSquirrel({
       name: pkg.name,
       setupIcon: getIconPath('ico'),
-      iconUrl: 'https://download.grommunio.com/desk/windows/app_icon.ico',
+      iconUrl: 'https://download.grommunio.com/desk/windows/.icons/app_icon.ico',
       windowsSign: undefined,
     }),
     new MakerMSIX({
