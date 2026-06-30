@@ -10,6 +10,9 @@ import {
 import { systemPlatform } from './constants/system'
 import { ServerUrl, ServerSystem, ServerType } from '../types/misc'
 import { firstNonNullPromise } from './utils/misc'
+import Logger from '@utils/logger'
+
+const logger = new Logger('main/intercom')
 
 async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): Promise<{ system: ServerSystem, url: ServerUrl } | null> {
   const MAX_VERSION_BODY_LENGTH = 8192
@@ -23,7 +26,7 @@ async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): 
     {
       serverPath: '/web', // Paths must always begin with a slash, but never end with one.
       versionPath: '/version',
-      regex: /^(\d+\.\d+\.\d+)\.[a-z0-9]+-(?:lp\d+\.|\d+\+)\d+\.\d+$/,
+      regex: /^(\d+(?:\.\d+)*)(?:\.[a-z0-9]+)?(?:-(?:lp\d+\.|\d+\+)\d+\.\d+)?$/,
       type: 'web',
     },
     {
@@ -69,7 +72,7 @@ async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): 
       res.on('end', () => {
         const trimmedBody = rawBody.trim()
         const match = trimmedBody.match(endpoint.regex)
-        if (trimmedBody != null && match != null && match.length > 1)
+        if (trimmedBody != null && match != null && match.length > 1) {
           resolve({
             system: {
               type: endpoint.type,
@@ -77,8 +80,11 @@ async function onValidateServerUrl(_event: IpcMainInvokeEvent, server: string): 
             },
             url: url.toString(),
           })
-        else
+        }
+        else {
+          logger.debug('onValidateServerUrl', `Version ${trimmedBody} does not match regular expression of ${endpoint.type}`)
           resolve(null)
+        }
       })
     })
     req.on('error', () => resolve(null))
