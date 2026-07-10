@@ -55,7 +55,7 @@ You can enable file logging in the configuration. Following options are supporte
 
 .. code-block:: typescript
 
-   fileLogLevel: 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly' | false
+   fileLogLevel: 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly' | 'false'
 
 When file logging is enabled, logs are written to:
 
