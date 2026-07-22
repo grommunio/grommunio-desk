@@ -16,7 +16,7 @@ import registerIpcFunctions from './intercom'
 import { IS_PRODUCTION } from '../constants/misc'
 import TrayMenu from './trayMenu'
 import { throwIfPropertyUndefined } from './utils/misc'
-import { addMailtoRegistryEntry, removeMailtoRegistryEntry } from './scripts/squirrelRegistryEntry'
+import { addMailtoRegistryEntry, removeMailtoRegistryEntry } from './scripts/windowsRegistryHandler'
 import { setupSpellChecker } from './utils/spellChecker'
 
 const logger = new Logger('main/index')
@@ -88,11 +88,13 @@ const handleSquirrelEvent = (): void => {
   switch (squirrelEvent) {
     case '--squirrel-install':
     case '--squirrel-updated':
+      logger.silly('handleSquirrelEvent', 'Detected Squirrel Install / Update event')
       addMailtoRegistryEntry()
       execUpdate('--createShortcut', exeName)
       setTimeout(app.quit, 1000)
       return
     case '--squirrel-uninstall':
+      logger.silly('handleSquirrelEvent', 'Detected Squirrel Uninstall event')
       removeMailtoRegistryEntry()
       execUpdate('--removeShortcut', exeName)
       setTimeout(app.quit, 1000)

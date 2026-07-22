@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process'
 import Logger from '@utils/logger'
 import { APP_NAME, APP_PRODUCT_NAME, APP_DESCRIPTION } from '../constants/app'
 
-const logger = new Logger('main/scripts/squirrelRegistryEntry')
+const logger = new Logger('main/scripts/windowsRegistryHandler')
 const HKCU_CLIENTS_APP_KEY = `HKCU\\Software\\Clients\\Mail\\${APP_PRODUCT_NAME}`
 const APP_MAILTO_NAME = `${APP_NAME}-mailto`
 const HKCU_CLASSES_APP_KEY = `HKCU\\Software\\Classes\\${APP_MAILTO_NAME}`
@@ -20,6 +20,7 @@ function execRegCmd(...args: string[]): void {
 }
 
 export function addMailtoRegistryEntry(): void {
+  logger.info('addMailtoRegistryEntry', 'Add Mailto registry entries')
   const cmd = `"${process.execPath}" "%1"`
 
   execRegCmd('ADD', HKCU_CLIENTS_APP_KEY, '/ve', '/d', APP_PRODUCT_NAME, '/f')
@@ -43,6 +44,7 @@ export function addMailtoRegistryEntry(): void {
 }
 
 export function removeMailtoRegistryEntry(): void {
+  logger.info('removeMailtoRegistryEntry', 'Remove Mailto registry entries')
   execRegCmd('DELETE', HKCU_CLIENTS_APP_KEY, '/f')
   execRegCmd('DELETE', HKCU_CLASSES_APP_KEY, '/f')
   execRegCmd('DELETE', 'HKCU\\Software\\RegisteredApplications', '/v', APP_PRODUCT_NAME, '/f')
