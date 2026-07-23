@@ -1,0 +1,20 @@
+<!-- {{...}} tokens are filled in by electron-wix-msi's own template pass. -->
+<DirectoryRef Id="APPLICATIONROOTDIRECTORY">
+  <Component Id="MailtoRegistration" Guid="A3F5C1E2-8B4D-4E6A-9C7F-1D2E3B4A5C6D" Win64="{{Win64YesNo}}">
+    <RegistryKey Root="HKMU" Key="Software\Clients\Mail\{{ApplicationName}}" ForceDeleteOnUninstall="yes">
+      <RegistryValue Type="string" Value="{{ApplicationName}}" />
+      <RegistryValue Key="Capabilities" Name="ApplicationName" Type="string" Value="{{ApplicationName}}" />
+      <RegistryValue Key="Capabilities" Name="ApplicationDescription" Type="string" Value="{{ApplicationDescription}}" />
+      <RegistryValue Key="Capabilities\URLAssociations" Name="mailto" Type="string" Value="{{ApplicationShortName}}-mailto" />
+      <RegistryValue Key="Protocols\mailto" Type="string" Value="URL:MailTo Protocol" />
+      <RegistryValue Key="Protocols\mailto" Name="URL Protocol" Type="string" Value="" />
+      <RegistryValue Key="Protocols\mailto\shell\open\command" Type="string" Value="&quot;[APPLICATIONROOTDIRECTORY]{{ApplicationBinary}}.exe&quot; &quot;%1&quot;" />
+    </RegistryKey>
+    <RegistryKey Root="HKMU" Key="Software\Classes\{{ApplicationShortName}}-mailto" ForceDeleteOnUninstall="yes">
+      <RegistryValue Type="string" Value="{{ApplicationName}}" />
+      <RegistryValue Name="URL Protocol" Type="string" Value="" />
+      <RegistryValue Key="shell\open\command" Type="string" Value="&quot;[APPLICATIONROOTDIRECTORY]{{ApplicationBinary}}.exe&quot; &quot;%1&quot;" />
+    </RegistryKey>
+    <RegistryValue Root="HKMU" Key="Software\RegisteredApplications" Name="{{ApplicationName}}" Type="string" Value="Software\Clients\Mail\{{ApplicationName}}\Capabilities" KeyPath="yes" />
+  </Component>
+</DirectoryRef>

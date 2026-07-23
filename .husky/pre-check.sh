@@ -2,6 +2,7 @@
 # Copyright (c) 2020-2026 grommunio GmbH. All Rights Reserved.
 
 # TODO: check that there are no unstaged changes to the files that will be committed
+# TODO: stage files that are not being committed
 
 set -e
 

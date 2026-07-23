@@ -6,11 +6,13 @@ import { MakerSquirrel } from '@electron-forge/maker-squirrel'
 import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerMSIX } from '@electron-forge/maker-msix'
 import { MakerDMG } from '@electron-forge/maker-dmg'
+import { MakerWix } from '@electron-forge/maker-wix'
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
 import { WebpackPlugin } from '@electron-forge/plugin-webpack'
 import { FusesPlugin } from '@electron-forge/plugin-fuses'
 import { FuseV1Options, FuseVersion } from '@electron/fuses'
 import path from 'node:path'
+import fs from 'node:fs'
 
 import envConfig from './envConfig'
 import { STATIC_RESOURCES, APP_IDENTIFIER } from './constants'
@@ -56,6 +58,24 @@ const config: ForgeConfig = {
       appManifest: path.resolve('./assets/windows/msix/AppXManifest.xml'),
       sign: false,
       // logLevel: 'debug',
+    }),
+    new MakerWix({
+      appUserModelId: APP_IDENTIFIER,
+      description: pkg.description,
+      exe: pkg.name,
+      icon: getIconPath('ico'),
+      manufacturer: pkg.author.name,
+      name: pkg.productName,
+      programFilesFolderName: pkg.name,
+      shortName: pkg.name,
+      version: pkg.version,
+      beforeCreate: (creator): void => {
+        // Injects the mailto registration component.
+        const component = fs.readFileSync(path.resolve('./assets/windows/msi/mailto-registration.xml'), 'utf-8')
+        creator.wixTemplate = creator.wixTemplate
+          .replace('<!-- {{ComponentRefs}} -->', `<ComponentRef Id="MailtoRegistration" />\n<!-- {{ComponentRefs}} -->`)
+          .replace('<!-- {{AutoRun}} -->', `${component}\n<!-- {{AutoRun}} -->`)
+      },
     }),
     new MakerDeb({
       options: {
