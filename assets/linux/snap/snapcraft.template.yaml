@@ -1,0 +1,44 @@
+name: {{name}}
+title: {{title}}
+version: '{{version}}'
+summary: {{summary}}
+description: |
+{{description}}
+license: AGPL-3.0-only
+website: {{website}}
+contact: {{contact}}
+source-code: {{sourceCode}}
+issues: {{sourceCode}}/issues
+icon: snap/icon.png
+base: core24
+grade: stable
+confinement: strict
+
+platforms:
+  {{arch}}:
+
+apps:
+  {{name}}:
+    command: {{name}} --no-sandbox
+    extensions: [gnome]
+    environment:
+      TMPDIR: $XDG_RUNTIME_DIR
+    plugs:
+      - browser-support
+      - network
+      - home
+      - unity7
+      - password-manager-service
+      - audio-playback
+      - audio-record
+      - camera
+
+parts:
+  {{name}}:
+    plugin: dump
+    source: {{packageDir}}
+    stage-packages:
+      - libnss3
+      - libnspr4
+      - libasound2t64
+      - libsecret-1-0

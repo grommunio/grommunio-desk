@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=grommunio Desk
+Comment=Desktop client for grommunio
+Exec=grommunio-desk %U
+Icon=${SNAP}/meta/gui/icon.png
+Type=Application
+Terminal=false
+StartupNotify=true
+Categories=Office;Network;Email;Calendar;Chat;
+MimeType=x-scheme-handler/mailto;
+StartupWMClass=grommunio-desk

@@ -14,6 +14,7 @@
     "make.msi": "electron-forge make --skip-package --targets wix",
     "make.deb": "electron-forge make --skip-package --targets deb",
     "make.dmg": "electron-forge make --skip-package --targets dmg",
+    "make.snap": "npm run generate-snapcraft-yaml && cd out && snapcraft pack",
     "publish": "electron-forge publish",
     "prepare": "husky",
     "lint": "eslint .",
@@ -22,7 +23,8 @@
     "tsc.preload": "tsc --noEmit -p tsconfig.preload.json",
     "tsc.renderer": "tsc --noEmit -p tsconfig.renderer.json",
     "test": "run-p lint tsc",
-    "generate-msix-manifest": "tsx ./scripts/generateMsixManifest.ts"
+    "generate-msix-manifest": "tsx ./scripts/generateMsixManifest.ts",
+    "generate-snapcraft-yaml": "tsx ./scripts/generateSnapcraftYaml.ts"
   },
   "keywords": [
     "Office",

@@ -13,3 +13,13 @@ export const STATIC_RESOURCES = [
 ]
 
 export const APP_IDENTIFIER = 'com.grommunio.grommunio-desk'
+export const APP_DESCRIPTION = `
+  grommunio Desk is the desktop client for grommunio, built with Electron
+  and React.
+
+  It provides direct access to your grommunio environment through a
+  desktop-native window with an integrated server selection, persistent
+  local configuration and OS-native notifications. grommunio Desk can be
+  registered as the system default mail client, so clicking mailto: links
+  opens a new mail in grommunio Desk.
+`

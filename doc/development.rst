@@ -33,6 +33,14 @@ Application packaging with Electron Forge / electron-packager.
    $ npm run package
    $ npm run make
 
+Snap Package
+~~~~~~~~~~~~
+
+* Create a Snap package: ``npm run make.snap`` (automatically runs
+  ``generate-snapcraft-yaml``)
+* Install a local Snap package (for debugging purposes):
+  ``snap install --dangerous <my.snap>``
+
 Creating Icons
 ~~~~~~~~~~~~~~
 
@@ -83,3 +91,13 @@ Troubleshoot
       * Open the event log: ``Event Viewer (Local)`` >
         ``Applications and Services Logs`` > ``Microsoft`` > ``Windows`` >
         ``AppxPackagingOM`` > ``Microsoft-Windows-AppxPackaging/Operational``
+
+Publishing
+----------
+
+Snap Store
+~~~~~~~~~~
+
+* Log in to your Snapcraft account: ``snapcraft login``
+* Upload and publish the app:
+  ``snapcraft upload --release=<release-channel> <my.snap>``
