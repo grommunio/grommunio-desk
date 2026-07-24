@@ -17,7 +17,7 @@
     <Logo>assets\icon.png</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="{{windowsKitVersion}}" MaxVersionTested="{{windowsKitVersion}}" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="{{minWindowsKitVersion}}" MaxVersionTested="{{windowsKitVersion}}" />
   </Dependencies>
   <Resources>
     <Resource Language="en-US" />

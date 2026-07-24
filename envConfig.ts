@@ -9,6 +9,7 @@ const EnvConfigDataKeys = {
   APPLE_TEAM_ID: ['mac'] as SystemPlatform[],
   APPLE_SIGNING_IDENTITY: ['mac'] as SystemPlatform[],
   WINDOWS_PUBLISHER: ['win'] as SystemPlatform[],
+  MIN_WINDOWS_KIT_VERSION: ['win'] as SystemPlatform[],
   WINDOWS_KIT_VERSION: ['win'] as SystemPlatform[],
 } satisfies Record<string, SystemPlatform[]>
 

@@ -56,6 +56,7 @@ const config: ForgeConfig = {
     new MakerMSIX({
       packageAssets: path.resolve('./assets/windows/msix'),
       appManifest: path.resolve('./assets/windows/msix/AppXManifest.xml'),
+      windowsKitVersion: envConfig.get('WINDOWS_KIT_VERSION'),
       sign: false,
       // logLevel: 'debug',
     }),

@@ -38,23 +38,35 @@ Environment Variables
 
 Set the environment variables in the ``.env`` file.
 
-For Windows builds:
+For Windows MSIX builds:
 
-- ``WINDOWS_PUBLISHER``: The X.500 distinguished name of the publishing company.
-  It must match the subject of the certificate used to sign the application.
-- ``WINDOWS_KIT_VERSION``: Windows Kit version used for the ``MinVersion`` and
-  ``MaxVersionTested`` settings in the package manifest.
+* ``WINDOWS_PUBLISHER``:
+
+  * For distribution via the MSIX file: The X.500 distinguished name of the
+    publishing company. This must match the subject of the certificate used to
+    sign the application.
+  * For distribution via the Microsoft Store: The X.500 distinguished name of
+    the company's Microsoft Store publisher identity. (You can find this under
+    Microsoft Partner Center > Apps and games > APP_NAME > Product Identity >
+    Package/Identity/Publisher.)
+
+* ``MIN_WINDOWS_KIT_VERSION``: Windows Kit version used for the ``MinVersion``
+  setting in the package manifest.
+* ``WINDOWS_KIT_VERSION``: Version of the Windows Kit to use for packaging the
+  application. (It can normally be found under
+  ``C:\Program Files (x86)\Windows Kits\10\bin\<version>``.) It is also used for
+  the ``MaxVersionTested`` setting in the package manifest.
 
 For macOS builds:
 
-- ``APPLE_ID``: The Apple ID associated with your Apple Developer account.
-- ``APPLE_PASSWORD``: App-specific password for your Apple account. (This is not
+* ``APPLE_ID``: The Apple ID associated with your Apple Developer account.
+* ``APPLE_PASSWORD``: App-specific password for your Apple account. (This is not
   the password for your Apple account.
   `Guide to generate an app-specific password <https://support.apple.com/en-us/102654>`__.)
-- ``APPLE_TEAM_ID``: The company's Apple Team ID.
-- ``APPLE_SIGNING_IDENTITY``: The name of the certificate used for signing. (Use
-  the command ``security find-identity -p codesigning -v`` to find valid
-  identities.)
+* ``APPLE_TEAM_ID``: The company's Apple Team ID.
+* ``APPLE_SIGNING_IDENTITY``: The name of the certificate to be used for
+  signing. (Use the command ``security find-identity -p codesigning -v`` to find
+  valid identities.)
 
 Snap Package
 ~~~~~~~~~~~~

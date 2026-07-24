@@ -4,17 +4,17 @@ import fs from 'fs'
 
 import pkg from '../package.json'
 import envConfig from '../envConfig.ts'
-import { APP_IDENTIFIER } from '../constants.ts'
 
 const vars = {
   name: pkg.name,
   displayName: pkg.productName,
-  appIdentifier: APP_IDENTIFIER,
+  appIdentifier: 'grommunio.grommunioDesk',
   version: `${pkg.version}.0`,
   description: pkg.description,
   arch: process.arch,
   publisher: envConfig.get('WINDOWS_PUBLISHER', true),
-  publisherDisplayName: pkg.author.name,
+  publisherDisplayName: 'grommunio  GmbH', // two spaces intentionally
+  minWindowsKitVersion: envConfig.get('MIN_WINDOWS_KIT_VERSION', true),
   windowsKitVersion: envConfig.get('WINDOWS_KIT_VERSION', true),
 }
 
