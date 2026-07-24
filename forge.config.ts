@@ -35,7 +35,7 @@ const config: ForgeConfig = {
     },
     osxNotarize: {
       appleId: envConfig.get('APPLE_ID'),
-      appleIdPassword: envConfig.get('APPLE_PASSWORD'), // despite the name, it is not the password of the Apple ID account
+      appleIdPassword: envConfig.get('APPLE_PASSWORD'),
       teamId: envConfig.get('APPLE_TEAM_ID'),
     },
     protocols: [

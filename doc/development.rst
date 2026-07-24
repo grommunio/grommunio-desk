@@ -33,6 +33,29 @@ Application packaging with Electron Forge / electron-packager.
    $ npm run package
    $ npm run make
 
+Environment Variables
+~~~~~~~~~~~~~~~~~~~~~
+
+Set the environment variables in the ``.env`` file.
+
+For Windows builds:
+
+- ``WINDOWS_PUBLISHER``: The X.500 distinguished name of the publishing company.
+  It must match the subject of the certificate used to sign the application.
+- ``WINDOWS_KIT_VERSION``: Windows Kit version used for the ``MinVersion`` and
+  ``MaxVersionTested`` settings in the package manifest.
+
+For macOS builds:
+
+- ``APPLE_ID``: The Apple ID associated with your Apple Developer account.
+- ``APPLE_PASSWORD``: App-specific password for your Apple account. (This is not
+  the password for your Apple account.
+  `Guide to generate an app-specific password <https://support.apple.com/en-us/102654>`__.)
+- ``APPLE_TEAM_ID``: The company's Apple Team ID.
+- ``APPLE_SIGNING_IDENTITY``: The name of the certificate used for signing. (Use
+  the command ``security find-identity -p codesigning -v`` to find valid
+  identities.)
+
 Snap Package
 ~~~~~~~~~~~~
 
